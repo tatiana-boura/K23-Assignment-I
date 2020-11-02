@@ -10,4 +10,9 @@ typedef struct node{
     struct node* next;
 }node;
 
+node* appendList(node* n, void* data);
+
+void destroyList(node* n,unsigned int* size,bool del, void(*deleteData)(void*,void*));
+
+
 #endif
