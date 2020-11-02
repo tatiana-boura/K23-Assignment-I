@@ -4,7 +4,16 @@
 #include <string.h>
 #include "../list/list.h"
 
+typedef struct bucketEntry{
+    char* path;
+}bucketEntry;
 
+typedef node bucket;
+
+typedef struct hashTable{
+    bucket** table;
+    unsigned int size;
+}hashTable;
 
 
 #endif
