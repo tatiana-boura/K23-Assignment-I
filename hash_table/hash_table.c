@@ -1,6 +1,7 @@
 #include "hash_table.h"
 
 //__hash_function________________________________________________________________________________________
+
 unsigned int hash(char* string, hashTable* ht){
     
     unsigned int value;
@@ -13,7 +14,8 @@ unsigned int hash(char* string, hashTable* ht){
     return value % ht->size;
 }
 
-//__create_hash_function__________________________________________________________________________________
+//__create_hash_table____________________________________________________________________________________
+
 hashTable* createHT(unsigned int size){
     
     hashTable* ht = NULL; 
@@ -31,7 +33,8 @@ hashTable* createHT(unsigned int size){
 
 
 //__addToHashTable_______________________________________________________________________________________ 
-void addtoHT(hashTable* ht, char* key, unsigned int bucketSize){
+
+void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTuples_){
 
     bucket* bucketPtr; int index; 
     
@@ -43,7 +46,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize){
     if(bucketPtr==NULL){
 
         //create entries table and add this entry
-        bucketEntry* entry = createEntry(key);
+        bucketEntry* entry = createEntry(key,_listOfTuples_);
         bucketEntry** entryTable = calloc(numOfEntries,sizeof(bucketEntry*)); assert(entryTable!=NULL); 
         
         for(unsigned int i=0; i<numOfEntries; i++) entryTable[i]=NULL;
@@ -56,28 +59,34 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize){
     }
     else{
         //create bucketEntry
-        bucketEntry* entry = createEntry(key);
+        bucketEntry* entry = createEntry(key,_listOfTuples_);
         bucketEntry** entryTable = bucketPtr->data;
-        int j=-1;
+
+        int position=-1;
         for(unsigned int i=0;i<numOfEntries;i++){
             if(entryTable[i]==NULL){
-                j=i;    //j holds the position in bucket's entry table in which
-                break;  // the new entry should be added
+                position=i;    //j holds the position in bucket's entry table in which
+                break;         // the new entry should be added
             }
         }
-        if(j==-1){  //entry doesn't fit in block -> new list node
-            bucketEntry** newEntryTable = malloc(numOfEntries*sizeof(bucketEntry)); 
+        if(position==-1){  //entry doesn't fit in block -> new list node
+
+            bucketEntry** newEntryTable = calloc(numOfEntries,sizeof(bucketEntry)); assert(newEntryTable!=NULL);
             
             for(int i=0;i<numOfEntries;i++) newEntryTable[i]=NULL;
             newEntryTable[0]=entry;
+            
             bucketPtr = appendList(bucketPtr,newEntryTable);
         }
         else{
-            entryTable[j]=entry;
+
+            entryTable[position]=entry;
             bucketPtr->data = entryTable;
         }
+
         ht->table[index] = bucketPtr; 
     }
+
     printBucket(bucketPtr);
     return;
 }
@@ -85,6 +94,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize){
 
 
 //__destroyHashTable______________________________________________________________________________________
+
 void destroyHT(hashTable* ht,unsigned int bucketSize){
 
     for(unsigned int i=0; i<ht->size; i++)
@@ -96,77 +106,152 @@ void destroyHT(hashTable* ht,unsigned int bucketSize){
     return;
 }
 
-void deleteBucketTable(bucketEntry** table,unsigned int* bucketSize){
+void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
 
+    
     unsigned int numOfEntries =(*bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
 
     for(int i=0;i<numOfEntries;i++){
-        if(table[i])
+        if(table[i]){
             //free bucketEntry's fields
-            free(table[i]->path); table[i]->path=NULL;
-        
+            free(table[i]->path); table[i]->path=NULL; //free path
+            destroyListOfTuples(table[i]->listOfTuples,(void*)tupleDeletion);
+            destroyClique(table[i]->clique);
+        }
         free(table[i]); table[i]=NULL;
     }
-
     free(table); table=NULL;
+
 
     return;
 }
 //_______________________________________________________________________________________________________
 
-//__getBucket____________________________________________________________________________________________
 bucket* getBucket(hashTable* ht, char* key, int* index){
 
     *index = hash(key,ht);
     bucket* bucketPtr = ht->table[*index];
     return bucketPtr;
 }
-//_______________________________________________________________________________________________________
 
 
-bucketEntry* createEntry(char* key){
-    //create entry of the bucket with name key
+
+bucketEntry* createEntry(char* _path_, node* _listOfTuples_){
+    // create entry of the bucket with name key(path)
     bucketEntry* entry = calloc(1,sizeof(bucketEntry)); assert(entry!=NULL);
 
-    entry->path = calloc(1,strlen(key)+1); assert(entry->path!=NULL);
-    strcpy(entry->path,key);
+    entry->path = calloc(1,strlen(_path_)+1); assert(entry->path!=NULL);
+    strcpy(entry->path,_path_);
+
+    // create list of tuples <char*,char*>
+    entry->listOfTuples = _listOfTuples_;
+
+    // create clique -- list of paths
+    entry->clique = NULL; entry->clique = appendList(entry->clique,_path_);
 
     return entry;
 }
 
-/*Used for patientHashTable returns true if record with key (recordID) is found*/
-/*bool foundInHT(hashTable* ht,bucket** bp,char* key,unsigned int numOfEntries,int* index){
-    *bp = getBucket(ht,key,index);
-    bucket* temp = *bp;
+
+bool foundInHT(hashTable* ht, char* _path_, unsigned int bucketSize, unsigned int* index, unsigned int* entryNum, bucket** bucketFound ){
+     // if function returns true, bucketFount := in which bucket entry has been found, entryNum := where in the array
+    
+    // get first node of bucket list
+    bucket* bp = getBucket(ht,_path_,index);
+    bucket* temp = bp;
+
+    bucketEntry** entryTable;
+
+    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
+    
+    // iterate while temp != NULL and item hasn't been found
     while(temp!=NULL){
-        bucketEntry** entryTable = temp->data;
-        for(int i=0;i<numOfEntries;i++){
+        
+        entryTable = temp->data;
+        
+        for(unsigned int i=0;i<numOfEntries;i++){
+
             if(entryTable[i]!=NULL){
-                if(!strcmp(entryTable[i]->name,key)) return true;
+                // if key path has been found, return what must be returned
+                if(strcmp(entryTable[i]->path,_path_)==0){ 
+                    *entryNum=i;
+                    *bucketFound=temp;
+                    return true;
+                }    
             }
         }
         temp = temp->next;
     }
     return false;
 }
-*/
+
+void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound1, unsigned int entryNum1, bucket** bucketFound2, unsigned int entryNum2 ){
+
+    // first go to the first one and get the clique(list)
+    bucketEntry**  entryTable1 = (*bucketFound1)->data;
+    node* clique1 = entryTable1[entryNum1]->clique;
+
+    // then go to second one and do the same
+    bucketEntry** entryTable2 = (*bucketFound2)->data;
+    node* clique2 = entryTable2[entryNum2]->clique;
+
+    // then merge the two lists and adjust the pointers of 
+    // bucketEntries 1 and 2 to show to the same list(clique)
+
+    clique1=mergeTwoLists(clique1,clique2);
+
+    unsigned int entryNum; 
+    bucket* bucketFound;
+    bucketEntry**  entryTable;
+
+    node* tempNode=clique1;
+
+    while(tempNode != NULL){
+
+        //find path in hash table and make it point to the new clique  
+        unsigned int index;
+        foundInHT(ht,(char*)tempNode->data,bucketSize, &index, &entryNum, &bucketFound );
+
+        entryTable = bucketFound->data;
+        entryTable[entryNum]->clique=clique1;
+
+        tempNode=tempNode->next;
+    }
 
 
+    return;
 
-// Extra -- print bucket function 
+}
+
+
+//__PRINTS__________________________________________________________________________________
 void printBucket(node* b){
+    
     if(b == NULL){ printf("Empty Bucket\n"); return; }
     node* temp = b;
 
     while(temp!=NULL){
 
         bucketEntry** entryTable = temp->data;
-        for(int i = 0;i<12;i++){
+        for(int i = 0;i<5;i++){
             if((entryTable[i]!=NULL)){
-                 printf("%s\n",entryTable[i]->path);
-
+                printf("%s is equal to\n\n",entryTable[i]->path );
+                //printList(entryTable[i]->listOfTuples,(void*)printTuple);
+                printList(entryTable[i]->clique,NULL);
+                printf("\n");
             }
         }
         temp=temp->next;
     }
 }
+
+void printHT(hashTable* ht){
+
+    bucket* bp;
+    for( unsigned int i=0; i<ht->size; i++ )
+        printBucket(ht->table[i]);
+        
+    return;
+}
+
+

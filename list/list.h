@@ -13,8 +13,10 @@ typedef struct node{
 }node;
 
 node* appendList(node* n, void* data);
-
 void destroyList(node* n, unsigned int* size, bool del, void(*deleteData)(void*,void*));
-
+node* mergeTwoLists(node* n1, node* n2);
+void destroyListOfTuples(node* n, void(*deleteData)(void*));
+void destroyClique(node* n);
+void printList(node* n, void(*printData)(void*));
 
 #endif
