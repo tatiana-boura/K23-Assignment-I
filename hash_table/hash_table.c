@@ -153,11 +153,14 @@ bucketEntry* createEntry(char* _path_, node* _listOfTuples_){
 }
 
 
-bool foundInHT(hashTable* ht, char* _path_, unsigned int bucketSize, unsigned int* index, unsigned int* entryNum, bucket** bucketFound ){
-     // if function returns true, bucketFount := in which bucket entry has been found, entryNum := where in the array
+bool foundInHT(hashTable* ht, char* _path_, unsigned int bucketSize, unsigned int* entryNum, bucket** bucketFound ){
+     // if function returns true(item is found), 
+     // bucketFount := in which bucket entry has been found, entryNum := where in the array
     
+    unsigned int index;
+
     // get first node of bucket list
-    bucket* bp = getBucket(ht,_path_,index);
+    bucket* bp = getBucket(ht,_path_,&index);
     bucket* temp = bp;
 
     bucketEntry** entryTable;
@@ -209,8 +212,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     while(tempNode != NULL){
 
         //find path in hash table and make it point to the new clique  
-        unsigned int index;
-        foundInHT(ht,(char*)tempNode->data,bucketSize, &index, &entryNum, &bucketFound );
+        foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
 
         entryTable = bucketFound->data;
         entryTable[entryNum]->clique=clique1;

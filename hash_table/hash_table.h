@@ -24,7 +24,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize,node* _listOfTupl
 void destroyHT(hashTable* ht,unsigned int bucketSize);
 void deleteBucketTable(bucketEntry** table,unsigned int* bucketSize);
 
-bool foundInHT(hashTable* ht, char* _path_, unsigned int bucketSize, unsigned int* index, unsigned int* entryNum, bucket** bucketFound );
+bool foundInHT(hashTable* ht, char* _path_, unsigned int bucketSize, unsigned int* entryNum, bucket** bucketFound );
 void changePointers(hashTable* ht, unsigned int bucketSize,bucket** bucketFound1, unsigned int entryNum1, bucket** bucketFound2, unsigned int entryNum2 );
 
 void printHT(hashTable* ht);

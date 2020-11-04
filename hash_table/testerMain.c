@@ -82,13 +82,13 @@ int main(void){
 
 	printf("\n");
 
-	unsigned int entryNum, index;
+	unsigned int entryNum;
 	bucket* bucketFound;
 
 	bool found=false;
 	
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s1, BUCKETSIZE, &index, &entryNum, &bucketFound );
+		found = foundInHT(ht, s1, BUCKETSIZE, &entryNum, &bucketFound );
 		if(found) break;
 	}
 
@@ -98,7 +98,7 @@ int main(void){
 	found=false;
 
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, "an to vreis sfira mou", BUCKETSIZE, &index, &entryNum, &bucketFound );
+		found = foundInHT(ht, "an to vreis sfira mou", BUCKETSIZE, &entryNum, &bucketFound );
 		if(found) break;
 	}
 
@@ -118,30 +118,14 @@ int main(void){
 	found=false;
 	
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s1, BUCKETSIZE, &index, &entryNum1, &bucketFound1 );
+		found = foundInHT(ht, s1, BUCKETSIZE, &entryNum1, &bucketFound1 );
 		if(found) break;
 	}
 
 	found=false;
 
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s6, BUCKETSIZE, &index, &entryNum2, &bucketFound2 );
-		if(found) break;
-	}
-
-	changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
-
-	found=false;
-	
-	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s6, BUCKETSIZE, &index, &entryNum1, &bucketFound1 );
-		if(found) break;
-	}
-
-	found=false;
-
-	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s4, BUCKETSIZE, &index, &entryNum2, &bucketFound2 );
+		found = foundInHT(ht, s6, BUCKETSIZE, &entryNum2, &bucketFound2 );
 		if(found) break;
 	}
 
@@ -150,14 +134,30 @@ int main(void){
 	found=false;
 	
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s3, BUCKETSIZE, &index, &entryNum1, &bucketFound1 );
+		found = foundInHT(ht, s6, BUCKETSIZE, &entryNum1, &bucketFound1 );
 		if(found) break;
 	}
 
 	found=false;
 
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s6, BUCKETSIZE, &index, &entryNum2, &bucketFound2 );
+		found = foundInHT(ht, s4, BUCKETSIZE, &entryNum2, &bucketFound2 );
+		if(found) break;
+	}
+
+	changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+
+	found=false;
+	
+	for( unsigned int i=0; i<HTSIZE; i++ ){
+		found = foundInHT(ht, s3, BUCKETSIZE, &entryNum1, &bucketFound1 );
+		if(found) break;
+	}
+
+	found=false;
+
+	for( unsigned int i=0; i<HTSIZE; i++ ){
+		found = foundInHT(ht, s6, BUCKETSIZE, &entryNum2, &bucketFound2 );
 		if(found) break;
 	}
 
