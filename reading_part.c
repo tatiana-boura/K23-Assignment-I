@@ -125,3 +125,23 @@ int main(int argc, char* argv[]){
 	closedir(Dataset_X);
 	return 0;
 }
+
+/*
+Testing code that finds the sum of json files to create hash table (use size accordingly)
+//Get number of subdirectories (apart from /. and /..)
+    //open given directory
+    struct dirent *dp;
+    DIR *d;
+    //unable to open directory stream
+    if (!(d= opendir("test"))) { perror("opendir"); exit(-1); }
+
+    unsigned int num_of_dir=0;
+    while ((dp = readdir(d)) != NULL) 
+        if(!((!(strcmp(dp->d_name,".")))||(!(strcmp(dp->d_name,".."))))) num_of_dir++;
+    closedir(d);
+    rewinddir(d);
+
+    unsigned int hash_size = num_of_dir;
+
+    hashTable* hash = createHT(hash_size); 
+*/
