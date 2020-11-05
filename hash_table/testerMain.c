@@ -21,31 +21,39 @@ int main(void){
 	char* s5 = calloc(100,sizeof(char)); strcpy(s5,"https://aegeanairlines/tickets.com");
 	char* s6 = calloc(100,sizeof(char)); strcpy(s6,"https://ebay/home0.com");
 
-	char* k1 = calloc(10,sizeof(char)); strcpy(k1,"one");
-	char* k2 = calloc(10,sizeof(char)); strcpy(k2,"two");
-	char* k3 = calloc(10,sizeof(char)); strcpy(k3,"three");
-	char* k4 = calloc(10,sizeof(char)); strcpy(k4,"four");
-	char* k5 = calloc(10,sizeof(char)); strcpy(k5,"five");
-	char* k6 = calloc(10,sizeof(char)); strcpy(k6,"six");
-	char* k7 = calloc(10,sizeof(char)); strcpy(k7,"seven");
-	char* k8 = calloc(10,sizeof(char)); strcpy(k8,"eight");
-	char* k9 = calloc(10,sizeof(char)); strcpy(k9,"nine");
-	char* k10 = calloc(10,sizeof(char)); strcpy(k10,"ten");
-	char* k11 = calloc(10,sizeof(char)); strcpy(k11,"eleven");
-	char* k12 = calloc(10,sizeof(char)); strcpy(k12,"twelve");
-	char* k13 = calloc(10,sizeof(char)); strcpy(k13,"thirteen");
-	char* k14 = calloc(10,sizeof(char)); strcpy(k14,"fourteen");
-	char* k15 = calloc(10,sizeof(char)); strcpy(k15,"fifteen");
-	char* k16 = calloc(10,sizeof(char)); strcpy(k16,"sixteen");
-	char* k17 = calloc(10,sizeof(char)); strcpy(k17,"seventeen");
-	char* k18 = calloc(10,sizeof(char)); strcpy(k18,"eighteen");
-	char* k19 = calloc(10,sizeof(char)); strcpy(k19,"nineteen");
-	char* k20 = calloc(10,sizeof(char)); strcpy(k20,"twenty");
+	char* k1 = calloc(20,sizeof(char)); strcpy(k1,"one");
+	char* k2 = calloc(20,sizeof(char)); strcpy(k2,"two");
+	char* k3 = calloc(20,sizeof(char)); strcpy(k3,"three");
+	char* k4 = calloc(20,sizeof(char)); strcpy(k4,"four");
+	char* k5 = calloc(20,sizeof(char)); strcpy(k5,"five");
+	char* k6 = calloc(20,sizeof(char)); strcpy(k6,"six");
+	char* k7 = calloc(20,sizeof(char)); strcpy(k7,"seven");
+	char* k8 = calloc(20,sizeof(char)); strcpy(k8,"eight");
+	char* k9 = calloc(20,sizeof(char)); strcpy(k9,"nine");
+	char* k10 = calloc(20,sizeof(char)); strcpy(k10,"ten");
+	char* k11 = calloc(20,sizeof(char)); strcpy(k11,"eleven");
+	char* k12 = calloc(20,sizeof(char)); strcpy(k12,"twelve");
+	char* k13 = calloc(20,sizeof(char)); strcpy(k13,"thirteen");
+	char* k14 = calloc(20,sizeof(char)); strcpy(k14,"fourteen");
+	char* k15 = calloc(20,sizeof(char)); strcpy(k15,"fifteen");
+	char* k16 = calloc(20,sizeof(char)); strcpy(k16,"sixteen");
+	char* k17 = calloc(20,sizeof(char)); strcpy(k17,"seventeen");
+	char* k18 = calloc(20,sizeof(char)); strcpy(k18,"eighteen");
+	char* k19 = calloc(20,sizeof(char)); strcpy(k19,"nineteen");
+	char* k20 = calloc(20,sizeof(char)); strcpy(k20,"twenty");
+	char* k21 = calloc(20,sizeof(char)); strcpy(k21,"twentyone");
+	char* k22 = calloc(20,sizeof(char)); strcpy(k22,"twentytwo");
+	char* k23 = calloc(20,sizeof(char)); strcpy(k23,"twentythree");
+	char* k24 = calloc(20,sizeof(char)); strcpy(k24,"twentyfour");
+	char* k25 = calloc(20,sizeof(char)); strcpy(k25,"twentyfive");
+	char* k26 = calloc(20,sizeof(char)); strcpy(k26,"twentysix");
 
 	TuplePtr t1 = calloc(1,sizeof(Tuple)); tupleInitialization(t1,k1,k2);
+	insertAtValueList(t1,k21); insertAtValueList(t1,k22); insertAtValueList(t1,k23); insertAtValueList(t1,k24);
 	TuplePtr t2 = calloc(1,sizeof(Tuple)); tupleInitialization(t2,k3,k4);
 	TuplePtr t3 = calloc(1,sizeof(Tuple)); tupleInitialization(t3,k5,k6);
 	TuplePtr t4 = calloc(1,sizeof(Tuple)); tupleInitialization(t4,k7,k8);
+	insertAtValueList(t4,k25); insertAtValueList(t4,k26);
 	TuplePtr t5 = calloc(1,sizeof(Tuple)); tupleInitialization(t5,k9,k10);
 	TuplePtr t6 = calloc(1,sizeof(Tuple)); tupleInitialization(t6,k11,k12);
 	TuplePtr t7 = calloc(1,sizeof(Tuple)); tupleInitialization(t7,k13,k14);
@@ -173,10 +181,12 @@ int main(void){
 	destroyHT(ht,BUCKETSIZE);
 
 	free(s1); s1=NULL; free(s2); s2=NULL; free(s3); s3=NULL; free(s4); s4=NULL; free(s5); s5=NULL; free(s6); s6=NULL;
-	free(k1); k1=NULL; free(k2); k2=NULL; free(k3); k3=NULL; free(k4); k4=NULL; free(k5); k5=NULL; free(k6); k6=NULL;
-	free(k7); k7=NULL; free(k8); k8=NULL; free(k9); k9=NULL; free(k10); k10=NULL; free(k11); k11=NULL; free(k12); k12=NULL;
-	free(k13); k13=NULL; free(k14); k14=NULL; free(k15); k15=NULL; free(k16); k16=NULL; free(k17); k17=NULL; free(k18); k18=NULL;
-	free(k19); k19=NULL; free(k20); k20=NULL;
+	free(k1); k1=NULL; free(k3); k3=NULL; free(k5); k5=NULL; free(k7); k7=NULL; free(k9); k9=NULL; free(k11); k11=NULL; 
+	free(k13); k13=NULL; free(k15); k15=NULL; free(k17); k17=NULL; free(k19); k19=NULL; 
+	//free(k21); k21=NULL; free(k22); k22=NULL; free(k23); k23=NULL; free(k24); k24=NULL; 
+	//free(k25); k25=NULL; free(k26); k26=NULL;
+
+	//destroyHT(ht,BUCKETSIZE);
 
 	return 0;
 }

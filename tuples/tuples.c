@@ -8,16 +8,16 @@ void tupleInitialization(TuplePtr t, char* pName, char* pValue){
 	/*t = calloc(1,sizeof(Tuple));
 	assert(t!=NULL);*/
 
-	t->propertyName = calloc(NAME_SIZE,sizeof(char));
+	t->propertyName = calloc(strlen(pName)+1,sizeof(char));
 	assert(t->propertyName!=NULL);
-	
 
 	strcpy(t->propertyName,pName);
 
-	t->propertyValue = calloc(VALUE_SIZE,sizeof(char));
-	assert(t->propertyValue!=NULL);
+	//char* newString  = calloc(strlen(pValue)+1,sizeof(char));
+	//strcpy(newString,pValue);
 
-	strcpy(t->propertyValue,pValue);
+	t->propertyValueList = NULL;
+	t->propertyValueList = appendList(t->propertyValueList,pValue);
 
 	return;
 }
@@ -25,15 +25,25 @@ void tupleInitialization(TuplePtr t, char* pName, char* pValue){
 void tupleDeletion(TuplePtr t){ 
 
 	free(t->propertyName); t->propertyName=NULL;
-	free(t->propertyValue); t->propertyValue=NULL;
+
+	destroyListOfStrings(t->propertyValueList,true);
 	free(t); t=NULL;
 
 	return;
 }
 
+void insertAtValueList( TuplePtr t, char* pValue ){
+
+	t->propertyValueList = appendList(t->propertyValueList,pValue);
+	return;
+}
+
 void printTuple(TuplePtr t){
 
-	printf("[propertyName] = [%s],[propertyValue] = [%s]\n",t->propertyName,t->propertyValue );
+	if(t==NULL){ printf("NULL tuple\n"); return;}
+
+	printf("[propertyName] = [%s],[propertyValue] = \t",t->propertyName );
+	printList(t->propertyValueList,NULL);
 
 	return;
 }

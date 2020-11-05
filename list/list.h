@@ -16,7 +16,9 @@ node* appendList(node* n, void* data);
 void destroyList(node* n, unsigned int* size, bool del, void(*deleteData)(void*,void*));
 node* mergeTwoLists(node* n1, node* n2);
 void destroyListOfTuples(node* n, void(*deleteData)(void*));
-void destroyClique(node* n);
+void destroyListOfStrings(node* n, bool destroyDataAsWell);
 void printList(node* n, void(*printData)(void*));
+
+bool addrFoundinList(node* n,  void* addr );
 
 #endif

@@ -1,5 +1,7 @@
 #include "hash_table.h"
 
+node* listOfCliques=NULL;
+
 //__hash_function________________________________________________________________________________________
 
 unsigned int hash(char* string, hashTable* ht){
@@ -103,25 +105,34 @@ void destroyHT(hashTable* ht,unsigned int bucketSize){
     free(ht->table); ht->table=NULL;
     free(ht); ht=NULL;
 
+    destroyListOfStrings(listOfCliques,false);
+    
+
     return;
 }
 
 void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
 
-    
     unsigned int numOfEntries =(*bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
 
-    for(int i=0;i<numOfEntries;i++){
+    for(unsigned int i=0;i<numOfEntries;i++){
         if(table[i]){
             //free bucketEntry's fields
-            free(table[i]->path); table[i]->path=NULL; //free path
-            destroyListOfTuples(table[i]->listOfTuples,(void*)tupleDeletion);
-            destroyClique(table[i]->clique);
+            
+            // if we haven't come across this clique yet, mark it
+            // as visited and then destroy it 
+            if( !addrFoundinList(listOfCliques,table[i]->clique)){
+                listOfCliques=appendList(listOfCliques,table[i]->clique);
+                //printf("%p\n",table[i]->clique);
+                destroyListOfStrings(table[i]->clique,false);
+            }
+            
+            destroyListOfTuples(table[i]->listOfTuples,(void*)tupleDeletion); 
+            free(table[i]->path); table[i]->path=NULL;
+            free(table[i]); table[i]=NULL;
         }
-        free(table[i]); table[i]=NULL;
     }
     free(table); table=NULL;
-
 
     return;
 }
@@ -140,14 +151,14 @@ bucketEntry* createEntry(char* _path_, node* _listOfTuples_){
     // create entry of the bucket with name key(path)
     bucketEntry* entry = calloc(1,sizeof(bucketEntry)); assert(entry!=NULL);
 
-    entry->path = calloc(1,strlen(_path_)+1); assert(entry->path!=NULL);
+    entry->path = calloc(strlen(_path_)+1,sizeof(char)); assert(entry->path!=NULL);
     strcpy(entry->path,_path_);
 
     // create list of tuples <char*,char*>
     entry->listOfTuples = _listOfTuples_;
 
     // create clique -- list of paths
-    entry->clique = NULL; entry->clique = appendList(entry->clique,_path_);
+    entry->clique = NULL; entry->clique = appendList(entry->clique,entry->path);
 
     return entry;
 }
@@ -215,6 +226,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
         // make it point to the new clique
         entryTable = bucketFound->data;
+
         entryTable[entryNum]->clique=clique1;
 
         tempNode=tempNode->next;
@@ -234,9 +246,9 @@ void printBucket(node* b){
         bucketEntry** entryTable = temp->data;
         for(int i = 0;i<5;i++){
             if((entryTable[i]!=NULL)){
-                printf("%s is equal to\n\n",entryTable[i]->path );
-                //printList(entryTable[i]->listOfTuples,(void*)printTuple);
-                printList(entryTable[i]->clique,NULL);
+                printList(entryTable[i]->listOfTuples,(void*)printTuple);
+                //printf("%s is equal to\n\n",entryTable[i]->path );
+                //printList(entryTable[i]->clique,NULL);
                 printf("\n");
             }
         }
