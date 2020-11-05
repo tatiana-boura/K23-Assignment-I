@@ -34,6 +34,7 @@ extra notes:
 #include <unistd.h>
 #include <dirent.h>
 
+
 //function to return #.json files in given directory
 int count_json(char* given_directory){
 	printf("given_dir: %s\n", given_directory);
