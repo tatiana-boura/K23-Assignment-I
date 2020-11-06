@@ -132,3 +132,31 @@ void printList(node* n, void(*printData)(void*)){
 
     return;
 }
+
+void makeOutputFileList(node* n, FILE* outputFile){
+
+    /* This function works as follows: let's say we have the example,
+    clique is a b c d. The function does the printing:
+    takes a and pairs it with what follows-- ab, ac, ad
+    then takes b and pairs it with what follows-- bc, bd (it has already been paired
+    with it's previous ones), then takes c-- cd and at last reaches d that has no 
+    followed, so it returns */
+
+    node* outterTemp=n;
+    node* innerTemp;
+
+    // takes an item
+    while( outterTemp!=NULL ){
+        // and begins printing it with the item that follow
+        innerTemp=outterTemp->next;
+
+        while( innerTemp!= NULL ){
+            // write same items into clique
+            fprintf(outputFile,"%s \t %s\n",(char*)outterTemp->data, (char*)innerTemp->data );
+            innerTemp=innerTemp->next;
+        }
+        outterTemp=outterTemp->next;
+    }
+
+    return;
+}

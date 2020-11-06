@@ -2,6 +2,7 @@
 #define _HASH_H_
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "../list/list.h"
 #include "../tuples/tuples.h"
 
@@ -32,5 +33,7 @@ void printBucket(node* b);
 
 bucket* getBucket(hashTable* ht, char* key, int* index);
 bucketEntry* createEntry(char* key,node* _listOfTuples_);
+
+void makeOutputFile(hashTable* ht, unsigned int bucketSize);
 
 #endif

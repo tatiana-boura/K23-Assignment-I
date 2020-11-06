@@ -171,7 +171,9 @@ int main(void){
 
 	changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
 
-	printHT(ht);
+	//printHT(ht);
+
+	makeOutputFile(ht, BUCKETSIZE);
 
 
 	//__END_PLAY_WITH_POINTERS_________________________________________________________________________________________

@@ -106,7 +106,7 @@ void destroyHT(hashTable* ht,unsigned int bucketSize){
     free(ht); ht=NULL;
 
     destroyListOfStrings(listOfCliques,false);
-    
+
 
     return;
 }
@@ -226,9 +226,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
         // make it point to the new clique
         entryTable = bucketFound->data;
-
         entryTable[entryNum]->clique=clique1;
-
         tempNode=tempNode->next;
     }
     return;
@@ -265,4 +263,53 @@ void printHT(hashTable* ht){
     return;
 }
 
+void makeOutputFile(hashTable* ht, unsigned int bucketSize){
+
+    // if output file exists delete it and then remake it( it is append only so it needs to be destroyed)
+    if( access( "../output.txt", F_OK ) != -1 )
+        // file exists
+        if (remove("../output.txt") != 0){
+            //delete it 
+            perror("File was not deleted successfully"); return;
+        } 
+
+    // make the output file (append only)
+    FILE *outputFile;
+
+    outputFile = fopen("../output.txt", "a"); 
+    if( outputFile==NULL ){ perror("unable to open file\n"); return; } 
+
+    bucketEntry** entryTable;
+    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
+
+    /* go to every entry of the hash table, go to bucket and start exploring
+    cliques. Keep track of what cliques you have already visited*/
+
+    for(unsigned int i=0; i<ht->size; i++ ){
+        // first entry of hashTable    
+        node* temp = ht->table[i];
+
+        while(temp!=NULL){
+
+            entryTable = temp->data;
+            
+            for( unsigned int j=0; j<numOfEntries && entryTable[j]!=NULL; j++){
+                // if this clique hasn't been visited before, go and print what it has inside
+                if( !addrFoundinList(listOfCliques,entryTable[j]->clique)){
+                    listOfCliques=appendList(listOfCliques,entryTable[j]->clique);
+                    makeOutputFileList(entryTable[j]->clique, outputFile);
+                }
+            }
+
+            temp=temp->next;
+        }
+    }
+
+    // close filw for reading
+    fclose(outputFile);
+    // we don't need anymore to keep list of visited cliques
+    destroyListOfStrings(listOfCliques,false); listOfCliques=NULL;
+
+    return;
+}
 
