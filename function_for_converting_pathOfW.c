@@ -8,18 +8,15 @@
 
 char* convertPath(char* _path_ ){
 
-	char* adjustedPath = calloc(strlen(_path_)+1-1,sizeof(char)); assert( adjustedPath != NULL);
-	bool foundFirstTime=true;
+	char* adjustedPath = calloc(strlen(_path_)+2,sizeof(char)); assert( adjustedPath != NULL);
 
 	unsigned int j=0;
 
 	for( unsigned int i=0; _path_[i] != '\0'; i++ )
 
 		if( _path_[i]=='/' ){
-			if(foundFirstTime){
-				foundFirstTime=false;
-				adjustedPath[j++]='/';
-			}
+			adjustedPath[j++]='/';
+			adjustedPath[j++]='/';
 		}else
 			adjustedPath[j++]=_path_[i];
 		
@@ -34,7 +31,7 @@ int main(void){
 
 	char* strNew;
 	char* str = calloc(STRSIZE,sizeof(char)); assert(str!=NULL);
-	strcpy(str,"www.ebay.com//1");
+	strcpy(str,"www.ebay.com/1");
 
 	strNew=convertPath(str);
 
