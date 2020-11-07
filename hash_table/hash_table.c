@@ -89,7 +89,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTup
         ht->table[index] = bucketPtr; 
     }
 
-    printBucket(bucketPtr);
+    //printBucket(bucketPtr);
     return;
 }
 //_______________________________________________________________________________________________________
