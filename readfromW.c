@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
     char** data = malloc(buffSize*sizeof(char*));
     char* str;
 
-    int j=0;
+    //int j=0;
     getline(&buff,&buffSize,dataset_matches); // read first line of instruction <left_spec_id,right_spec_id,label>
     
     //for every line in dataset_matches
@@ -116,15 +116,11 @@ int main(int argc, char* argv[]){
             data[i]=str; //store the different strings into a table
             str = strtok(NULL,commas); //strtok needs to start from next parameter
             i++;
-        }
-
-        
-        printf("1: %s\t2: %s\t%s\n",data[0],data[1],data[2]);
+        }     
 
         char* left_spec_id = calloc(100,sizeof(char)); strcpy(left_spec_id,data[0]);
         char* right_spec_id = calloc(100,sizeof(char)); strcpy(right_spec_id,data[1]);
-        char* label = calloc(100,sizeof(char)); strcpy(label,data[2]);
-
+        char* label = calloc(100,sizeof(char)); strcpy(label,data[2]);     
         
         if(!strcmp(label,"1")){ //if label == 1
             //find left_spec_id and right_spec_id in hash table
@@ -132,24 +128,26 @@ int main(int argc, char* argv[]){
             bucket* bucketFound1;
             bucket* bucketFound2;
             
-            bool found=false;
+            bool found_left=false; bool found_right = false;
             for( unsigned int i=0; i<HTSIZE; i++ ){
-                found = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );
-                if(found) break;
+                found_left = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );
+                if(found_left) break;
             }
-            found=false;
             for( unsigned int i=0; i<HTSIZE; i++ ){
-                found = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
-                if(found) break;
+                found_right = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
+                if(found_right) break;
             }
-            changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+            if(found_left&&found_right){
+                printf("left: %s\tright: %s\tlabel:%s\n",left_spec_id,right_spec_id,label);
+                changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+            }
         }
 
-        j++;
+       // j++;
 
         free(left_spec_id);free(right_spec_id);free(label);
-        if(j==3)
-           break;
+        //if(j==3)
+         //  break;
 
     }
     
