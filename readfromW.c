@@ -132,31 +132,25 @@ int main(int argc, char* argv[]){
             bucket* bucketFound1;
             bucket* bucketFound2;
             
-            bool found;
-
-            found=false;
-            
+            bool found=false;
             for( unsigned int i=0; i<HTSIZE; i++ ){
                 found = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );
                 if(found) break;
             }
-
             found=false;
-
             for( unsigned int i=0; i<HTSIZE; i++ ){
                 found = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
                 if(found) break;
             }
-
-            
-                changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+            changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
         }
 
         j++;
-        if(j==3)
-            break;
+
         free(left_spec_id);free(right_spec_id);free(label);
-        
+        if(j==3)
+           break;
+
     }
     
     makeOutputFile(ht, BUCKETSIZE);
@@ -167,9 +161,9 @@ int main(int argc, char* argv[]){
 	free(s1); s1=NULL; free(s2); s2=NULL; free(s3); s3=NULL; free(s4); s4=NULL; free(s5); s5=NULL; free(s6); s6=NULL;
 	free(k1); k1=NULL; free(k3); k3=NULL; free(k5); k5=NULL; free(k7); k7=NULL; free(k9); k9=NULL; free(k11); k11=NULL; 
 	free(k13); k13=NULL; free(k15); k15=NULL; free(k17); k17=NULL; free(k19); k19=NULL; 
-    free(k21); k21=NULL; free(k22); k22=NULL; free(k23); k23=NULL; free(k24); k24=NULL; 
-	free(k25); k25=NULL; free(k26); k26=NULL;
-
+    //free(k21); k21=NULL; free(k22); k22=NULL; free(k23); k23=NULL; free(k24); k24=NULL; 
+	//free(k25); k25=NULL; free(k26); k26=NULL;
     
+    fclose(dataset_matches);
     return 0;
 }
