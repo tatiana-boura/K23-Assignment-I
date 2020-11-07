@@ -78,21 +78,13 @@ int main(int argc, char* argv[]){
 	hashTable* ht = createHT(HTSIZE);
 
 	addtoHT(ht, s1, BUCKETSIZE, l1);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s2, BUCKETSIZE, l2);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s3, BUCKETSIZE, l3);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s4, BUCKETSIZE ,l4);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s5, BUCKETSIZE ,l5);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s6, BUCKETSIZE ,l6);
 
 	//__END_INITIALIZING_HASH_TABLE____________________________________________________________________________________
-
-
-
 
 
 	FILE* dataset_matches;
@@ -133,36 +125,44 @@ int main(int argc, char* argv[]){
         char* right_spec_id = calloc(100,sizeof(char)); strcpy(right_spec_id,data[1]);
         char* label = calloc(100,sizeof(char)); strcpy(label,data[2]);
 
-        //find left_spec_id and right_spec_id in hash table
-        unsigned int entryNum1, entryNum2;
-        bucket* bucketFound1;
-        bucket* bucketFound2;
-        bool found;
-
-        found=false;
         
-        for( unsigned int i=0; i<HTSIZE; i++ ){
-            found = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );
-            if(found) break;
+        if(!strcmp(label,"1")){ //if label == 1
+            //find left_spec_id and right_spec_id in hash table
+            unsigned int entryNum1, entryNum2;
+            bucket* bucketFound1;
+            bucket* bucketFound2;
+            
+            bool found;
+
+            found=false;
+            
+            for( unsigned int i=0; i<HTSIZE; i++ ){
+                found = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );
+                if(found) break;
+            }
+
+            found=false;
+
+            for( unsigned int i=0; i<HTSIZE; i++ ){
+                found = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
+                if(found) break;
+            }
+
+            
+                changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
         }
-
-        found=false;
-
-        for( unsigned int i=0; i<HTSIZE; i++ ){
-            found = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
-            if(found) break;
-        }
-
-        if(!strcmp(label,"1")) //if label == 1
-            changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
 
         j++;
         if(j==3)
             break;
+        free(left_spec_id);free(right_spec_id);free(label);
+        
     }
     
     makeOutputFile(ht, BUCKETSIZE);
     destroyHT(ht,BUCKETSIZE);
+    free(buff);
+    free(data);
 
 	free(s1); s1=NULL; free(s2); s2=NULL; free(s3); s3=NULL; free(s4); s4=NULL; free(s5); s5=NULL; free(s6); s6=NULL;
 	free(k1); k1=NULL; free(k3); k3=NULL; free(k5); k5=NULL; free(k7); k7=NULL; free(k9); k9=NULL; free(k11); k11=NULL; 
