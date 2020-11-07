@@ -89,7 +89,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTup
         ht->table[index] = bucketPtr; 
     }
 
-    //printBucket(bucketPtr);
+    printBucket(bucketPtr);
     return;
 }
 //_______________________________________________________________________________________________________
@@ -266,9 +266,9 @@ void printHT(hashTable* ht){
 void makeOutputFile(hashTable* ht, unsigned int bucketSize){
 
     // if output file exists delete it and then remake it( it is append only so it needs to be destroyed)
-    if( access( "output.txt", F_OK ) != -1 )
+    if( access( "../output.txt", F_OK ) != -1 )
         // file exists
-        if (remove("output.txt") != 0){
+        if (remove("../output.txt") != 0){
             //delete it 
             perror("File was not deleted successfully"); return;
         } 
@@ -276,7 +276,7 @@ void makeOutputFile(hashTable* ht, unsigned int bucketSize){
     // make the output file (append only)
     FILE *outputFile;
 
-    outputFile = fopen("output.txt", "a"); 
+    outputFile = fopen("../output.txt", "a"); 
     if( outputFile==NULL ){ perror("unable to open file\n"); return; } 
 
     bucketEntry** entryTable;
