@@ -89,7 +89,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTup
         ht->table[index] = bucketPtr; 
     }
 
-    printBucket(bucketPtr);
+    //printBucket(bucketPtr);
     return;
 }
 //_______________________________________________________________________________________________________
@@ -209,7 +209,6 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     bucketEntry** entryTable2 = (*bucketFound2)->data;
     node* clique2 = entryTable2[entryNum2]->clique;
 
-
     // merge the two lists
     clique1=mergeTwoLists(clique1,clique2);
 
@@ -229,6 +228,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         entryTable[entryNum]->clique=clique1;
         tempNode=tempNode->next;
     }
+    printf("made it point to new one\n");
     return;
 }
 
