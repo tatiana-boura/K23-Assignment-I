@@ -158,14 +158,14 @@ int main(void){
 	found=false;
 	
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s3, BUCKETSIZE, &entryNum1, &bucketFound1 );
+		found = foundInHT(ht, s6, BUCKETSIZE, &entryNum1, &bucketFound1 );
 		if(found) break;
 	}
 
 	found=false;
 
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s6, BUCKETSIZE, &entryNum2, &bucketFound2 );
+		found = foundInHT(ht, s3, BUCKETSIZE, &entryNum2, &bucketFound2 );
 		if(found) break;
 	}
 

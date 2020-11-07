@@ -120,14 +120,16 @@ int main(int argc, char* argv[]){
 
         char* left_spec_id = calloc(100,sizeof(char)); strcpy(left_spec_id,data[0]);
         char* right_spec_id = calloc(100,sizeof(char)); strcpy(right_spec_id,data[1]);
-        char* label = calloc(100,sizeof(char)); strcpy(label,data[2]);     
+        char* label = calloc(100,sizeof(char)); strcpy(label,data[2]); 
+
+
         
         if(!strcmp(label,"1")){ //if label == 1
             //find left_spec_id and right_spec_id in hash table
             unsigned int entryNum1, entryNum2;
             bucket* bucketFound1;
             bucket* bucketFound2;
-            
+
             bool found_left=false; bool found_right = false;
             for( unsigned int i=0; i<HTSIZE; i++ ){
                 found_left = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );

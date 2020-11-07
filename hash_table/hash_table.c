@@ -209,25 +209,29 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     bucketEntry** entryTable2 = (*bucketFound2)->data;
     node* clique2 = entryTable2[entryNum2]->clique;
 
-    // merge the two lists
-    clique1=mergeTwoLists(clique1,clique2);
+    // if cliques aren't already the same
+    if (clique1!=clique2){
+        // merge the two lists
+        clique1=mergeTwoLists(clique1,clique2);
+    
+        // now adjust the pointers of all items in clique to show to the same list(clique)
+        unsigned int entryNum; 
+        bucket* bucketFound;
+        bucketEntry**  entryTable;
 
-    // now adjust the pointers of all items in clique to show to the same list(clique)
-    unsigned int entryNum; 
-    bucket* bucketFound;
-    bucketEntry**  entryTable;
-
-    // go through the clique
-    node* tempNode=clique1;
-    while(tempNode != NULL){
-    // for each path
-        // find path in hash table  
-        foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
-        // make it point to the new clique
-        entryTable = bucketFound->data;
-        entryTable[entryNum]->clique=clique1;
-        tempNode=tempNode->next;
+        // go through the clique
+        node* tempNode=clique1;
+        while(tempNode != NULL){
+        // for each path
+            // find path in hash table 
+            foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
+            // make it point to the new clique
+            entryTable = bucketFound->data;
+            entryTable[entryNum]->clique=clique1;
+            tempNode=tempNode->next;
+        }
     }
+
     printf("made it point to new one\n");
     return;
 }
