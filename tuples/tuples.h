@@ -15,7 +15,7 @@ typedef struct Tuple{
 
 typedef Tuple* TuplePtr;
 
-void tupleInitialization(TuplePtr,char*,char*,int);
+void tupleInitialization(TuplePtr,char*,char*);
 void insertAtValueList( TuplePtr, char*);
 void tupleDeletion(TuplePtr);
 void printTuple(TuplePtr);

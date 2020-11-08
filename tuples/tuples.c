@@ -3,17 +3,16 @@
 #define NAME_SIZE 100
 #define VALUE_SIZE 300
 
-void tupleInitialization(TuplePtr t, char* pName, char* pValue, int type){ 
+void tupleInitialization(TuplePtr t, char* pName, char* pValue){ 
 
 	/*t = calloc(1,sizeof(Tuple));
 	assert(t!=NULL);*/
 
 	t->propertyName=pName;
 
-	if(type == 1){
-		t->propertyValueList = NULL;
-		t->propertyValueList = appendList(t->propertyValueList,pValue);
-	}
+	t->propertyValueList = NULL;
+	t->propertyValueList = appendList(t->propertyValueList,pValue);
+
 	return;
 }
 
