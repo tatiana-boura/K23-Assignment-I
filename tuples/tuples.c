@@ -10,13 +10,6 @@ void tupleInitialization(TuplePtr t, char* pName, char* pValue, int type){
 
 	t->propertyName=pName;
 
-	/*t->propertyName = calloc(strlen(pName)+1,sizeof(char));
-	assert(t->propertyName!=NULL);
-
-	strcpy(t->propertyName,pName);*/
-
-	//char* newString  = calloc(strlen(pValue)+1,sizeof(char));
-	//strcpy(newString,pValue);
 	if(type == 1){
 		t->propertyValueList = NULL;
 		t->propertyValueList = appendList(t->propertyValueList,pValue);

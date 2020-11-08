@@ -2,6 +2,7 @@
 
 node* appendList(node* n, void* data){
 
+    // append at front for O(1) 
     node* newNode=calloc(1,sizeof(node)); assert(newNode!=NULL);
     newNode->data=data;
     newNode->next=n;

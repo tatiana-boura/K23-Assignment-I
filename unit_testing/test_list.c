@@ -12,7 +12,7 @@ void test_appendList_string(void){
 
 	/* initializing a big number in order to try and cause 
 	stack overflow because our function is recursive*/
-	unsigned int N=10000;
+	unsigned int N=200000;
 	char** array = calloc(N,sizeof(char*));
 
 	node* n=NULL;
@@ -27,7 +27,7 @@ void test_appendList_string(void){
 	}
 
 	node* temp=n;
-	for( unsigned int i = 0; i<N; i++ ){
+	for( int i = N-1; i>=0; i-- ){
 		// checking if values are inserted as expected
 		TEST_ASSERT(!strcmp(temp->data,array[i]));
 		temp=temp->next;
@@ -138,13 +138,13 @@ void test_mergeTwoLists(void){
 	n1=mergeTwoLists(n1,n2);
 
 	node* temp=n1;
-	for( unsigned int i = 0; i<N1; i++ ){
+	for( int i = N1-1; i>=0; i-- ){
 		// checking if values are inserted as expected
 		TEST_ASSERT(!strcmp(temp->data,array1[i]));
 		temp=temp->next;
 	}
 
-	for( unsigned int i = N1; i<N2; i++ ){
+	for( unsigned int i = N2-1; i>=N2; i-- ){
 		// checking if values are inserted as expected
 		TEST_ASSERT(!strcmp(temp->data,array2[i]));
 		temp=temp->next;
