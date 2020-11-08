@@ -1,0 +1,60 @@
+Σχετικές σημειώσεις 7/11/2020 16:40
+
+εκτέλεση
+========
+$ make clean
+$ make
+$ ./reading_part 2013_camera_specs
+
+output
+======
+given_dir: 2013_camera_specs
+num = 29787
+SUBDIR 1: www.flipkart.com
+SUBDIR 2: www.mypriceindia.com
+SUBDIR 3: www.priceme.co.nz
+SUBDIR 4: www.canon-europe.com
+SUBDIR 5: www.henrys.com
+SUBDIR 6: www.ukdigitalcameras.co.uk
+SUBDIR 7: www.eglobalcentral.co.uk
+SUBDIR 8: www.camerafarm.com.au
+SUBDIR 9: cammarkt.com
+SUBDIR 10: buy.net
+SUBDIR 11: www.buzzillions.com
+SUBDIR 12: www.gosale.com
+SUBDIR 13: www.shopbot.com.au
+SUBDIR 14: www.alibaba.com
+SUBDIR 15: www.price-hunt.com
+SUBDIR 16: www.ebay.com
+SUBDIR 17: www.shopmania.in
+SUBDIR 18: www.cambuy.com.au
+SUBDIR 19: www.pricedekho.com
+SUBDIR 20: www.garricks.com.au
+SUBDIR 21: www.pcconnection.com
+SUBDIR 22: www.ilgs.net
+SUBDIR 23: www.wexphotographic.com
+SUBDIR 24: www.walmart.com
+
+
+Προσθήκες:
+1. functions.h / functions.c
+έχει μαζεμένες τις συναρτήσεις
+	-for conventing path
+	-count .json
+	-handle .json property line
+		*1 συναρτηση για απλό proprty - value
+ 		*1 συναρτηση για proprty - list of values
+
+2. BUFFERSIZE = 51000
+
+3.Δουλεύει για όλα τα αρχεία .jason που δίνονται
+
+-------------------------------------------------------------
+soon to be added/working on:
+
+>χρήση συνάρτησης για το path για την εισαγωγή στις δομές
+>τροποποίηση για τα tuples στις συναρτήσεις για jason
+
+------------------------------------------------------------
+
+
