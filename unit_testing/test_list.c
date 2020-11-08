@@ -40,12 +40,13 @@ void test_appendList_string(void){
 	return;
 }
 
+/*
 void test_appendList_Tuple(void){
-	/* this is a test function for lists that tuples that are <string,
-	listOfStrings>*/
+	//this is a test function for lists that tuples that are <string,
+	//listOfValues>
 
-	/* initializing a big number in order to try and cause 
-	stack overflow because our function is recursive*/
+	// initializing a big number in order to try and cause 
+	// stack overflow because our function is recursive
 	unsigned int N=10000;
 	char** arrayOfNames = calloc(N,sizeof(char*));
 	node* listOfTuples=NULL;
@@ -102,10 +103,64 @@ void test_appendList_Tuple(void){
 	free(arrayOfNames); arrayOfNames=NULL;
 
 	return;
+}*/
+
+void test_mergeTwoLists(void){
+	/* this is a test function for merging lists */ 
+
+	/* create two lists */
+	unsigned int N1=5000, N2=10000;
+	char** array1 = calloc(N1,sizeof(char*));
+	node* n1=NULL;
+
+	for( unsigned int i = 0; i<N1; i++ ){
+		
+		array1[i] = calloc(STRSIZE,sizeof(char));
+		sprintf(array1[i],"%d",i);
+		//printf("%s\n", array1[i]);
+
+		n1 = appendList(n1,array1[i]);
+	}
+
+	char** array2 = calloc(N2,sizeof(char*));
+	node* n2=NULL;
+
+	for( unsigned int i = N1; i<N2; i++ ){
+		
+		array2[i] = calloc(STRSIZE,sizeof(char));
+		sprintf(array2[i],"%d",i);
+		//printf("%s\n", array2[i]);
+
+		n2 = appendList(n2,array2[i]);
+	}
+
+	/* merge them */
+	n1=mergeTwoLists(n1,n2);
+
+	node* temp=n1;
+	for( unsigned int i = 0; i<N1; i++ ){
+		// checking if values are inserted as expected
+		TEST_ASSERT(!strcmp(temp->data,array1[i]));
+		temp=temp->next;
+	}
+
+	for( unsigned int i = N1; i<N2; i++ ){
+		// checking if values are inserted as expected
+		TEST_ASSERT(!strcmp(temp->data,array2[i]));
+		temp=temp->next;
+	}
+
+	// free not needed memo
+	destroyListOfStrings(n1, true );
+	free(array1); array1=NULL;
+	free(array2); array2=NULL;
+
+	return;
 }
 
 TEST_LIST = {
 	{ "appendList_string", test_appendList_string },
-	{ "appendList_tuple", test_appendList_Tuple },
+	//{ "appendList_tuple", test_appendList_Tuple },
+	{ "merge", test_mergeTwoLists },
 	{ NULL, NULL } // end of tests
 };
