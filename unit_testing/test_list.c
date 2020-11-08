@@ -10,8 +10,6 @@ void test_appendList_string(void){
 	/* this is a test function for lists that contain strings.
 	In our code these are: cliques and propertyValueList */
 
-	/* initializing a big number in order to try and cause 
-	stack overflow because our function is recursive*/
 	unsigned int N=200000;
 	char** array = calloc(N,sizeof(char*));
 
@@ -45,8 +43,6 @@ void test_appendList_Tuple(void){
 	//this is a test function for lists that tuples that are <string,
 	//listOfValues>
 
-	// initializing a big number in order to try and cause 
-	// stack overflow because our function is recursive
 	unsigned int N=10000;
 	char** arrayOfNames = calloc(N,sizeof(char*));
 	node* listOfTuples=NULL;
