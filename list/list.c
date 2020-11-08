@@ -2,13 +2,13 @@
 
 node* appendList(node* n, void* data){
 
-    /*node* newNode=calloc(1,sizeof(n)); assert(newNode!=NULL);
+    node* newNode=calloc(1,sizeof(node)); assert(newNode!=NULL);
     newNode->data=data;
     newNode->next=n;
 
-    return newNode;*/
+    return newNode;
 
-    if(n==NULL){    // after the last node of the list
+    /*if(n==NULL){    // after the last node of the list
         
         n = calloc(1,sizeof(node)+1);
         n->data=data;
@@ -16,7 +16,7 @@ node* appendList(node* n, void* data){
     
     }else n->next = appendList(n->next,data);
     
-    return n;
+    return n;*/
 }
 
 node* mergeTwoLists(node* n1, node* n2){
