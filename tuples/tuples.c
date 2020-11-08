@@ -3,7 +3,7 @@
 #define NAME_SIZE 100
 #define VALUE_SIZE 300
 
-void tupleInitialization(TuplePtr t, char* pName, char* pValue){ 
+void tupleInitialization(TuplePtr t, char* pName, char* pValue, int type){ 
 
 	/*t = calloc(1,sizeof(Tuple));
 	assert(t!=NULL);*/
@@ -17,10 +17,10 @@ void tupleInitialization(TuplePtr t, char* pName, char* pValue){
 
 	//char* newString  = calloc(strlen(pValue)+1,sizeof(char));
 	//strcpy(newString,pValue);
-
-	t->propertyValueList = NULL;
-	t->propertyValueList = appendList(t->propertyValueList,pValue);
-
+	if(type == 1){
+		t->propertyValueList = NULL;
+		t->propertyValueList = appendList(t->propertyValueList,pValue);
+	}
 	return;
 }
 
