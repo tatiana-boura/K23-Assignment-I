@@ -159,8 +159,8 @@ int main(int argc, char* argv[]){
     free(data);
 
 	free(s1); s1=NULL; free(s2); s2=NULL; free(s3); s3=NULL; free(s4); s4=NULL; free(s5); s5=NULL; free(s6); s6=NULL;
-	free(k1); k1=NULL; free(k3); k3=NULL; free(k5); k5=NULL; free(k7); k7=NULL; free(k9); k9=NULL; free(k11); k11=NULL; 
-	free(k13); k13=NULL; free(k15); k15=NULL; free(k17); k17=NULL; free(k19); k19=NULL; 
+	//free(k1); k1=NULL; free(k3); k3=NULL; free(k5); k5=NULL; free(k7); k7=NULL; free(k9); k9=NULL; free(k11); k11=NULL; 
+	//free(k13); k13=NULL; free(k15); k15=NULL; free(k17); k17=NULL; free(k19); k19=NULL; 
 
     
     fclose(dataset_matches);

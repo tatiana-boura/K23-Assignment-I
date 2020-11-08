@@ -2,6 +2,12 @@
 
 node* appendList(node* n, void* data){
 
+    /*node* newNode=calloc(1,sizeof(n)); assert(newNode!=NULL);
+    newNode->data=data;
+    newNode->next=n;
+
+    return newNode;*/
+
     if(n==NULL){    // after the last node of the list
         
         n = calloc(1,sizeof(node)+1);

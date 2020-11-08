@@ -8,10 +8,12 @@ void tupleInitialization(TuplePtr t, char* pName, char* pValue){
 	/*t = calloc(1,sizeof(Tuple));
 	assert(t!=NULL);*/
 
-	t->propertyName = calloc(strlen(pName)+1,sizeof(char));
+	t->propertyName=pName;
+
+	/*t->propertyName = calloc(strlen(pName)+1,sizeof(char));
 	assert(t->propertyName!=NULL);
 
-	strcpy(t->propertyName,pName);
+	strcpy(t->propertyName,pName);*/
 
 	//char* newString  = calloc(strlen(pValue)+1,sizeof(char));
 	//strcpy(newString,pValue);
