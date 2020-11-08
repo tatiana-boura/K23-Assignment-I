@@ -35,7 +35,9 @@ extra notes:
 #include <dirent.h>
 
 #include "functions.h" 
-//#include "./tuples/tuples.h"
+#include "tuples.h"
+#include "list.h"
+#include "hash_table.h"
 
 #define BUFFER_SIZE 51000
 
@@ -72,7 +74,7 @@ int main(int argc, char* argv[]){
 	int json_num = count_json(argv[1]);
 	printf("num = %d\n", json_num);
 
-	//for later..
+	//--------------Create Hash table --------------------------------------------------------------------
 	//unsigned int hash_size = json_num;
     //hashTable* hash = createHT(hash_size); 
 
@@ -130,9 +132,14 @@ int main(int argc, char* argv[]){
 						exit(-1);
 					} 
 
+					//--------------create list for json file's property tuples --------------------------------
+
 					//------------Convert properties in json files in tuples ------------------------------------ 
 					while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
-						//puts(buff);                                    
+						TuplePtr t;   //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+						t = calloc(1,sizeof(Tuple));
+						//puts(buff);  
+						                                  
 						if(buff[strlen(buff)-2] == '['){
 							//DETECTED PROPERTY WITH ARRAY OF VALUES !
 							//process: 
@@ -153,16 +160,25 @@ int main(int argc, char* argv[]){
 									array_off = 1;  //reached the end of the array
 								}		
 							}
-							json_array_handler(buff);
+							//printTuple(t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+							printf("\n");
+							json_array_handler(buff, t); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+							printTuple(t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 							memset(arbuff ,'\0' , BUFFER_SIZE);
 							memset(buff ,'\0' , BUFFER_SIZE);
 							//return 1;
 						}else{
-							json_separator(buff);
+							//printTuple(t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+							printf("\n");
+							json_separator(buff,t);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+							printTuple(t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 							memset(arbuff ,'\0' , BUFFER_SIZE);
 							memset(buff ,'\0' , BUFFER_SIZE);
 						}
+						
+						//---add tuple to spec-list for json file -----------------------------
 					}
+					//-------------print list -------------------------------------------------
 
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
@@ -171,6 +187,8 @@ int main(int argc, char* argv[]){
 					char* path = convertPath(json_path);   // fix special character '//'
 
 					//printf("%s\n",path);  //<---------WORKS
+
+					//----ADD PATH & LIST in HT -----------------------------------------------
 
 					fclose(json_file);
 					memset(json_path ,'\0' , 200);
@@ -184,6 +202,7 @@ int main(int argc, char* argv[]){
 	}
 	closedir(main_dir);
 	free(buff);
+	printf("\nEND\n");
 	return 0;
 }
 

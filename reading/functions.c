@@ -1,7 +1,7 @@
 #include "functions.h" 
 
 #define STRSIZE 50
-#define BUFFER_SIZE 51000
+#define BUFFER_SIZE 52000
 
 
 //================================================================================================================
@@ -91,15 +91,15 @@ json format
 */
 
 //function that takes a string and stores key and value into a tuple
-void json_separator(char* str){
+void json_separator(char* str, TuplePtr t){  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	//printf("In json_separator\n");
 	//printf("given string: %s \n", str);
 	const char s[2] = "\""; // delimeter: "
 
 	//string to store key
-	char* key_buff = calloc(BUFFER_SIZE,sizeof(char));  
-	assert( key_buff != NULL );
-	memset(key_buff, '\0', BUFFER_SIZE*sizeof(char)); 
+	char* property_buff = calloc(BUFFER_SIZE,sizeof(char));  
+	assert( property_buff != NULL );
+	memset(property_buff, '\0', BUFFER_SIZE*sizeof(char)); 
 	//strig to store value
 	char* value_buff = calloc(BUFFER_SIZE,sizeof(char));  
 	assert( value_buff != NULL );
@@ -117,29 +117,30 @@ void json_separator(char* str){
    			//printf( " token: %s\n", token );
 	   			
    			if((flag == 1)){
-		      	strcpy(key_buff, token);
+		      	strcpy(property_buff, token);
 		    }else if(flag == 2){
 		        strcpy(value_buff, token);
-		       // printf("k: %s  - v: %s\n", key_buff, value_buff);
+		       	//printf("k: %s  - v: %s\n", property_buff, value_buff);
+		        tupleInitialization(t, property_buff, value_buff);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		    }
 		    flag++;
 		}		
         token = strtok(NULL, s); 
     }
-    free(key_buff);
-    free(value_buff);
+    //free(property_buff);
+    //free(value_buff);
     //printf("after json_separator\n");	
 }
 
-
+//key_buff ---> property_buff
 
 //function that takes a string {that contains array!} and stores key and value into a tuple
-void json_array_handler(char* str){
+void json_array_handler(char* str, TuplePtr t){//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	//printf("given string: %s \n", str);
 	const char s[2] = "\""; // delimeter: "
-	char* key_buff = calloc(BUFFER_SIZE,sizeof(char));  
-	assert( key_buff != NULL );
-	memset(key_buff, '\0', BUFFER_SIZE*sizeof(char)); 
+	char* property_buff = calloc(BUFFER_SIZE,sizeof(char));  
+	assert( property_buff != NULL );
+	memset(property_buff, '\0', BUFFER_SIZE*sizeof(char)); 
 	char* value_buff = calloc(BUFFER_SIZE,sizeof(char));  
 	assert( value_buff != NULL );
 	memset(value_buff, '\0', BUFFER_SIZE*sizeof(char));
@@ -159,21 +160,25 @@ void json_array_handler(char* str){
    	while( token != NULL ) {
 		//printf( " token: %s\n", token );	
 		if(flag == 0){
-			strcpy(key_buff, token);
+			strcpy(property_buff, token);
+			tupleInitialization(t, property_buff, value_buff);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		}
 		//flag == 1 --> empty line
 		if(flag>1){
 			if((token[0] != ',') && (token[0] != '$') ){
 				strcat(value_buff,token);
+				if(value_buff != NULL){
+					insertAtValueList(t, value_buff);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				}
 			}
 		}
 		flag++;
         token = strtok(NULL, s); 
     }
-    //printf("k: %s  - v: %s\n", key_buff, value_buff);
+    //printf("ARRAY k: %s  - v: %s\n", property_buff, value_buff);
 
-    free(key_buff);
-    free(value_buff);
+    //free(property_buff);
+    //free(value_buff);
     free(arbuff);
 }
 

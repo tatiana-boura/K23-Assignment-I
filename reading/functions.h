@@ -1,4 +1,5 @@
-//functions.h
+#ifndef __FUNCTIONS__
+#define __FUNCTIONS__
 
 #include <stdio.h>
 #include <string.h>
@@ -7,8 +8,13 @@
 #include <dirent.h>
 #include <stdlib.h>
 
+#include "tuples.h"
+#include "list.h"
+
 
 char* convertPath(char* _path_ );
 int count_json(char* given_directory);
-void json_separator(char* str);
-void json_array_handler(char* string);
+void json_separator(char* str, TuplePtr t);
+void json_array_handler(char* string, TuplePtr t);
+
+#endif
