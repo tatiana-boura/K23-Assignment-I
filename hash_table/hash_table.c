@@ -168,7 +168,7 @@ bucketEntry* createEntry(char* _path_, node* _listOfTuples_){
 
 bool foundInHT(hashTable* ht, char* _path_, unsigned int bucketSize, unsigned int* entryNum, bucket** bucketFound ){
      // if function returns true(item is found), 
-     // bucketFount := in which bucket entry has been found, entryNum := where in the array
+     // bucketFound := in which bucket entry has been found, entryNum := where in the array
     
     unsigned int index;
 
@@ -234,7 +234,6 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         }
     }
 
-    printf("made it point to new one\n");
     return;
 }
 
