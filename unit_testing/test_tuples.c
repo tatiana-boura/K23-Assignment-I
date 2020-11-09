@@ -39,7 +39,7 @@ void test_insertAtValueList(void){
 	tupleInitialization(t,_pName_,_pValue_);
 
 	// now create values in order to insert at propertyValueList
-	unsigned int N=10;
+	unsigned int N=10000;
 	char* str;
 	// start the insertion
 	for( unsigned int i=0; i<N; i++ ){

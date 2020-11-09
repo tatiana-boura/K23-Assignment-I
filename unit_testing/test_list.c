@@ -58,7 +58,6 @@ void test_appendList_Tuple(void){
 
 		for( unsigned int i = 0; i<=j; i++ ){
 			// in this loop we are making the listOfStrings
-			
 			str = calloc(j,sizeof(char));
 			sprintf(str,"%d",i);
 
@@ -164,7 +163,7 @@ void test_addrFoundinList(void){
 
 	// keep random position of address in list
 	srand(time(NULL));
-	unsigned int randomNumForListPosition=rand();
+	unsigned int randomNumForListPosition=rand()%N;
 	int* keepRandomAddress;
 
 	/* we will insert addresses and keep a random one to check later */
@@ -186,7 +185,7 @@ void test_addrFoundinList(void){
 	}
 
 	/* now try and locate the address where this function is stored, which
-	means that it cannot be used to allocate new memory [IT SHOULD NOT BE FOUND]*/
+	means that it cannot be used to allocate new memory [IT SHOULD NOT BE FOUND] */
 	void *addressOfThisFunction=(void*)&test_addrFoundinList;
 
 	temp=n;
