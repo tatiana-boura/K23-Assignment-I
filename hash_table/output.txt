@@ -1,6 +1,0 @@
-https://ebay/home.com 	 https://ebay/home0.com
-https://ebay/home.com 	 https://netflix/favourites.com
-https://ebay/home.com 	 https://skroutz/chilly.com
-https://ebay/home0.com 	 https://netflix/favourites.com
-https://ebay/home0.com 	 https://skroutz/chilly.com
-https://netflix/favourites.com 	 https://skroutz/chilly.com

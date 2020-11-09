@@ -182,7 +182,7 @@ int main(void){
 
 	destroyHT(ht,BUCKETSIZE);
 
-	free(s1); s1=NULL; free(s2); s2=NULL; free(s3); s3=NULL; free(s4); s4=NULL; free(s5); s5=NULL; free(s6); s6=NULL;
+	//free(s1); s1=NULL; free(s2); s2=NULL; free(s3); s3=NULL; free(s4); s4=NULL; free(s5); s5=NULL; free(s6); s6=NULL;
 	
 
 	return 0;
