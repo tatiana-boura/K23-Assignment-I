@@ -48,7 +48,7 @@ int main(void){
 	char* k25 = calloc(20,sizeof(char)); strcpy(k25,"twentyfive");
 	char* k26 = calloc(20,sizeof(char)); strcpy(k26,"twentysix");
 
-	TuplePtr t1 = calloc(1,sizeof(Tuple)); tupleInitialization(t1,k1,k2,);
+	TuplePtr t1 = calloc(1,sizeof(Tuple)); tupleInitialization(t1,k1,k2);
 	insertAtValueList(t1,k21); insertAtValueList(t1,k22); insertAtValueList(t1,k23); insertAtValueList(t1,k24);
 	TuplePtr t2 = calloc(1,sizeof(Tuple)); tupleInitialization(t2,k3,k4);
 	TuplePtr t3 = calloc(1,sizeof(Tuple)); tupleInitialization(t3,k5,k6);
@@ -183,12 +183,7 @@ int main(void){
 	destroyHT(ht,BUCKETSIZE);
 
 	free(s1); s1=NULL; free(s2); s2=NULL; free(s3); s3=NULL; free(s4); s4=NULL; free(s5); s5=NULL; free(s6); s6=NULL;
-	//free(k1); k1=NULL; free(k3); k3=NULL; free(k5); k5=NULL; free(k7); k7=NULL; free(k9); k9=NULL; free(k11); k11=NULL; 
-	//free(k13); k13=NULL; free(k15); k15=NULL; free(k17); k17=NULL; free(k19); k19=NULL; 
-	//free(k21); k21=NULL; free(k22); k22=NULL; free(k23); k23=NULL; free(k24); k24=NULL; 
-	//free(k25); k25=NULL; free(k26); k26=NULL;
-
-	//destroyHT(ht,BUCKETSIZE);
+	
 
 	return 0;
 }

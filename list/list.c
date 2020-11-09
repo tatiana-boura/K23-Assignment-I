@@ -2,22 +2,12 @@
 
 node* appendList(node* n, void* data){
 
-    // append at front for O(1) 
+    // put at front for O(1) 
     node* newNode=calloc(1,sizeof(node)); assert(newNode!=NULL);
     newNode->data=data;
     newNode->next=n;
 
     return newNode;
-
-    /*if(n==NULL){    // after the last node of the list
-        
-        n = calloc(1,sizeof(node)+1);
-        n->data=data;
-        n->next=NULL;
-    
-    }else n->next = appendList(n->next,data);
-    
-    return n;*/
 }
 
 node* mergeTwoLists(node* n1, node* n2){
@@ -84,38 +74,11 @@ void destroyListOfStrings(node* n, bool destroyDataAsWell ){
     return;
 }
 
-/*
-void destroyClique(node** n, char* _path_ ){ 
-    
-    node* tempNode = *n;
-    node* prev; 
-  
-    if (tempNode != NULL && strcmp(_path_,(char*)tempNode->data) == 0){ 
-        *n = tempNode->next;               
-        free(tempNode);  tempNode=NULL; 
-        return; 
-    } 
-   
-    while (tempNode != NULL && strcmp(_path_,(char*)tempNode->data) != 0){ 
-        prev = tempNode; 
-        tempNode = tempNode->next; 
-    } 
-   
-    prev->next = tempNode->next; 
-    printf("%s\n", (char*)tempNode->data);
-
-    free(tempNode); tempNode=NULL;
-
-
-    return;
-} */
-
-
 // function to help identify the clique
 bool addrFoundinList(node* n,  void* addr ){
 
     if (n == NULL) return false; 
-
+    // this list is a list of visited address spaces
     if (n->data == addr) return true; 
   
     return addrFoundinList(n->next, addr); 
@@ -130,9 +93,8 @@ void printList(node* n, void(*printData)(void*)){
         
         // printData == void for printing the clique
         if(printData==NULL) printf("%s\n", (char*)tempNode->data);
-        else{
+        else
             (*printData)(tempNode->data);
-        } 
         
         tempNode=tempNode->next;
     }
