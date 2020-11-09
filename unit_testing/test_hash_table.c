@@ -73,7 +73,6 @@ void test_addtoHT(void){
             tempEntryList = tempEntryList->next;
             tempList = tempList->next;
         }
-        free(path); 
     }
 
     destroyHT(ht,BUCK_SIZE);
@@ -82,9 +81,97 @@ void test_addtoHT(void){
 }
 
 
+//___test_foundInHT______________________________________________________________
+void test_foundInHT(void){
+    /* function to check if foundInHT find the path's bucket and entry position
+       correctly in the hash table */
+    /* bucketFound := in which bucket entry has been found, 
+       entryNum := where in the array */
+
+    // create a hash table of size 1 so we can find the path even when there is 
+    // collision (chain)
+    hashTable* ht = createHT(1);
+    // by making bucket_size equal to 2 entries we make sure there's collisions
+    // while testing more than 1 entry in each bucket
+    unsigned int bucket_size = 2*sizeof(bucketEntry);
+
+    char* str1 = calloc(STRSIZE,sizeof(char));
+    char* str2 = calloc(STRSIZE,sizeof(char));
+    char* str3 = calloc(STRSIZE,sizeof(char));
+
+    strcpy(str1,"string1");
+    strcpy(str2,"string2");
+    strcpy(str3,"string3");
+    addtoHT(ht,str1,bucket_size,NULL);
+    addtoHT(ht,str2,bucket_size,NULL);
+    addtoHT(ht,str3,bucket_size,NULL);
+
+    unsigned int entryNum; bucket* bucketFound;
+    // test if each string is found in hash table (collisions are tested)
+    TEST_ASSERT(foundInHT(ht,str1,bucket_size,&entryNum,&bucketFound)==true);
+    TEST_ASSERT(foundInHT(ht,str2,bucket_size,&entryNum,&bucketFound)==true);
+    TEST_ASSERT(foundInHT(ht,str3,bucket_size,&entryNum,&bucketFound)==true);
+
+    char* str4 = calloc(STRSIZE,sizeof(char));
+    strcpy(str4,"black sheep");
+    // test if str4 is found in hash table [should not be found - not added to ht]
+    TEST_ASSERT(foundInHT(ht,str4,bucket_size,&entryNum,&bucketFound)!=true);
+
+
+	// free not needed memo
+	destroyHT(ht, bucket_size );
+
+	return;
+}
+
+//___test_changePointers______________________________________________________________
+void test_changePointers(void){
+    /* function to check if, after going through the (merged) clique, the pointers are 
+       pointing to the correct clique */
+
+    unsigned int size = 20;
+    hashTable* ht = createHT(size);
+
+    char* str1 = calloc(STRSIZE,sizeof(char));
+    char* str2 = calloc(STRSIZE,sizeof(char));
+    char* str3 = calloc(STRSIZE,sizeof(char));
+
+    strcpy(str1,"string1");
+    strcpy(str2,"string2");
+    strcpy(str3,"string3");
+    addtoHT(ht,str1,BUCK_SIZE,NULL);
+    addtoHT(ht,str2,BUCK_SIZE,NULL);
+    addtoHT(ht,str3,BUCK_SIZE,NULL);
+
+    unsigned int entryNum1; bucket* bucketFound1;
+    foundInHT(ht,str1,BUCK_SIZE,&entryNum1,&bucketFound1);
+
+    unsigned int entryNum2; bucket* bucketFound2;
+    foundInHT(ht,str2,BUCK_SIZE,&entryNum2,&bucketFound2);
+        
+    unsigned int entryNum3; bucket* bucketFound3;
+    foundInHT(ht,str3,BUCK_SIZE,&entryNum3,&bucketFound3);
+
+    changePointers(ht,BUCK_SIZE,&bucketFound1,entryNum1,&bucketFound2,entryNum2);
+    changePointers(ht,BUCK_SIZE,&bucketFound3,entryNum3,&bucketFound1,entryNum1);
+    changePointers(ht,BUCK_SIZE,&bucketFound3,entryNum3,&bucketFound2,entryNum2);
+
+    bucketEntry**  entryTable1 = bucketFound1->data;
+    bucketEntry** entryTable2 = bucketFound2->data;
+    bucketEntry** entryTable3 = bucketFound3->data;
+
+    TEST_ASSERT(entryTable1[entryNum1]->clique==entryTable2[entryNum2]->clique);
+    TEST_ASSERT(entryTable2[entryNum2]->clique==entryTable3[entryNum3]->clique);
+    TEST_ASSERT(entryTable3[entryNum3]->clique==entryTable1[entryNum1]->clique);
+
+    destroyHT(ht,BUCK_SIZE);
+    return;
+}
 
 TEST_LIST = {
 	{ "createHT", test_createHT },
     { "addtoHT", test_addtoHT },
+    { "foundInHT", test_foundInHT },
+    { "changePointers", test_changePointers },
 	{ NULL, NULL } // end of tests
 };
