@@ -28,7 +28,6 @@ void test_addtoHT(void){
     //create listOfTuples just like in test_list.c
     unsigned int Nentries=1000; unsigned int Ntuples=100;
 	char** arrayOfNames = calloc(Ntuples,sizeof(char*));
-
 	char* path; char* str;
 
     // for example if k=2 then the entry must be 2 | [0,[0]] , [2,[0,2]] , [4,[0,2,4]]
@@ -60,12 +59,13 @@ void test_addtoHT(void){
         addtoHT(ht,path,BUCK_SIZE,listOfTuples);
 
         unsigned int entryNum; bucket* bucketFound;
-        // test if path string is found in hash table
+        // test if path string is found in hash table(foundInHT is tested below)
         TEST_ASSERT(foundInHT(ht,path,BUCK_SIZE,&entryNum,&bucketFound)==true);
         // test if the path in the bucket is the same as expected
         bucketEntry**  entryTable = bucketFound->data;
         TEST_ASSERT(!strcmp(entryTable[entryNum]->path,path));
 
+        // test if the list contain the same elements as it should be
         node* tempList = listOfTuples;
         node* tempEntryList = entryTable[entryNum]->listOfTuples; 
         for( unsigned int j=0; j<Ntuples; j++ ){
@@ -95,13 +95,10 @@ void test_foundInHT(void){
     // while testing more than 1 entry in each bucket
     unsigned int bucket_size = 2*sizeof(bucketEntry);
 
-    char* str1 = calloc(STRSIZE,sizeof(char));
-    char* str2 = calloc(STRSIZE,sizeof(char));
-    char* str3 = calloc(STRSIZE,sizeof(char));
+    char* str1 = calloc(STRSIZE,sizeof(char)); strcpy(str1,"string1");
+    char* str2 = calloc(STRSIZE,sizeof(char)); strcpy(str2,"string2");
+    char* str3 = calloc(STRSIZE,sizeof(char)); strcpy(str3,"string3");
 
-    strcpy(str1,"string1");
-    strcpy(str2,"string2");
-    strcpy(str3,"string3");
     addtoHT(ht,str1,bucket_size,NULL);
     addtoHT(ht,str2,bucket_size,NULL);
     addtoHT(ht,str3,bucket_size,NULL);
@@ -132,17 +129,16 @@ void test_changePointers(void){
     unsigned int size = 20;
     hashTable* ht = createHT(size);
 
-    char* str1 = calloc(STRSIZE,sizeof(char));
-    char* str2 = calloc(STRSIZE,sizeof(char));
-    char* str3 = calloc(STRSIZE,sizeof(char));
-
-    strcpy(str1,"string1");
-    strcpy(str2,"string2");
-    strcpy(str3,"string3");
+    // create two entries
+    char* str1 = calloc(STRSIZE,sizeof(char)); strcpy(str1,"string1");
+    char* str2 = calloc(STRSIZE,sizeof(char)); strcpy(str2,"string2");
+    char* str3 = calloc(STRSIZE,sizeof(char)); strcpy(str3,"string3");
+    // add them to ht
     addtoHT(ht,str1,BUCK_SIZE,NULL);
     addtoHT(ht,str2,BUCK_SIZE,NULL);
     addtoHT(ht,str3,BUCK_SIZE,NULL);
 
+    // locate these entries in the hash table (foundInHT has been checked above)
     unsigned int entryNum1; bucket* bucketFound1;
     foundInHT(ht,str1,BUCK_SIZE,&entryNum1,&bucketFound1);
 
@@ -152,6 +148,11 @@ void test_changePointers(void){
     unsigned int entryNum3; bucket* bucketFound3;
     foundInHT(ht,str3,BUCK_SIZE,&entryNum3,&bucketFound3);
 
+    /* these three entries are in the same clique */
+    /* NOTE: we change the pointers three times even though two should be enough
+    because that is an action that was observed in our project. By making this 
+    'cycling' changing there whould be a problem of a cyclic queue where every 
+    item points to another. Our program avoids such problems and operates properly.*/
     changePointers(ht,BUCK_SIZE,&bucketFound1,entryNum1,&bucketFound2,entryNum2);
     changePointers(ht,BUCK_SIZE,&bucketFound3,entryNum3,&bucketFound1,entryNum1);
     changePointers(ht,BUCK_SIZE,&bucketFound3,entryNum3,&bucketFound2,entryNum2);
@@ -160,6 +161,7 @@ void test_changePointers(void){
     bucketEntry** entryTable2 = bucketFound2->data;
     bucketEntry** entryTable3 = bucketFound3->data;
 
+    // now check if the entries point to the same clique (point to the same address)
     TEST_ASSERT(entryTable1[entryNum1]->clique==entryTable2[entryNum2]->clique);
     TEST_ASSERT(entryTable2[entryNum2]->clique==entryTable3[entryNum3]->clique);
     TEST_ASSERT(entryTable3[entryNum3]->clique==entryTable1[entryNum1]->clique);
