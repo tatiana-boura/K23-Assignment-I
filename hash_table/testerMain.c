@@ -48,18 +48,18 @@ int main(void){
 	char* k25 = calloc(20,sizeof(char)); strcpy(k25,"twentyfive");
 	char* k26 = calloc(20,sizeof(char)); strcpy(k26,"twentysix");
 
-	TuplePtr t1 = calloc(1,sizeof(Tuple)); tupleInitialization(t1,k1,k2,0);
-	insertAtValueList(t1,k21); insertAtValueList(t1,k22); insertAtValueList(t1,k23); insertAtValueList(t1,k24); insertAtValueList(t1,k2);
-	TuplePtr t2 = calloc(1,sizeof(Tuple)); tupleInitialization(t2,k3,k4,1);
-	TuplePtr t3 = calloc(1,sizeof(Tuple)); tupleInitialization(t3,k5,k6,1);
-	TuplePtr t4 = calloc(1,sizeof(Tuple)); tupleInitialization(t4,k7,k8,0);
-	insertAtValueList(t4,k25); insertAtValueList(t4,k26); insertAtValueList(t4,k8);
-	TuplePtr t5 = calloc(1,sizeof(Tuple)); tupleInitialization(t5,k9,k10,1);
-	TuplePtr t6 = calloc(1,sizeof(Tuple)); tupleInitialization(t6,k11,k12,1);
-	TuplePtr t7 = calloc(1,sizeof(Tuple)); tupleInitialization(t7,k13,k14,1);
-	TuplePtr t8 = calloc(1,sizeof(Tuple)); tupleInitialization(t8,k15,k16,1);
-	TuplePtr t9 = calloc(1,sizeof(Tuple)); tupleInitialization(t9,k17,k18,1);
-	TuplePtr t10 = calloc(1,sizeof(Tuple)); tupleInitialization(t10,k19,k20,1);
+	TuplePtr t1 = calloc(1,sizeof(Tuple)); tupleInitialization(t1,k1,k2,);
+	insertAtValueList(t1,k21); insertAtValueList(t1,k22); insertAtValueList(t1,k23); insertAtValueList(t1,k24);
+	TuplePtr t2 = calloc(1,sizeof(Tuple)); tupleInitialization(t2,k3,k4);
+	TuplePtr t3 = calloc(1,sizeof(Tuple)); tupleInitialization(t3,k5,k6);
+	TuplePtr t4 = calloc(1,sizeof(Tuple)); tupleInitialization(t4,k7,k8);
+	insertAtValueList(t4,k25); insertAtValueList(t4,k26);
+	TuplePtr t5 = calloc(1,sizeof(Tuple)); tupleInitialization(t5,k9,k10);
+	TuplePtr t6 = calloc(1,sizeof(Tuple)); tupleInitialization(t6,k11,k12);
+	TuplePtr t7 = calloc(1,sizeof(Tuple)); tupleInitialization(t7,k13,k14);
+	TuplePtr t8 = calloc(1,sizeof(Tuple)); tupleInitialization(t8,k15,k16);
+	TuplePtr t9 = calloc(1,sizeof(Tuple)); tupleInitialization(t9,k17,k18);
+	TuplePtr t10 = calloc(1,sizeof(Tuple)); tupleInitialization(t10,k19,k20);
 
 
 	node* l1=NULL; l1 = appendList(l1,t1); l1 = appendList(l1,t2); l1 = appendList(l1,t3); l1 = appendList(l1,t4);
