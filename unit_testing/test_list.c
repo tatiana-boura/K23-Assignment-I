@@ -58,7 +58,7 @@ void test_appendList_Tuple(void){
 
 		for( unsigned int i = 0; i<=j; i++ ){
 			// in this loop we are making the listOfStrings
-			str = calloc(j,sizeof(char));
+			str = calloc(STRSIZE,sizeof(char));
 			sprintf(str,"%d",i);
 
 			if(i==0) // first time
@@ -76,7 +76,7 @@ void test_appendList_Tuple(void){
 		// checking if values at name are the same
 		TEST_ASSERT(!strcmp(((TuplePtr)(tempTuples->data))->propertyName,arrayOfNames[j]));
 
-		str = calloc(j,sizeof(char));
+		str = calloc(STRSIZE,sizeof(char));
 		node* tempValues=(((TuplePtr)(tempTuples->data))->propertyValueList);
 
 		for( int i = j; i>=0; i-- ){
