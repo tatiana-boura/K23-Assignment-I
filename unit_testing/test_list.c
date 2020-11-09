@@ -158,7 +158,7 @@ void test_addrFoundinList(void){
 	/* function to check if addrFoundinList finds the address correctly in a list
 	of addresses */
 
-	unsigned int N=10;
+	unsigned int N=10000;
 	
 	node* n=NULL;
 
@@ -201,7 +201,6 @@ void test_addrFoundinList(void){
 
 	return;
 }
-
 
 TEST_LIST = {
 	{ "appendList_string", test_appendList_string },
