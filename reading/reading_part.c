@@ -93,10 +93,11 @@ int main(int argc, char* argv[]){
 	strcat(dirpath, "/");        //current dirpath: "2013_camera_specs/"
 
 	//dirpath: sting to built and store the pathname to each json file
-	//char* json_path = calloc(200,sizeof(char));  
-	//assert( json_path != NULL );
-	//memset(json_path ,'\0' , 200); 
-	char json_path[200];
+	char* json_path = calloc(200,sizeof(char));
+	assert( json_path != NULL );
+	memset(json_path ,'\0' , 200); 
+	//char json_path[200];
+
 	int dirs=0; //num of files in main_dir --> 2013_camera_specs
 	while( (main_dir_entry = readdir(main_dir)) ){  //check each entry in the directory
 		//ignore open current & parent dir
@@ -131,7 +132,7 @@ int main(int argc, char* argv[]){
 					} 
 
 					//--------------create list for json file's property tuples --------------------------------
-					node* spec_list = NULL; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					node* spec_list = NULL;
 					
 					//------------Convert properties in json files in tuples ------------------------------------ 
 					while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
@@ -172,20 +173,18 @@ int main(int argc, char* argv[]){
 								memset(buff ,'\0' , BUFFER_SIZE);
 							}
 							//---add tuple to spec-list for json file -----------------------------
-							if(spec_list == NULL){
-								//printf("\nspec_list is NULL... don't know whyyyyy\n");
-							}
-							spec_list = appendList(spec_list, t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+							spec_list = appendList(spec_list, t); 
 						}
 					}
 					//-------------print list -------------------------------------------------
 					//printf("LIST\n");
-					//printList(spec_list, printTuple);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-					destroyListOfTuples(spec_list, (void*)tupleDeletion);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					//printList(spec_list, printTuple); 
+					destroyListOfTuples(spec_list, (void*)tupleDeletion);  
 					
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
-					strcpy(json_path,json_path+strlen(argv[1])+1); // cut "2013_camera_specs/"
+					//strcpy(json_path,json_path+strlen(argv[1])+1); // cut "2013_camera_specs/"
+					memmove(json_path,json_path+strlen(argv[1])+1, strlen(json_path)-strlen(argv[1]));
 					json_path[strlen(json_path)-strlen(".json")] ='\0';  //cut ".json"
 					char* path = convertPath(json_path);   // fix special character '//'
 
@@ -207,7 +206,7 @@ int main(int argc, char* argv[]){
 	free(buff);
 	free(arbuff);
 	free(dirpath);
-	//free(json_path);
+	free(json_path);
 	printf("\nEND\n");
 	return 0;
 }

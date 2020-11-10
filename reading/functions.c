@@ -91,20 +91,14 @@ json format
 */
 
 //function that takes a string and stores key and value into a tuple
-void json_separator(char* str, TuplePtr t){  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	//printf("In json_separator\n");
+void json_separator(char* str, TuplePtr t){  
 	//printf("given string: %s \n", str);
 	const char s[2] = "\""; // delimeter: "
 
 	//string to store key
-	//char* property_buff = calloc(BUFFER_SIZE,sizeof(char));
 	char* property_buff;  
-	//assert( property_buff != NULL );
-	//memset(property_buff, '\0', BUFFER_SIZE*sizeof(char)); 
 	//strig to store value
-	char* value_buff;// = calloc(BUFFER_SIZE,sizeof(char));  
-	//assert( value_buff != NULL );
-	//memset(value_buff, '\0', BUFFER_SIZE*sizeof(char));
+	char* value_buff;
 
    	char *token;
     int flag = 0; //flag == 1 buff contains "key" | flag == 2 buff contains "value" 
@@ -118,25 +112,19 @@ void json_separator(char* str, TuplePtr t){  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    			//printf( " token: %s\n", token );
 	   			
    			if((flag == 1)){
-   				//----------------------------------------------------
    				str_length = strlen(token);
    				property_buff = calloc(str_length+1,sizeof(char));
    				assert( property_buff != NULL );
 				memset(property_buff, '\0', (str_length+1)*sizeof(char)); 
-   				//----------------------------------------------------
 
 		      	strcpy(property_buff, token);
 		      	if(token == NULL){
 		      		strcpy(property_buff, " ");
 		      	}
 		    }else if(flag == 2){
-
-		    	//----------------------------------------------------
-   				str_length = strlen(token);
-   				value_buff = calloc(str_length+1,sizeof(char));
+   				value_buff = calloc(strlen(token)+1,sizeof(char));
    				assert( value_buff != NULL );
-				memset(value_buff, '\0', (str_length+1)*sizeof(char)); 
-   				//----------------------------------------------------
+				memset(value_buff, '\0', (strlen(token)+1)*sizeof(char)); 
 
 		        strcpy(value_buff, token);
 		       	//printf("k: %s  - v: %s\n", property_buff, value_buff);
@@ -149,29 +137,20 @@ void json_separator(char* str, TuplePtr t){  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		}		
         token = strtok(NULL, s); 
     }
+    //will be freed by destroy tuple
     //free(property_buff);
     //free(value_buff);
-    //printf("after json_separator\n");	
 }
 
-//key_buff ---> property_buff
 
 //function that takes a string {that contains array!} and stores key and value into a tuple
 void json_array_handler(char* str, TuplePtr t){
 	//printf("given string: %s \n", str);
 	const char s[2] = "\""; // delimeter: "
-	char* property_buff;// = calloc(BUFFER_SIZE,sizeof(char));  
-	//assert( property_buff != NULL );
-	//memset(property_buff, '\0', BUFFER_SIZE*sizeof(char)); 
-	char* value_buff;// = calloc(BUFFER_SIZE,sizeof(char));  
-	//assert( value_buff != NULL );
-	//memset(value_buff, '\0', BUFFER_SIZE*sizeof(char));
+	char* property_buff;
+	char* value_buff;
 	char *token;
 
-
-	char* arbuff = calloc(BUFFER_SIZE,sizeof(char));  
-	assert( arbuff != NULL );
-	memset(arbuff, '\0', BUFFER_SIZE*sizeof(char));
 	const char sa[2] = "$"; // delimeter: \n
 
 	// get the first token 
@@ -182,18 +161,15 @@ void json_array_handler(char* str, TuplePtr t){
    	while( token != NULL ) {
 		//printf( " token: %s\n", token );	
 		if(flag == 0){
-			//----------------------------------------------------
-   			//str_length = strlen(token);
+			
    			property_buff = calloc(strlen(token)+1,sizeof(char));
    			assert( property_buff != NULL );
 			memset(property_buff, '\0', (strlen(token)+1)*sizeof(char)); 
-   			//----------------------------------------------------
-
+   			
 			strcpy(property_buff, token);
 			if(token == NULL){
 		      	strcpy(property_buff, " ");
 		    }
-		    //printf("property_buff")
 			tupleInitialization(t, property_buff, value_buff); 
 		}
 		//flag == 1 --> empty line
@@ -216,9 +192,9 @@ void json_array_handler(char* str, TuplePtr t){
     }
     //printf("ARRAY k: %s  - v: %s\n", property_buff, value_buff);
 
+    //will be freed by destroy tuple
     //free(property_buff);
-    //free(value_buff);
-    free(arbuff);
+    //free(value_buff);  
 }
 
 //=======================================================================================================================
