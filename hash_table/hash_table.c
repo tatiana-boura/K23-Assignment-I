@@ -138,7 +138,7 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
 }
 //_______________________________________________________________________________________________________
 
-bucket* getBucket(hashTable* ht, char* key, int* index){
+bucket* getBucket(hashTable* ht, char* key, unsigned int* index){
 
     *index = hash(key,ht);
     bucket* bucketPtr = ht->table[*index];

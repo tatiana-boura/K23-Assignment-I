@@ -31,7 +31,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize,bucket** bucketFound1
 void printHT(hashTable* ht);
 void printBucket(node* b);
 
-bucket* getBucket(hashTable* ht, char* key, int* index);
+bucket* getBucket(hashTable* ht, char* key, unsigned int* index);
 bucketEntry* createEntry(char* key,node* _listOfTuples_);
 
 void makeOutputFile(hashTable* ht, unsigned int bucketSize);
