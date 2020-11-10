@@ -35,9 +35,7 @@ extra notes:
 #include <dirent.h>
 
 #include "functions.h" 
-#include "tuples.h"
-#include "list.h"
-#include "hash_table.h"
+#include "./hash_table/hash_table.h"
 
 #define BUFFER_SIZE 51000
 
