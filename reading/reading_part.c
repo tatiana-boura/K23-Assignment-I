@@ -182,8 +182,8 @@ int main(int argc, char* argv[]){
 					//-------------print list -------------------------------------------------
 					printf("LIST\n");
 					printList(spec_list, printTuple);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-					//destroyListOfTuples(spec_list, tupleDeletion);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+					//destroyListOfTuples(spec_list, (void*)tupleDeletion);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
 					strcpy(json_path,json_path+strlen(argv[1])+1); // cut "2013_camera_specs/"
