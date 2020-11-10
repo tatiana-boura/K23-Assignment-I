@@ -8,8 +8,8 @@
 #include <dirent.h>
 #include <stdlib.h>
 
-#include "tuples.h"
-#include "list.h"
+#include "../tuples/tuples.h"
+#include "../list/list.h"
 
 
 char* convertPath(char* _path_ );
