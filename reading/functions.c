@@ -118,10 +118,16 @@ void json_separator(char* str, TuplePtr t){  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	   			
    			if((flag == 1)){
 		      	strcpy(property_buff, token);
+		      	if(token == NULL){
+		      		strcpy(property_buff, " ");
+		      	}
 		    }else if(flag == 2){
 		        strcpy(value_buff, token);
 		       	//printf("k: %s  - v: %s\n", property_buff, value_buff);
-		        tupleInitialization(t, property_buff, value_buff);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		       	if(value_buff == NULL){
+					strcpy(value_buff, " ");
+				}
+		        tupleInitialization(t, property_buff, value_buff);  
 		    }
 		    flag++;
 		}		
@@ -135,7 +141,7 @@ void json_separator(char* str, TuplePtr t){  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 //key_buff ---> property_buff
 
 //function that takes a string {that contains array!} and stores key and value into a tuple
-void json_array_handler(char* str, TuplePtr t){//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+void json_array_handler(char* str, TuplePtr t){
 	//printf("given string: %s \n", str);
 	const char s[2] = "\""; // delimeter: "
 	char* property_buff = calloc(BUFFER_SIZE,sizeof(char));  
@@ -161,15 +167,20 @@ void json_array_handler(char* str, TuplePtr t){//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		//printf( " token: %s\n", token );	
 		if(flag == 0){
 			strcpy(property_buff, token);
-			tupleInitialization(t, property_buff, value_buff);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			if(token == NULL){
+		      	strcpy(property_buff, " ");
+		    }
+		    //printf("property_buff")
+			tupleInitialization(t, property_buff, value_buff); 
 		}
 		//flag == 1 --> empty line
 		if(flag>1){
 			if((token[0] != ',') && (token[0] != '$') ){
 				strcat(value_buff,token);
-				if(value_buff != NULL){
-					insertAtValueList(t, value_buff);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				if(value_buff == NULL){
+					strcpy(value_buff, " ");
 				}
+				insertAtValueList(t, value_buff);
 			}
 		}
 		flag++;

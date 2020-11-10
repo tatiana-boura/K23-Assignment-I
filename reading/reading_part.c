@@ -118,7 +118,7 @@ int main(int argc, char* argv[]){
 			while( (sub_dir_entry = readdir(sub_dir)) ){
 				//ignore current & parent dir
 				if((strcmp(sub_dir_entry->d_name,".")!=0) && (strcmp(sub_dir_entry->d_name,"..")!=0)){ 
-					//printf("\tjsonFILE: %s\n", sub_dir_entry->d_name);  
+					printf("\njsonFILE: %s +++++++++++++++++++++++++++++++++++++\n", sub_dir_entry->d_name);  //<<<<<<<<
 						
 					//create path to .json file
 					strcat(json_path,dirpath);
@@ -133,14 +133,15 @@ int main(int argc, char* argv[]){
 					} 
 
 					//--------------create list for json file's property tuples --------------------------------
-
+					node* spec_list = NULL; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					
 					//------------Convert properties in json files in tuples ------------------------------------ 
 					while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
-						TuplePtr t;   //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+						TuplePtr t;   
 						t = calloc(1,sizeof(Tuple));
 						//puts(buff);  
 						                                  
-						if(buff[strlen(buff)-2] == '['){
+						if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //(the 2nd condition came up for www.cambuy.com.au/17.json) 
 							//DETECTED PROPERTY WITH ARRAY OF VALUES !
 							//process: 
 							//strcat all the lines of .json file until the end of the array
@@ -160,25 +161,28 @@ int main(int argc, char* argv[]){
 									array_off = 1;  //reached the end of the array
 								}		
 							}
-							//printTuple(t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-							printf("\n");
-							json_array_handler(buff, t); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-							printTuple(t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+							json_array_handler(buff, t); 
+							//printTuple(t);  							
 							memset(arbuff ,'\0' , BUFFER_SIZE);
 							memset(buff ,'\0' , BUFFER_SIZE);
 							//return 1;
 						}else{
-							//printTuple(t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-							printf("\n");
-							json_separator(buff,t);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-							printTuple(t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+							json_separator(buff,t);
+							//printTuple(t); 
 							memset(arbuff ,'\0' , BUFFER_SIZE);
 							memset(buff ,'\0' , BUFFER_SIZE);
 						}
 						
 						//---add tuple to spec-list for json file -----------------------------
+						if(spec_list == NULL){
+							//printf("\nspec_list is NULL... don't know whyyyyy\n");
+						}
+						appendList(spec_list, t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					}
 					//-------------print list -------------------------------------------------
+					printf("LIST\n");
+					printList(spec_list, printTuple);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					destroyListOfTuples(spec_list, tupleDeletion);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
