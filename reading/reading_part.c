@@ -139,8 +139,8 @@ int main(int argc, char* argv[]){
 						TuplePtr t;   
 						t = calloc(1,sizeof(Tuple));
 						//puts(buff);  
-						
-						if((buff[strlen(buff)-2] != '{')&&(buff[strlen(buff)-1] != '}')){                                        
+					
+						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){                                        
 							if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //(the 2nd condition came up for www.cambuy.com.au/17.json) 
 								//DETECTED PROPERTY WITH ARRAY OF VALUES !
 								//process: 
@@ -176,6 +176,7 @@ int main(int argc, char* argv[]){
 							spec_list = appendList(spec_list, t); 
 						}
 					}
+					
 					//-------------print list -------------------------------------------------
 					//printf("LIST\n");
 					//printList(spec_list, printTuple); 
