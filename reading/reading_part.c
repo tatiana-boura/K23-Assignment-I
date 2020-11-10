@@ -184,15 +184,15 @@ int main(int argc, char* argv[]){
 					
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
-					//strcpy(json_path,json_path+strlen(argv[1])+1); // cut "2013_camera_specs/"
+				    // cut "2013_camera_specs/"
 					memmove(json_path,json_path+strlen(argv[1])+1, strlen(json_path)-strlen(argv[1]));
 					json_path[strlen(json_path)-strlen(".json")] ='\0';  //cut ".json"
 					char* path = convertPath(json_path);   // fix special character '//'
+					//free(path);  //remember to set it free <<<<<<<<<<------ [!]
 
 					//printf("%s\n",path);  //<---------WORKS
 
 					//----ADD PATH & LIST in HT -----------------------------------------------
-
 					fclose(json_file);
 					memset(json_path ,'\0' , 200);
 				}
