@@ -177,12 +177,12 @@ int main(int argc, char* argv[]){
 						if(spec_list == NULL){
 							//printf("\nspec_list is NULL... don't know whyyyyy\n");
 						}
-						appendList(spec_list, t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+						spec_list = appendList(spec_list, t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					}
 					//-------------print list -------------------------------------------------
 					printf("LIST\n");
 					printList(spec_list, printTuple);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-					destroyListOfTuples(spec_list, tupleDeletion);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					//destroyListOfTuples(spec_list, tupleDeletion);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
