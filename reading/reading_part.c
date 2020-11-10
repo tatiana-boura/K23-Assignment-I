@@ -93,10 +93,10 @@ int main(int argc, char* argv[]){
 	strcat(dirpath, "/");        //current dirpath: "2013_camera_specs/"
 
 	//dirpath: sting to built and store the pathname to each json file
-	char* json_path = calloc(200,sizeof(char));  
-	assert( json_path != NULL );
-	memset(json_path ,'\0' , 200); 
-
+	//char* json_path = calloc(200,sizeof(char));  
+	//assert( json_path != NULL );
+	//memset(json_path ,'\0' , 200); 
+	char json_path[200];
 	int dirs=0; //num of files in main_dir --> 2013_camera_specs
 	while( (main_dir_entry = readdir(main_dir)) ){  //check each entry in the directory
 		//ignore open current & parent dir
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]){
 			while( (sub_dir_entry = readdir(sub_dir)) ){
 				//ignore current & parent dir
 				if((strcmp(sub_dir_entry->d_name,".")!=0) && (strcmp(sub_dir_entry->d_name,"..")!=0)){ 
-					printf("\njsonFILE: %s +++++++++++++++++++++++++++++++++++++\n", sub_dir_entry->d_name);  //<<<<<<<<
+					//printf("\njsonFILE: %s +++++++++++++++++++++++++++++++++++++\n", sub_dir_entry->d_name);  //<<<<<<<<
 						
 					//create path to .json file
 					strcat(json_path,dirpath);
@@ -156,7 +156,7 @@ int main(int argc, char* argv[]){
 										array_off = 1;  //reached the end of the array
 									}
 									//we have array as value for the last property
-									if((arbuff[strlen(arbuff)-2] == ']') ){
+									if((arbuff[strlen(arbuff)-2] == ']') && (arbuff[strlen(arbuff)-1] == '\n') ){
 										array_off = 1;  //reached the end of the array
 									}		
 								}
@@ -179,9 +179,9 @@ int main(int argc, char* argv[]){
 						}
 					}
 					//-------------print list -------------------------------------------------
-					printf("LIST\n");
-					printList(spec_list, printTuple);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-					//destroyListOfTuples(spec_list, (void*)tupleDeletion);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					//printf("LIST\n");
+					//printList(spec_list, printTuple);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					destroyListOfTuples(spec_list, (void*)tupleDeletion);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
@@ -205,6 +205,9 @@ int main(int argc, char* argv[]){
 	}
 	closedir(main_dir);
 	free(buff);
+	free(arbuff);
+	free(dirpath);
+	//free(json_path);
 	printf("\nEND\n");
 	return 0;
 }
