@@ -38,7 +38,7 @@ hashTable* createHT(unsigned int size){
 
 void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTuples_){
 
-    bucket* bucketPtr; int index; 
+    bucket* bucketPtr; unsigned int index; 
     
     unsigned int numOfEntries = (bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
 
@@ -261,7 +261,7 @@ void printBucket(node* b){
 
 void printHT(hashTable* ht){
 
-    bucket* bp;
+    //bucket* bp;
     for( unsigned int i=0; i<ht->size; i++ )
         printBucket(ht->table[i]);
         
