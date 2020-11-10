@@ -140,39 +140,40 @@ int main(int argc, char* argv[]){
 						TuplePtr t;   
 						t = calloc(1,sizeof(Tuple));
 						//puts(buff);  
-						                                  
-						if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //(the 2nd condition came up for www.cambuy.com.au/17.json) 
-							//DETECTED PROPERTY WITH ARRAY OF VALUES !
-							//process: 
-							//strcat all the lines of .json file until the end of the array
-							//use json_array_handler 
-							int array_off=0;
-							while(array_off == 0){
-								fgets(arbuff, BUFFER_SIZE, json_file);
-								buff[strlen(buff)-1] = '$'; //overwrite '\n' with special character '$'
-								strcat(buff,arbuff);
-								//puts(buff);
-								//array is not for the last property
-								if((arbuff[strlen(arbuff)-3] == ']') && (arbuff[strlen(arbuff)-2] == ',')){
-									array_off = 1;  //reached the end of the array
-								}
-								//we have array as value for the last property
-								if((arbuff[strlen(arbuff)-2] == ']') ){
-									array_off = 1;  //reached the end of the array
-								}		
-							}
-							json_array_handler(buff, t); 
-							//printTuple(t);  							
-							memset(arbuff ,'\0' , BUFFER_SIZE);
-							memset(buff ,'\0' , BUFFER_SIZE);
-							//return 1;
-						}else{
-							json_separator(buff,t);
-							//printTuple(t); 
-							memset(arbuff ,'\0' , BUFFER_SIZE);
-							memset(buff ,'\0' , BUFFER_SIZE);
-						}
 						
+						if((buff[strlen(buff)-2] != '{')&&(buff[strlen(buff)-1] != '}')){                                        
+							if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //(the 2nd condition came up for www.cambuy.com.au/17.json) 
+								//DETECTED PROPERTY WITH ARRAY OF VALUES !
+								//process: 
+								//strcat all the lines of .json file until the end of the array
+								//use json_array_handler 
+								int array_off=0;
+								while(array_off == 0){
+									fgets(arbuff, BUFFER_SIZE, json_file);
+									buff[strlen(buff)-1] = '$'; //overwrite '\n' with special character '$'
+									strcat(buff,arbuff);
+									//puts(buff);
+									//array is not for the last property
+									if((arbuff[strlen(arbuff)-3] == ']') && (arbuff[strlen(arbuff)-2] == ',')){
+										array_off = 1;  //reached the end of the array
+									}
+									//we have array as value for the last property
+									if((arbuff[strlen(arbuff)-2] == ']') ){
+										array_off = 1;  //reached the end of the array
+									}		
+								}
+								json_array_handler(buff, t); 
+								//printTuple(t);  							
+								memset(arbuff ,'\0' , BUFFER_SIZE);
+								memset(buff ,'\0' , BUFFER_SIZE);
+								//return 1;
+							}else{
+								json_separator(buff,t);
+								//printTuple(t); 
+								memset(arbuff ,'\0' , BUFFER_SIZE);
+								memset(buff ,'\0' , BUFFER_SIZE);
+							}
+						}
 						//---add tuple to spec-list for json file -----------------------------
 						if(spec_list == NULL){
 							//printf("\nspec_list is NULL... don't know whyyyyy\n");
