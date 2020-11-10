@@ -171,12 +171,12 @@ int main(int argc, char* argv[]){
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
 							}
+							//---add tuple to spec-list for json file -----------------------------
+							if(spec_list == NULL){
+								//printf("\nspec_list is NULL... don't know whyyyyy\n");
+							}
+							spec_list = appendList(spec_list, t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 						}
-						//---add tuple to spec-list for json file -----------------------------
-						if(spec_list == NULL){
-							//printf("\nspec_list is NULL... don't know whyyyyy\n");
-						}
-						spec_list = appendList(spec_list, t);  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					}
 					//-------------print list -------------------------------------------------
 					printf("LIST\n");
