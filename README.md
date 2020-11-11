@@ -5,7 +5,7 @@
 
 ## Compile and run
 Για να τρέξει κατευθείαν από το repository, χρησιμοποιώντας τα αρχεία στο φάκελο dataset,
-> make
+> make\\
 > ./prog ./datasets/camera_specs/2013 ./datasets/sigmod_large_labelled_dataset.csv 
 					ή
 > ./prog ./datasets/camera_specs/2013 ./datasets/sigmod_medium_labelled_dataset.csv,
