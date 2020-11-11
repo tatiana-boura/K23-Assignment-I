@@ -38,6 +38,7 @@ extra notes:
 #include "../hash_table/hash_table.h"
 
 #define BUFFER_SIZE 51000
+#define BUCKETSIZE 100
 
 
 /*
@@ -74,7 +75,7 @@ int main(int argc, char* argv[]){
 
 	//--------------Create Hash table --------------------------------------------------------------------
 	//unsigned int hash_size = json_num;
-    //hashTable* hash = createHT(hash_size); 
+    hashTable* ht = createHT(json_num/10); 
 
 
 	//---------------Open directory 2013_camera_specs-----------------------------------------------------
@@ -164,28 +165,41 @@ int main(int argc, char* argv[]){
 									}		
 								}
 
-								//if(buff==NULL) printf("here\n");
+								if(buff==NULL) printf("here\n");
+								/*char temp[BUFFER_SIZE]; temp[BUFFER_SIZE-1]='\0';
+								strcpy(temp,buff);
+								*/
+								
 								json_array_handler(buff, t); 
+								/*if( t->propertyName == NULL ){
+									printf("\nTHIS ONE IS PROBLEMATIC\t  ");
+									printf("%s\n",temp);
+								}*/
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
 								
 							}else{
 
+								char temp[BUFFER_SIZE]; temp[BUFFER_SIZE-1]='\0';
+								strcpy(temp,buff);
+
 								json_separator(buff,t); 
+
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
 								
 							}
 							//---add tuple to spec-list for json file -----------------------------
-							spec_list = appendList(spec_list, t); 
+							if( t->propertyName!=NULL )
+								spec_list = appendList(spec_list, t);
+							else{ free(t); t=NULL;} 
 						}
 					}
-					
 					//-------------print list -------------------------------------------------
 					//printf("\nLIST\n");
 					//printList(spec_list, (void*)printTuple); 
-					destroyListOfTuples(spec_list, (void*)tupleDeletion);  
-					
+					//destroyListOfTuples(spec_list, (void*)tupleDeletion);  
+
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
 				    // cut "2013_camera_specs/"
@@ -193,7 +207,10 @@ int main(int argc, char* argv[]){
 					char* path = convertPath(json_path);   // fix special character '//' and .json
 					
 					free(json_path);  
-					free(path);
+					//free(path);
+					addtoHT(ht, path, BUCKETSIZE, spec_list);
+
+
 
 					//----ADD PATH & LIST in HT -----------------------------------------------
 					fclose(json_file);
@@ -205,6 +222,9 @@ int main(int argc, char* argv[]){
 		strcpy(dirpath, argv[1]);
 		strcat(dirpath, "/");
 	}
+
+	destroyHT(ht,BUCKETSIZE);
+
 	closedir(main_dir);
 	free(buff);
 	free(arbuff);

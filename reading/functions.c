@@ -103,7 +103,6 @@ void json_separator(char* str, TuplePtr t){
 
    	char *token;
     int flag = 0; //flag == 1 buff contains "key" | flag == 2 buff contains "value" 
-    int str_length;
    	// get the first token
    	token = strtok(str, s);
 	  
@@ -112,11 +111,10 @@ void json_separator(char* str, TuplePtr t){
    		if((strcmp(token,"{")!=0) && (strcmp(token,"}")!=0) && (strcmp(token,": ")!=0) && (strcmp(token,",")!=0)){
    			//printf( " token: %s\n", token );
 	   			
-   			if((flag == 1)){
-   				str_length = strlen(token);
-   				property_buff = calloc(str_length+1,sizeof(char));
+   			if(flag == 1){
+   				property_buff = calloc(strlen(token)+1,sizeof(char));
    				assert( property_buff != NULL );
-				memset(property_buff, '\0', (str_length+1)*sizeof(char)); 
+				memset(property_buff, '\0', (strlen(token)+1)*sizeof(char)); 
 				strcpy(property_buff, token);
 
 		      	if(token == NULL){
@@ -188,6 +186,7 @@ void json_array_handler(char* str, TuplePtr t){
 				if(value_buff == NULL){ strcpy(value_buff, " ");}
 
 				if(firstTime){ // then initialize
+					//if(property_buff==NULL) printf("here\n");
 					tupleInitialization(t, property_buff, value_buff);
 					firstTime=false;
 				}else // not first time here
