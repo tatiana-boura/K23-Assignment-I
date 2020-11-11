@@ -74,7 +74,7 @@ int main(int argc, char* argv[]){
 	printf("num = %d\n", json_num);
 
 	//--------------Create Hash table --------------------------------------------------------------------
-	unsigned int hash_size = json_num/10;
+	unsigned int hash_size = json_num/50;
     hashTable* ht = createHT(hash_size); 
 
 
