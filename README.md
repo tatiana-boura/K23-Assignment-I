@@ -8,10 +8,10 @@
 
 ## Compile and run
 Για να τρέξει κατευθείαν από το repository, χρησιμοποιώντας τα αρχεία στο φάκελο dataset,
-> >make  
-> >./prog ./datasets/camera_specs/2013 ./datasets/sigmod_large_labelled_dataset.csv  
+> make  
+> ./prog ./datasets/camera_specs/2013 ./datasets/sigmod_large_labelled_dataset.csv  
 						ή  
-> >./prog ./datasets/camera_specs/2013 ./datasets/sigmod_medium_labelled_dataset.csv,  
+> ./prog ./datasets/camera_specs/2013 ./datasets/sigmod_medium_labelled_dataset.csv,  
 όπου sigmod_large_labelled_dataset.csv είναο το datasetW και το sigmod_medium_labelled_dataset το datasetY.
 
 ## Λειτουργικότητα / Σχεδιαστικές επιλογές
