@@ -7,13 +7,13 @@
 //================================================================================================================
 char* convertPath(char* _path_ ){
 
-	char* adjustedPath = calloc(strlen(_path_)+2,sizeof(char)); assert( adjustedPath != NULL);
+	char* adjustedPath = calloc(strlen(_path_)-2,sizeof(char)); assert( adjustedPath != NULL);
 
 	unsigned int j=0;
 
+	// do not include .json
 	unsigned int k=strlen(_path_)-5;
 	for( unsigned int i=0; i < k;i++ ){
-	//for( unsigned int i=0; _path_[i] != '\0'; i++ )
 
 		if( _path_[i]=='/' ){
 			adjustedPath[j++]='/';
@@ -67,7 +67,6 @@ int count_json(char* given_directory){
 			while ((sub_dir_entry = readdir(sub_dir)) != NULL){ 
         		if( (strcmp(sub_dir_entry->d_name,".") != 0) && (strcmp(sub_dir_entry->d_name,"..")!=0) ){
         			count++;
-        			//printf("%d) %s\n", count, sub_dir_entry->d_name ); 
         		}
         	}
         	closedir(sub_dir);
@@ -142,11 +141,9 @@ void json_separator(char* str, TuplePtr t){
 		}		
         token = strtok(NULL, s); 
     }
-    //will be freed by destroy tuple
-    //free(property_buff);
-    //free(value_buff);
+    
+    return;
 }
-
 
 //function that takes a string {that contains array!} and stores key and value into a tuple
 void json_array_handler(char* str, TuplePtr t){
@@ -160,13 +157,14 @@ void json_array_handler(char* str, TuplePtr t){
 
 	// get the first token 
    	token = strtok(str, sa);
-	int flag=0;
+	bool pNameNotYet=false;
+	bool firstTime=true;
 
    	// walk through other tokens 
    	while( token != NULL ) {
 			
-		if(flag == 0){
-			printf( " token: %s\n", token ); 
+		if(pNameNotYet == 0){
+   			
    			property_buff = calloc(strlen(token)+1,sizeof(char));
    			assert( property_buff != NULL );
 			memset(property_buff, '\0', (strlen(token)+1)*sizeof(char)); 
@@ -175,48 +173,34 @@ void json_array_handler(char* str, TuplePtr t){
 			if(property_buff == NULL){
 		      	strcpy(property_buff, " ");
 		    }
+		    // made the property name 
+			pNameNotYet=true;
 
-		    //printf("%s\n",property_buff );
-			//tupleInitialization(t, property_buff, value_buff);  //PREV <-- AYTO MALLON MAS EKANE ZHMIA..
-		}
-		
-		//flag == 1 --> empty line
-		int f=0;  //<------------------------------------------------[CHANGE]
-		if(flag>=1){
+			//if(property_buff==NULL) printf("here\n");
+
+		}else{
+			// time to make the values
 			if((token[0] != ',') && (token[0] != '$') && (token[0] != ' ')){
 
-				//strcat(value_buff,token);
 				value_buff = calloc(strlen(token)+1,sizeof(char));
 				memset(value_buff, '\0', (strlen(token)+1)*sizeof(char));
 				strcpy(value_buff, token);
-				if(value_buff == NULL){
-					strcpy(value_buff, " ");
-				}
-				//insertAtValueList(t, value_buff1);  //PREV
+				if(value_buff == NULL){ strcpy(value_buff, " ");}
 
-				//------------------------------[CHANGE]---------------------------------------
-				if(f == 0){
-					//printf("ARRAY k: %s  - v: %s\n", property_buff, value_buff);
+				if(firstTime){ // then initialize
 					tupleInitialization(t, property_buff, value_buff);
-					f=1;
-				}else{
+					firstTime=false;
+				}else // not first time here
 					insertAtValueList(t, value_buff);
-				}
-				//-------------------------------------------------------------------------
-
 			}
 		}
-		flag++;
+		// get next value
         token = strtok(NULL, s); 
     }
 
-    //if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
+    if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
 
-    //printf("ARRAY k: %s  - v: %s\n", property_buff, value_buff);
-
-    //will be freed by destroy tuple
-    //free(property_buff);
-    //free(value_buff);  
+    return;
 }
 
 //=======================================================================================================================

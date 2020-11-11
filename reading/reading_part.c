@@ -163,22 +163,20 @@ int main(int argc, char* argv[]){
 										array_off = 1;  //reached the end of the array
 									}		
 								}
-								//printf("%s\n",buff );
-								json_array_handler(buff, t); 
 
-								//printTuple(t);  
+								//if(buff==NULL) printf("here\n");
+								json_array_handler(buff, t); 
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
-								//return 1;
+								
 							}else{
-								json_separator(buff,t);
-								//printTuple(t); 
+
+								json_separator(buff,t); 
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
 								
 							}
 							//---add tuple to spec-list for json file -----------------------------
-							//if(t == NULL) printf("potato [t to be added to list == NULL] ------------------");
 							spec_list = appendList(spec_list, t); 
 						}
 					}
@@ -192,17 +190,13 @@ int main(int argc, char* argv[]){
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
 				    // cut "2013_camera_specs/"
 					memmove(json_path,json_path+strlen(argv[1])+1, strlen(json_path)-strlen(argv[1]));
-					//json_path[strlen(json_path)-strlen(".json")] ='\0';  //cut ".json"
-					char* path = convertPath(json_path);   // fix special character '//'
-					//printf("%s\n",path );
-					free(json_path);  //remember to set it free <<<<<<<<<<------ [!]
+					char* path = convertPath(json_path);   // fix special character '//' and .json
+					
+					free(json_path);  
 					free(path);
-
-					//printf("%s\n",path);  //<---------WORKS
 
 					//----ADD PATH & LIST in HT -----------------------------------------------
 					fclose(json_file);
-					//memset(json_path ,'\0' , 200);
 				}
 			}	
 			closedir(sub_dir);
@@ -215,7 +209,6 @@ int main(int argc, char* argv[]){
 	free(buff);
 	free(arbuff);
 	free(dirpath);
-	//free(json_path);
 	printf("\nEND\n");
 	return 0;
 }
