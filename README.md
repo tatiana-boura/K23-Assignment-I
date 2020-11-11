@@ -12,7 +12,11 @@
 > ./prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_large_labelled_dataset.csv  
 						ή  
 > ./prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_medium_labelled_dataset.csv,  
-όπου sigmod_large_labelled_dataset.csv είναο το datasetW και το sigmod_medium_labelled_dataset το datasetY.
+όπου sigmod_large_labelled_dataset.csv είναο το datasetW και το sigmod_medium_labelled_dataset το datasetY.  
+  
+Για το unit testing κάνουμε
+> make tests  
+όπου θα προκύψουν 3 εκτελέσιμα (ένα για τον έλεγχο κάθε δομής). Για τα επιμέρους arguments του κάθε εκτελέσιμου ανατρέξατε στο TEST_LIST του κάθε .c του testing.
 
 ## Λειτουργικότητα / Σχεδιαστικές επιλογές
 
