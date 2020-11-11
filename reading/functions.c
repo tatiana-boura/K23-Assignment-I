@@ -164,8 +164,9 @@ void json_array_handler(char* str, TuplePtr t){
 
    	// walk through other tokens 
    	while( token != NULL ) {
-		//printf( " token: %s\n", token );	
+			
 		if(flag == 0){
+			printf( " token: %s\n", token ); 
    			property_buff = calloc(strlen(token)+1,sizeof(char));
    			assert( property_buff != NULL );
 			memset(property_buff, '\0', (strlen(token)+1)*sizeof(char)); 
@@ -182,7 +183,7 @@ void json_array_handler(char* str, TuplePtr t){
 		//flag == 1 --> empty line
 		int f=0;  //<------------------------------------------------[CHANGE]
 		if(flag>=1){
-			if((token[0] != ',') && (token[0] != '$') ){
+			if((token[0] != ',') && (token[0] != '$') && (token[0] != ' ')){
 
 				//strcat(value_buff,token);
 				value_buff = calloc(strlen(token)+1,sizeof(char));
@@ -208,7 +209,7 @@ void json_array_handler(char* str, TuplePtr t){
 		flag++;
         token = strtok(NULL, s); 
     }
-    printf("\n");
+
     //if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
 
     //printf("ARRAY k: %s  - v: %s\n", property_buff, value_buff);

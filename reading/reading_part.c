@@ -138,13 +138,16 @@ int main(int argc, char* argv[]){
 					//------------Convert properties in json files in tuples ------------------------------------ 
 					while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
 					
-						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){  
+						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){ 
+
 							TuplePtr t = calloc(1,sizeof(Tuple));                                      
+							
 							if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //(the 2nd condition came up for www.cambuy.com.au/17.json) 
 								//DETECTED PROPERTY WITH ARRAY OF VALUES !
 								//process: 
 								//strcat all the lines of .json file until the end of the array
 								//use json_array_handler 
+
 								int array_off=0;
 								while(array_off == 0){
 									fgets(arbuff, BUFFER_SIZE, json_file);
@@ -160,7 +163,9 @@ int main(int argc, char* argv[]){
 										array_off = 1;  //reached the end of the array
 									}		
 								}
+								//printf("%s\n",buff );
 								json_array_handler(buff, t); 
+
 								//printTuple(t);  
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
