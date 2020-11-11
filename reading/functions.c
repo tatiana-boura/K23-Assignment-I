@@ -11,14 +11,16 @@ char* convertPath(char* _path_ ){
 
 	unsigned int j=0;
 
-	for( unsigned int i=0; _path_[i] != '\0'; i++ )
+	unsigned int k=strlen(_path_)-5;
+	for( unsigned int i=0; i < k;i++ ){
+	//for( unsigned int i=0; _path_[i] != '\0'; i++ )
 
 		if( _path_[i]=='/' ){
 			adjustedPath[j++]='/';
 			adjustedPath[j++]='/';
 		}else
 			adjustedPath[j++]=_path_[i];
-		
+	}
 
 	adjustedPath[j]='\0';
 
@@ -93,7 +95,7 @@ json format
 //function that takes a string and stores key and value into a tuple
 void json_separator(char* str, TuplePtr t){  
 	//printf("given string: %s \n", str);
-	const char s[2] = "\""; // delimeter: "
+	const char s[3] = "\""; // delimeter: "
 
 	//string to store key
 	char* property_buff;  
@@ -116,12 +118,14 @@ void json_separator(char* str, TuplePtr t){
    				property_buff = calloc(str_length+1,sizeof(char));
    				assert( property_buff != NULL );
 				memset(property_buff, '\0', (str_length+1)*sizeof(char)); 
+				strcpy(property_buff, token);
 
-		      	strcpy(property_buff, token);
 		      	if(token == NULL){
 		      		strcpy(property_buff, " ");
 		      	}
+		      	
 		    }else if(flag == 2){
+
    				value_buff = calloc(strlen(token)+1,sizeof(char));
    				assert( value_buff != NULL );
 				memset(value_buff, '\0', (strlen(token)+1)*sizeof(char)); 
@@ -131,7 +135,8 @@ void json_separator(char* str, TuplePtr t){
 		       	if(value_buff == NULL){
 					strcpy(value_buff, " ");
 				}
-		        tupleInitialization(t, property_buff, value_buff);  
+		        tupleInitialization(t, property_buff, value_buff); 
+
 		    }
 		    flag++;
 		}		
@@ -146,9 +151,9 @@ void json_separator(char* str, TuplePtr t){
 //function that takes a string {that contains array!} and stores key and value into a tuple
 void json_array_handler(char* str, TuplePtr t){
 	//printf("given string: %s \n", str);
-	const char s[2] = "\""; // delimeter: "
-	char* property_buff;
-	char* value_buff;
+	const char s[3] = "\"";
+	char* property_buff=NULL;
+	char* value_buff=NULL;
 	char *token;
 
 	const char sa[2] = "$"; // delimeter: \n
@@ -161,20 +166,22 @@ void json_array_handler(char* str, TuplePtr t){
    	while( token != NULL ) {
 		//printf( " token: %s\n", token );	
 		if(flag == 0){
-			
    			property_buff = calloc(strlen(token)+1,sizeof(char));
    			assert( property_buff != NULL );
 			memset(property_buff, '\0', (strlen(token)+1)*sizeof(char)); 
    			
 			strcpy(property_buff, token);
-			if(token == NULL){
+			if(property_buff == NULL){
 		      	strcpy(property_buff, " ");
 		    }
+
+		    //printf("%s\n",property_buff );
 			//tupleInitialization(t, property_buff, value_buff);  //PREV <-- AYTO MALLON MAS EKANE ZHMIA..
 		}
+		
 		//flag == 1 --> empty line
 		int f=0;  //<------------------------------------------------[CHANGE]
-		if(flag>1){
+		if(flag>=1){
 			if((token[0] != ',') && (token[0] != '$') ){
 
 				//strcat(value_buff,token);
@@ -201,6 +208,9 @@ void json_array_handler(char* str, TuplePtr t){
 		flag++;
         token = strtok(NULL, s); 
     }
+    printf("\n");
+    //if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
+
     //printf("ARRAY k: %s  - v: %s\n", property_buff, value_buff);
 
     //will be freed by destroy tuple

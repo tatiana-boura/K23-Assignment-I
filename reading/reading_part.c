@@ -92,10 +92,7 @@ int main(int argc, char* argv[]){
 	strcpy(dirpath, argv[1]);
 	strcat(dirpath, "/");        //current dirpath: "2013_camera_specs/"
 
-	//dirpath: sting to built and store the pathname to each json file
-	char* json_path = calloc(200,sizeof(char));
-	assert( json_path != NULL );
-	memset(json_path ,'\0' , 200); 
+	 
 	//char json_path[200];
 
 	int dirs=0; //num of files in main_dir --> 2013_camera_specs
@@ -118,7 +115,11 @@ int main(int argc, char* argv[]){
 				//ignore current & parent dir
 				if((strcmp(sub_dir_entry->d_name,".")!=0) && (strcmp(sub_dir_entry->d_name,"..")!=0)){ 
 					//printf("\njsonFILE: %s +++++++++++++++++++++++++++++++++++++\n", sub_dir_entry->d_name);  //<<<<<<<<
-						
+					//dirpath: sting to built and store the pathname to each json file
+					char* json_path = calloc(200,sizeof(char));
+					assert( json_path != NULL );
+					memset(json_path ,'\0' , 200);
+
 					//create path to .json file
 					strcat(json_path,dirpath);
 					strcat(json_path,"/"); 
@@ -136,11 +137,9 @@ int main(int argc, char* argv[]){
 					
 					//------------Convert properties in json files in tuples ------------------------------------ 
 					while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
-						TuplePtr t;   
-						t = calloc(1,sizeof(Tuple));
-						//puts(buff);  
 					
-						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){                                        
+						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){  
+							TuplePtr t = calloc(1,sizeof(Tuple));                                      
 							if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //(the 2nd condition came up for www.cambuy.com.au/17.json) 
 								//DETECTED PROPERTY WITH ARRAY OF VALUES !
 								//process: 
@@ -162,7 +161,7 @@ int main(int argc, char* argv[]){
 									}		
 								}
 								json_array_handler(buff, t); 
-								//printTuple(t);  							
+								//printTuple(t);  
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
 								//return 1;
@@ -171,6 +170,7 @@ int main(int argc, char* argv[]){
 								//printTuple(t); 
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
+								
 							}
 							//---add tuple to spec-list for json file -----------------------------
 							//if(t == NULL) printf("potato [t to be added to list == NULL] ------------------");
@@ -179,23 +179,25 @@ int main(int argc, char* argv[]){
 					}
 					
 					//-------------print list -------------------------------------------------
-					//printf("LIST\n");
-					//printList(spec_list, printTuple); 
+					//printf("\nLIST\n");
+					//printList(spec_list, (void*)printTuple); 
 					destroyListOfTuples(spec_list, (void*)tupleDeletion);  
 					
 					//--------------Convert path to be inserted in data structures----------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
 				    // cut "2013_camera_specs/"
 					memmove(json_path,json_path+strlen(argv[1])+1, strlen(json_path)-strlen(argv[1]));
-					json_path[strlen(json_path)-strlen(".json")] ='\0';  //cut ".json"
+					//json_path[strlen(json_path)-strlen(".json")] ='\0';  //cut ".json"
 					char* path = convertPath(json_path);   // fix special character '//'
-					free(path);  //remember to set it free <<<<<<<<<<------ [!]
+					//printf("%s\n",path );
+					free(json_path);  //remember to set it free <<<<<<<<<<------ [!]
+					free(path);
 
 					//printf("%s\n",path);  //<---------WORKS
 
 					//----ADD PATH & LIST in HT -----------------------------------------------
 					fclose(json_file);
-					memset(json_path ,'\0' , 200);
+					//memset(json_path ,'\0' , 200);
 				}
 			}	
 			closedir(sub_dir);
@@ -208,7 +210,7 @@ int main(int argc, char* argv[]){
 	free(buff);
 	free(arbuff);
 	free(dirpath);
-	free(json_path);
+	//free(json_path);
 	printf("\nEND\n");
 	return 0;
 }
