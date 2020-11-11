@@ -3,17 +3,16 @@
 	Χουσιανίτη Κατερίνα sdi1700194
 	Μπούρα Τατιάνα sdi1700100
 
+## Αρχεία και οργάνωση
+Η οργάνωση των αρχείων έχει γίνει ως εξής: η κάθε χρησιμοποιούμενη δομή έχει τον δικό της φάκελο(hash_table,list και tuples), τα datasets βρίσκονται σε δικό τους φάκελο(datasets), ό,τι σχετίζεται με το reading και η main βρίσκονται στον φάκελο reading, τα unit tests στον unit_testing, ενώ παρέχεται και makefile και το παρόν README.md.
+
 ## Compile and run
 Για να τρέξει κατευθείαν από το repository, χρησιμοποιώντας τα αρχεία στο φάκελο dataset,
 > >make  
 > >./prog ./datasets/camera_specs/2013 ./datasets/sigmod_large_labelled_dataset.csv  
-					ή  
+						ή  
 > >./prog ./datasets/camera_specs/2013 ./datasets/sigmod_medium_labelled_dataset.csv,  
 όπου sigmod_large_labelled_dataset.csv είναο το datasetW και το sigmod_medium_labelled_dataset το datasetY.
-
-
-## Αρχεία 
-Η οργάνωση των αρχείων έχει γίνει ως εξής
 
 ## Λειτουργικότητα / Σχεδιαστικές επιλογές
 
