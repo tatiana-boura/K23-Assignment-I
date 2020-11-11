@@ -173,6 +173,7 @@ int main(int argc, char* argv[]){
 								memset(buff ,'\0' , BUFFER_SIZE);
 							}
 							//---add tuple to spec-list for json file -----------------------------
+							//if(t == NULL) printf("potato [t to be added to list == NULL] ------------------");
 							spec_list = appendList(spec_list, t); 
 						}
 					}
@@ -188,7 +189,7 @@ int main(int argc, char* argv[]){
 					memmove(json_path,json_path+strlen(argv[1])+1, strlen(json_path)-strlen(argv[1]));
 					json_path[strlen(json_path)-strlen(".json")] ='\0';  //cut ".json"
 					char* path = convertPath(json_path);   // fix special character '//'
-					//free(path);  //remember to set it free <<<<<<<<<<------ [!]
+					free(path);  //remember to set it free <<<<<<<<<<------ [!]
 
 					//printf("%s\n",path);  //<---------WORKS
 

@@ -170,9 +170,10 @@ void json_array_handler(char* str, TuplePtr t){
 			if(token == NULL){
 		      	strcpy(property_buff, " ");
 		    }
-			tupleInitialization(t, property_buff, value_buff); 
+			//tupleInitialization(t, property_buff, value_buff);  //PREV <-- AYTO MALLON MAS EKANE ZHMIA..
 		}
 		//flag == 1 --> empty line
+		int f=0;  //<------------------------------------------------[CHANGE]
 		if(flag>1){
 			if((token[0] != ',') && (token[0] != '$') ){
 
@@ -183,8 +184,18 @@ void json_array_handler(char* str, TuplePtr t){
 				if(value_buff == NULL){
 					strcpy(value_buff, " ");
 				}
-				//insertAtValueList(t, value_buff1);
-				insertAtValueList(t, value_buff);
+				//insertAtValueList(t, value_buff1);  //PREV
+
+				//------------------------------[CHANGE]---------------------------------------
+				if(f == 0){
+					//printf("ARRAY k: %s  - v: %s\n", property_buff, value_buff);
+					tupleInitialization(t, property_buff, value_buff);
+					f=1;
+				}else{
+					insertAtValueList(t, value_buff);
+				}
+				//-------------------------------------------------------------------------
+
 			}
 		}
 		flag++;
