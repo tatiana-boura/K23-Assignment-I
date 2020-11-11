@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <dirent.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "../tuples/tuples.h"
 #include "../list/list.h"

@@ -233,7 +233,6 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
             tempNode=tempNode->next;
         }
     }
-
     return;
 }
 

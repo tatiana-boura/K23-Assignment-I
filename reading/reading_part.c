@@ -74,8 +74,8 @@ int main(int argc, char* argv[]){
 	printf("num = %d\n", json_num);
 
 	//--------------Create Hash table --------------------------------------------------------------------
-	//unsigned int hash_size = json_num;
-    hashTable* ht = createHT(json_num/10); 
+	unsigned int hash_size = json_num/10;
+    hashTable* ht = createHT(hash_size); 
 
 
 	//---------------Open directory 2013_camera_specs-----------------------------------------------------
@@ -223,12 +223,77 @@ int main(int argc, char* argv[]){
 		strcat(dirpath, "/");
 	}
 
-	destroyHT(ht,BUCKETSIZE);
-
 	closedir(main_dir);
 	free(buff);
 	free(arbuff);
 	free(dirpath);
+
+	// created ht
+	FILE* dataset_matches;
+
+	//open dataset file with matches
+    dataset_matches = fopen(argv[2], "r");
+    if (dataset_matches == NULL){ perror("Unable to read directory"); exit(-1);  }
+    printf("File %s opened successfully.\n",argv[1]);
+    
+    size_t buffSize = 250;
+    char* buffMatces;
+    buffMatces = malloc(buffSize*sizeof(char));
+    
+    char* nline;
+    const char commas[3] = ",";
+    char** data = malloc(buffSize*sizeof(char*));
+    char* str;
+
+    //int j=0;
+    getline(&buffMatces,&buffSize,dataset_matches); // read first line of instruction <left_spec_id,right_spec_id,label>
+    
+    //for every line in dataset_matches
+    while(getline(&buffMatces,&buffSize,dataset_matches) != EOF){  
+
+        if((nline = strchr(buffMatces,'\n')))   //find '\n' and erase
+            *nline = 0;
+        str = strtok(buffMatces,commas);   //split into strings (get rid of gaps)
+        int i = 0;
+        while(str!=NULL){ //strtok returns NULL when the whole str is split
+            data[i]=str; //store the different strings into a table
+            str = strtok(NULL,commas); //strtok needs to start from next parameter
+            i++;
+        }     
+
+        char* left_spec_id = calloc(100,sizeof(char)); strcpy(left_spec_id,data[0]);
+        char* right_spec_id = calloc(100,sizeof(char)); strcpy(right_spec_id,data[1]);
+        char* label = calloc(100,sizeof(char)); strcpy(label,data[2]); 
+
+        if(!strcmp(label,"1")){ //if label == 1
+            //find left_spec_id and right_spec_id in hash table
+            unsigned int entryNum1, entryNum2;
+            bucket* bucketFound1;
+            bucket* bucketFound2;
+
+            bool found_left=false; bool found_right = false;
+            for( unsigned int i=0; i<hash_size; i++ ){
+                found_left = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );
+                if(found_left) break;
+            }
+            for( unsigned int i=0; i<hash_size; i++ ){
+                found_right = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
+                if(found_right) break;
+            }
+            if(found_left&&found_right)
+                changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+            
+        }
+
+        free(left_spec_id);free(right_spec_id);free(label);
+    }
+    
+    makeOutputFile(ht, BUCKETSIZE);
+    destroyHT(ht,BUCKETSIZE);
+
+    free(buffMatces);
+    free(data);
+	
 	printf("\nEND\n");
 	return 0;
 }
