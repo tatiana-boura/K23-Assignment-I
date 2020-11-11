@@ -39,6 +39,7 @@ extra notes:
 
 #define BUFFER_SIZE 51000
 #define BUCKETSIZE 100
+#define STRSIZE 100
 
 
 /*
@@ -59,21 +60,18 @@ int main(int argc, char* argv[]){
 	DIR* sub_dir; //sub-directory of main_dir [no inspo for this name either]
 	FILE* json_file;
 
-	char* buff = calloc(BUFFER_SIZE,sizeof(char));
-	assert( buff != NULL );
+	char* buff = calloc(BUFFER_SIZE,sizeof(char)); assert( buff != NULL );
 	memset(buff ,'\0' , BUFFER_SIZE); 
 	
 	//arbuff : extra buffer to help collect & store 
 	//value info in array form from property in .json file 
-	char* arbuff = calloc(BUFFER_SIZE,sizeof(char));
-	assert( arbuff != NULL );
+	char* arbuff = calloc(BUFFER_SIZE,sizeof(char)); assert( arbuff != NULL );
 	memset(arbuff ,'\0' , BUFFER_SIZE); 
 	
 	//-----------Count total number of .json files to initialise hash table size-------------------------- 
 	int json_num = count_json(argv[1]);
-	printf("num = %d\n", json_num);
-
-	//--------------Create Hash table --------------------------------------------------------------------
+	
+	// create hash table
 	unsigned int hash_size = json_num/50;
     hashTable* ht = createHT(hash_size); 
 
@@ -84,8 +82,7 @@ int main(int argc, char* argv[]){
 		perror("Unable to read directory");
 		exit(-1); 
 	}
-	//main directory opened successfully!
-
+	
 	//dirpath: sting to built and store the pathname to each camera spec directory
 	char* dirpath = calloc(200,sizeof(char));  
 	assert( dirpath != NULL );
@@ -94,8 +91,6 @@ int main(int argc, char* argv[]){
 	strcat(dirpath, "/");        //current dirpath: "2013_camera_specs/"
 
 	 
-	//char json_path[200];
-
 	int dirs=0; //num of files in main_dir --> 2013_camera_specs
 	while( (main_dir_entry = readdir(main_dir)) ){  //check each entry in the directory
 		//ignore open current & parent dir
@@ -115,7 +110,7 @@ int main(int argc, char* argv[]){
 			while( (sub_dir_entry = readdir(sub_dir)) ){
 				//ignore current & parent dir
 				if((strcmp(sub_dir_entry->d_name,".")!=0) && (strcmp(sub_dir_entry->d_name,"..")!=0)){ 
-					//printf("\njsonFILE: %s +++++++++++++++++++++++++++++++++++++\n", sub_dir_entry->d_name);  //<<<<<<<<
+					
 					//dirpath: sting to built and store the pathname to each json file
 					char* json_path = calloc(200,sizeof(char));
 					assert( json_path != NULL );
@@ -132,8 +127,8 @@ int main(int argc, char* argv[]){
 						perror("Unable to open file :(");
 						exit(-1);
 					} 
-
 					//--------------create list for json file's property tuples --------------------------------
+					
 					node* spec_list = NULL;
 					
 					//------------Convert properties in json files in tuples ------------------------------------ 
@@ -152,9 +147,8 @@ int main(int argc, char* argv[]){
 								int array_off=0;
 								while(array_off == 0){
 									fgets(arbuff, BUFFER_SIZE, json_file);
-									buff[strlen(buff)-1] = '$'; //overwrite '\n' with special character '$'
+									buff[strlen(buff)-1] = '#'; //overwrite '\n' with special character '#'
 									strcat(buff,arbuff);
-									//puts(buff);
 									//array is not for the last property
 									if((arbuff[strlen(arbuff)-3] == ']') && (arbuff[strlen(arbuff)-2] == ',')){
 										array_off = 1;  //reached the end of the array
@@ -165,54 +159,44 @@ int main(int argc, char* argv[]){
 									}		
 								}
 
-								if(buff==NULL) printf("here\n");
-								/*char temp[BUFFER_SIZE]; temp[BUFFER_SIZE-1]='\0';
-								strcpy(temp,buff);
-								*/
-								
 								json_array_handler(buff, t); 
-								/*if( t->propertyName == NULL ){
-									printf("\nTHIS ONE IS PROBLEMATIC\t  ");
-									printf("%s\n",temp);
-								}*/
+								
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
+
+								//---add tuple to spec-list for json file ----------------------
+								spec_list = appendList(spec_list, t);
 								
 							}else{
 
-								char temp[BUFFER_SIZE]; temp[BUFFER_SIZE-1]='\0';
-								strcpy(temp,buff);
+								// in some files the buffer contains this string "{\n"
+								// -- no info so we are not even consdering using it
+								if( strcmp(buff,"{\n")!=0 ){
+									json_separator(buff,t);
 
-								json_separator(buff,t); 
+									memset(arbuff ,'\0' , BUFFER_SIZE);
+									memset(buff ,'\0' , BUFFER_SIZE);
 
-								memset(arbuff ,'\0' , BUFFER_SIZE);
-								memset(buff ,'\0' , BUFFER_SIZE);
-								
+									//---add tuple to spec-list for json file ----------------------
+									spec_list = appendList(spec_list, t);
+
+								}else{ free(t); t=NULL; }
 							}
-							//---add tuple to spec-list for json file -----------------------------
-							if( t->propertyName!=NULL )
-								spec_list = appendList(spec_list, t);
-							else{ free(t); t=NULL;} 
 						}
 					}
-					//-------------print list -------------------------------------------------
-					//printf("\nLIST\n");
-					//printList(spec_list, (void*)printTuple); 
-					//destroyListOfTuples(spec_list, (void*)tupleDeletion);  
+				
+					//printf("\nLIST\n");  printList(spec_list, (void*)printTuple); 
 
-					//--------------Convert path to be inserted in data structures----------------
+					//--------------Convert path to be inserted in data structures-------------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
 				    // cut "2013_camera_specs/"
 					memmove(json_path,json_path+strlen(argv[1])+1, strlen(json_path)-strlen(argv[1]));
 					char* path = convertPath(json_path);   // fix special character '//' and .json
-					
-					free(json_path);  
-					//free(path);
+										
+					//----ADD PATH & LIST in HT -----------------------------------------------------
 					addtoHT(ht, path, BUCKETSIZE, spec_list);
 
-
-
-					//----ADD PATH & LIST in HT -----------------------------------------------
+					free(json_path);  
 					fclose(json_file);
 				}
 			}	
@@ -224,29 +208,35 @@ int main(int argc, char* argv[]){
 	}
 
 	closedir(main_dir);
-	free(buff);
-	free(arbuff);
-	free(dirpath);
+	free(buff); buff=NULL;
+	free(arbuff); arbuff=NULL;
+	free(dirpath); dirpath=NULL;
 
-	// created ht
+	//___the hash table has now been created -> start making the cliques__________________________________________________
+
 	FILE* dataset_matches;
 
 	//open dataset file with matches
     dataset_matches = fopen(argv[2], "r");
     if (dataset_matches == NULL){ perror("Unable to read directory"); exit(-1);  }
-    printf("File %s opened successfully.\n",argv[1]);
+    
+    printf("\nFile [%s] for finding matches opened successfully.\n",argv[2]);
     
     size_t buffSize = 250;
     char* buffMatces;
-    buffMatces = malloc(buffSize*sizeof(char));
+    buffMatces = calloc(buffSize,sizeof(char)); assert( buffMatces!=NULL);
     
     char* nline;
     const char commas[3] = ",";
-    char** data = malloc(buffSize*sizeof(char*));
+    char** data = calloc(buffSize,sizeof(char*)); assert( data!=NULL );
     char* str;
 
-    //int j=0;
-    getline(&buffMatces,&buffSize,dataset_matches); // read first line of instruction <left_spec_id,right_spec_id,label>
+    char* left_spec_id = calloc(STRSIZE,sizeof(char));
+    char* right_spec_id = calloc(STRSIZE,sizeof(char));
+    char* label = calloc(STRSIZE,sizeof(char)); 
+
+    // read first line of instruction <left_spec_id,right_spec_id,label>
+    getline(&buffMatces,&buffSize,dataset_matches); 
     
     //for every line in dataset_matches
     while(getline(&buffMatces,&buffSize,dataset_matches) != EOF){  
@@ -261,11 +251,12 @@ int main(int argc, char* argv[]){
             i++;
         }     
 
-        char* left_spec_id = calloc(100,sizeof(char)); strcpy(left_spec_id,data[0]);
-        char* right_spec_id = calloc(100,sizeof(char)); strcpy(right_spec_id,data[1]);
-        char* label = calloc(100,sizeof(char)); strcpy(label,data[2]); 
+        strcpy(left_spec_id,data[0]);
+        strcpy(right_spec_id,data[1]);
+        strcpy(label,data[2]); 
 
-        if(!strcmp(label,"1")){ //if label == 1
+        // if label == 1 : the two items belong to the same clique
+        if(!strcmp(label,"1")){
             //find left_spec_id and right_spec_id in hash table
             unsigned int entryNum1, entryNum2;
             bucket* bucketFound1;
@@ -280,21 +271,28 @@ int main(int argc, char* argv[]){
                 found_right = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
                 if(found_right) break;
             }
+            // make both point to the same clique
             if(found_left&&found_right)
                 changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
             
         }
-
-        free(left_spec_id);free(right_spec_id);free(label);
     }
     
+    //----make the output file---------------------------------------------------------
     makeOutputFile(ht, BUCKETSIZE);
+    printf("\nOutput file with name [output.txt] has now been created.\n");
+
+    //--destroy tree and all not needed memo--------------------------------------------
+    printf("\nNow, the memory used in this program is being freed.\n");
     destroyHT(ht,BUCKETSIZE);
 
-    free(buffMatces);
-    free(data);
+    free(buffMatces); buffMatces=NULL;
+    free(data); data=NULL;
+    free(left_spec_id); left_spec_id=NULL;
+    free(right_spec_id); right_spec_id=NULL;
+    free(label); label=NULL;
+    fclose(dataset_matches);
 	
-	printf("\nEND\n");
 	return 0;
 }
 

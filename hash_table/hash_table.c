@@ -309,7 +309,7 @@ void makeOutputFile(hashTable* ht, unsigned int bucketSize){
         }
     }
 
-    // close filw for reading
+    // close file for reading
     fclose(outputFile);
     // we don't need anymore to keep list of visited cliques
     destroyListOfStrings(listOfCliques,false); listOfCliques=NULL;

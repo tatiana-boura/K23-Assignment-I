@@ -151,7 +151,7 @@ void json_array_handler(char* str, TuplePtr t){
 	char* value_buff=NULL;
 	char *token;
 
-	const char sa[2] = "$"; // delimeter: \n
+	const char sa[2] = "#"; // delimeter: #
 
 	// get the first token 
    	token = strtok(str, sa);
@@ -178,7 +178,7 @@ void json_array_handler(char* str, TuplePtr t){
 
 		}else{
 			// time to make the values
-			if((token[0] != ',') && (token[0] != '$') && (token[0] != ' ')){
+			if((token[0] != ',') && (token[0] != '#') && (token[0] != ' ')){
 
 				value_buff = calloc(strlen(token)+1,sizeof(char));
 				memset(value_buff, '\0', (strlen(token)+1)*sizeof(char));
