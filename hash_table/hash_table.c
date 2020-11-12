@@ -105,9 +105,6 @@ void destroyHT(hashTable* ht,unsigned int bucketSize){
     free(ht->table); ht->table=NULL;
     free(ht); ht=NULL;
 
-    destroyListOfStrings(listOfCliques,false);
-
-
     return;
 }
 
@@ -119,13 +116,9 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
         if(table[i]){
             //free bucketEntry's fields
             
-            // if we haven't come across this clique yet, mark it
-            // as visited and then destroy it 
-            if( !addrFoundinList(listOfCliques,table[i]->clique)){
-                listOfCliques=appendList(listOfCliques,table[i]->clique);
-                //printf("%p\n",table[i]->clique);
+            // if we haven't come across this clique yet, destroy it 
+            if( table[i]->clique != NULL )
                 destroyListOfStrings(table[i]->clique,false);
-            }
             
             destroyListOfTuples(table[i]->listOfTuples,(void*)tupleDeletion); 
             free(table[i]->path); table[i]->path=NULL;
@@ -297,7 +290,7 @@ void makeOutputFile(hashTable* ht, unsigned int bucketSize){
                 if( !addrFoundinList(listOfCliques,entryTable[j]->clique)){
                     listOfCliques=appendList(listOfCliques,entryTable[j]->clique);
                     makeOutputFileList(entryTable[j]->clique, outputFile);
-                }
+                }else entryTable[j]->clique=NULL;
             }
 
             temp=temp->next;
