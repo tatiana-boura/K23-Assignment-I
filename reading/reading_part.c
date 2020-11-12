@@ -72,7 +72,7 @@ int main(int argc, char* argv[]){
 	int json_num = count_json(argv[1]);
 	
 	// create hash table
-	unsigned int hash_size = (json_num)*0.75;
+	unsigned int hash_size = (int)(json_num*0.75);
     hashTable* ht = createHT(hash_size); 
 
 
@@ -284,7 +284,7 @@ int main(int argc, char* argv[]){
 
     //--destroy tree and all not needed memo--------------------------------------------
     printf("\nNow, the memory used in this program is being freed.\n");
-    destroyHT(ht,BUCKETSIZE);
+    //destroyHT(ht,BUCKETSIZE);
 
     free(buffMatces); buffMatces=NULL;
     free(data); data=NULL;
