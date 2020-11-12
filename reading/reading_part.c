@@ -284,7 +284,7 @@ int main(int argc, char* argv[]){
 
     //--destroy tree and all not needed memo--------------------------------------------
     printf("\nNow, the memory used in this program is being freed.\n");
-    //destroyHT(ht,BUCKETSIZE);
+    destroyHT(ht,BUCKETSIZE);
 
     free(buffMatces); buffMatces=NULL;
     free(data); data=NULL;
