@@ -121,7 +121,8 @@ void makeOutputFileList(node* n, FILE* outputFile){
 
         while( innerTemp!= NULL ){
             // write same items into clique
-            fprintf(outputFile,"%s \t %s\n",(char*)outterTemp->data, (char*)innerTemp->data );
+            printf("%s \t %s\n",(char*)outterTemp->data, (char*)innerTemp->data );
+            //fprintf(outputFile,"%s \t %s\n",(char*)outterTemp->data, (char*)innerTemp->data );
             innerTemp=innerTemp->next;
         }
         outterTemp=outterTemp->next;

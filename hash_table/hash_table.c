@@ -270,19 +270,19 @@ void printHT(hashTable* ht){
 void makeOutputFile(hashTable* ht, unsigned int bucketSize){
 
     // if output file exists delete it and then remake it( it is append only so it needs to be destroyed)
-    if( access( "output.txt", F_OK ) != -1 )
+   /* if( access( "output.txt", F_OK ) != -1 )
         // file exists
         if (remove("output.txt") != 0){
             //delete it 
             perror("File was not deleted successfully"); return;
         } 
-
+*/
     // make the output file (append only)
     FILE *outputFile;
-
+/*
     outputFile = fopen("output.txt", "a"); 
     if( outputFile==NULL ){ perror("unable to open file\n"); return; } 
-
+*/
     bucketEntry** entryTable;
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
 
@@ -310,7 +310,7 @@ void makeOutputFile(hashTable* ht, unsigned int bucketSize){
     }
 
     // close file for reading
-    fclose(outputFile);
+    //fclose(outputFile);
     // we don't need anymore to keep list of visited cliques
     destroyListOfStrings(listOfCliques,false); listOfCliques=NULL;
 
