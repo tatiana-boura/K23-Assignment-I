@@ -59,8 +59,20 @@ void destroyListOfTuples(node* n, void(*deleteData)(void*)){
     return;
 }
 
-void destroyListOfStrings(node* n, bool destroyDataAsWell ){
+void destroyListOfStrings(node** n, bool destroyDataAsWell ){
 
+    node* current = *n;  
+    node* next;  
+      
+    while (current != NULL){  
+        next = current->next;
+        if(destroyDataAsWell){free(current->data); current->data=NULL; }
+        free(current);  
+        current = next;  
+    }  
+    *n = NULL;  
+    }  
+/*
     if (n == NULL) return;
 
     // if destroyDataAsWell==false it means that nodes data stored in 
@@ -72,7 +84,7 @@ void destroyListOfStrings(node* n, bool destroyDataAsWell ){
     free(n); n=NULL; 
 
     return;
-}
+}*/
 
 // function to help identify the clique
 bool addrFoundinList(node* n,  void* addr ){

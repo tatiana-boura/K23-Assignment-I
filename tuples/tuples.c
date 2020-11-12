@@ -20,7 +20,7 @@ void tupleDeletion(TuplePtr t){
 
 	free(t->propertyName); t->propertyName=NULL;
 
-	destroyListOfStrings(t->propertyValueList,true);
+	destroyListOfStrings(&(t->propertyValueList),true);
 	free(t); t=NULL;
 
 	return;
