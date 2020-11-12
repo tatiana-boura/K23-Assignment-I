@@ -1,4 +1,4 @@
-name: Ex
+name: CompileAndRunProgram
 
 on: [push]
 
