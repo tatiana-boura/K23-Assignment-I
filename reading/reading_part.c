@@ -72,7 +72,7 @@ int main(int argc, char* argv[]){
 	int json_num = count_json(argv[1]);
 	
 	// create hash table
-	unsigned int hash_size = json_num/50;
+	unsigned int hash_size = (json_num)*0.75;
     hashTable* ht = createHT(hash_size); 
 
 

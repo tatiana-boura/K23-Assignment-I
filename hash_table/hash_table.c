@@ -151,14 +151,9 @@ bucketEntry* createEntry(char* _path_, node* _listOfTuples_){
     // create entry of the bucket with name key(path)
     bucketEntry* entry = calloc(1,sizeof(bucketEntry)); assert(entry!=NULL);
 
-    /*entry->path = calloc(strlen(_path_)+1,sizeof(char)); assert(entry->path!=NULL);
-    strcpy(entry->path,_path_);*/
-
     entry->path = _path_;
-
     // create list of tuples <char*,char*>
     entry->listOfTuples = _listOfTuples_;
-
     // create clique -- list of paths
     entry->clique = NULL; entry->clique = appendList(entry->clique,entry->path);
 
@@ -221,7 +216,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         bucket* bucketFound;
         bucketEntry**  entryTable;
 
-        // go through the clique
+        // go through the clique (only the elements of the second one)
         node* tempNode=clique2;
         while(tempNode != NULL){
         // for each path
