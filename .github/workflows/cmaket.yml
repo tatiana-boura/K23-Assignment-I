@@ -11,12 +11,3 @@ jobs:
       run: make
     - name: runit
       run: ./prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_large_labelled_dataset.csv
-    - name: Cache valgrind
-      uses: actions/cache@v1.0.3
-      id: cache-valgrind
-      with:
-          path: "~/valgrind"
-          key: ${{secrets.VALGRIND_VERSION}}
-    - name: valgrind
-      run: valgrind ./prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_large_labelled_dataset.csv
-
