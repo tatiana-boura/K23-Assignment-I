@@ -89,7 +89,6 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTup
         ht->table[index] = bucketPtr; 
     }
 
-    //printBucket(bucketPtr);
     return;
 }
 //_______________________________________________________________________________________________________
@@ -149,6 +148,8 @@ bucketEntry* createEntry(char* _path_, node* _listOfTuples_){
     entry->listOfTuples = _listOfTuples_;
     // create clique -- list of paths
     entry->clique = NULL; entry->clique = appendList(entry->clique,entry->path);
+    // create not clique -- list of pointers to not cliques
+    entry->notClique = NULL; 
 
     return entry;
 }
@@ -221,6 +222,46 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
             tempNode=tempNode->next;
         }
     }
+    return;
+}
+
+void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound1, unsigned int entryNum1, bucket** bucketFound2, unsigned int entryNum2 ){
+
+    bucketEntry**  entryTable1 = (*bucketFound1)->data;
+    node* clique1 = entryTable1[entryNum1]->clique;
+
+    bucketEntry** entryTable2 = (*bucketFound2)->data;
+    node* clique2 = entryTable2[entryNum2]->clique;
+
+    // now add to list of noCliques each other 
+    unsigned int entryNum; 
+    bucket* bucketFound;
+    bucketEntry**  entryTable;
+
+    // go through the clique
+    node* tempNode=clique1;
+    while(tempNode != NULL){
+    // for each path
+        // find path in hash table 
+        foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
+        // append to list of no cliques
+        entryTable = bucketFound->data;
+        entryTable[entryNum]->notClique = appendList(entryTable[entryNum]->notClique,clique2);
+        tempNode=tempNode->next;
+    }
+
+    // go through the clique
+    tempNode=clique2;
+    while(tempNode != NULL){
+    // for each path
+        // find path in hash table 
+        foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
+        // append to list of no cliques
+        entryTable = bucketFound->data;
+        entryTable[entryNum]->notClique = appendList(entryTable[entryNum]->notClique,clique1);
+        tempNode=tempNode->next;
+    }
+    
     return;
 }
 
