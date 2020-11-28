@@ -7,7 +7,7 @@
 #define BUCKETSIZE 50
 #define HTSIZE 2 
 
-//to trexw ws eksis: gcc -o prog testerMain.c ../list/list.c hash_table.c ../tuples/tuples.c
+//to trexw ws eksis:  gcc -o test testerMain.c ../list/list.c ../../tuples/tuples.c hash_table.c
 
 
 int main(void){
