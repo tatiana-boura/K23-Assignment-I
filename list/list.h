@@ -7,11 +7,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include "node.h"
 
-typedef struct node{
-    void* data;
-    struct node* next;
-}node;
 
 node* appendList(node* n, void* data);
 void destroyList(node* n, unsigned int* size, bool del, void(*deleteData)(void*,void*));
