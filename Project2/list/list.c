@@ -120,7 +120,7 @@ void makeOutputFileList(node* n, FILE* outputFile){
         innerTemp=outterTemp->next;
 
         while( innerTemp!= NULL ){
-            // write same items into clique
+            // clique is a list of pointers to bucketEntries
             bucketEntry* inner = innerTemp->data;
             bucketEntry* outter = outterTemp->data;
             fprintf(outputFile,"%s \t %s\n",(char*)outter->path, (char*)inner->path );
