@@ -197,6 +197,8 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     node* clique1 = entryTable1[entryNum1]->clique;
     node* notClique1 = entryTable1[entryNum1]->notClique;
 
+    // this is needed only for the occasion if the first of  
+    // the two bucketentries is not linked to a -1 clique
     bool goThroughBothLists=false;
     if(notClique1==NULL) goThroughBothLists=true;
 
@@ -214,10 +216,10 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         // now adjust the pointers of all items in clique to show to the same list(clique)
         bucketEntry* entry;
 
-        // go through the clique (only the elements of the second)
+        // go through the clique (usually sonly the elements of the second)
         node* tempNode;
         (goThroughBothLists) ? (tempNode=clique1) : (tempNode=clique2);
-
+        // adjust -1 clique to the rest of the clique
         while(tempNode != NULL){
         	entry = (bucketEntry*)tempNode->data;
             entry->clique=clique1;
@@ -231,6 +233,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 
 void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound1, unsigned int entryNum1, bucket** bucketFound2, unsigned int entryNum2 ){
 
+	// get the cliques
     bucketEntry**  entryTable1 = (*bucketFound1)->data;
     node* clique1 = entryTable1[entryNum1]->clique;
 
@@ -240,10 +243,11 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     // now add to list of noCliques each other 
     bucketEntry* entry;
 
+    // for each clique mark the other as -1
+
     // go through the 1st clique
     node* tempNode=clique1;
     while(tempNode != NULL){
-    // for each path
         entry = (bucketEntry*)tempNode->data;
         entry->notClique = appendList(entry->notClique,clique2);
         tempNode=tempNode->next;
@@ -252,7 +256,6 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     // go through the 2nd clique
     tempNode=clique2;
     while(tempNode != NULL){
-    // for each path
         entry = (bucketEntry*)tempNode->data;
         entry->notClique = appendList(entry->notClique,clique1);
         tempNode=tempNode->next;
