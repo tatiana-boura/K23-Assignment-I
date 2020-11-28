@@ -20,6 +20,7 @@ int main(void){
 	char* s4 = calloc(100,sizeof(char)); strcpy(s4,"https://netflix/favourites.com");
 	char* s5 = calloc(100,sizeof(char)); strcpy(s5,"https://aegeanairlines/tickets.com");
 	char* s6 = calloc(100,sizeof(char)); strcpy(s6,"https://ebay/home0.com");
+	char* s7 = calloc(100,sizeof(char)); strcpy(s7,"https://milko/milko.gr");
 
 	char* k1 = calloc(20,sizeof(char)); strcpy(k1,"one");
 	char* k2 = calloc(20,sizeof(char)); strcpy(k2,"two");
@@ -47,6 +48,8 @@ int main(void){
 	char* k24 = calloc(20,sizeof(char)); strcpy(k24,"twentyfour");
 	char* k25 = calloc(20,sizeof(char)); strcpy(k25,"twentyfive");
 	char* k26 = calloc(20,sizeof(char)); strcpy(k26,"twentysix");
+	char* k27 = calloc(20,sizeof(char)); strcpy(k27,"twentyseven");
+	char* k28 = calloc(20,sizeof(char)); strcpy(k28,"twentyeight");
 
 	TuplePtr t1 = calloc(1,sizeof(Tuple)); tupleInitialization(t1,k1,k2);
 	insertAtValueList(t1,k21); insertAtValueList(t1,k22); insertAtValueList(t1,k23); insertAtValueList(t1,k24);
@@ -60,6 +63,7 @@ int main(void){
 	TuplePtr t8 = calloc(1,sizeof(Tuple)); tupleInitialization(t8,k15,k16);
 	TuplePtr t9 = calloc(1,sizeof(Tuple)); tupleInitialization(t9,k17,k18);
 	TuplePtr t10 = calloc(1,sizeof(Tuple)); tupleInitialization(t10,k19,k20);
+	TuplePtr t11 = calloc(1,sizeof(Tuple)); tupleInitialization(t11,k27,k28);
 
 
 	node* l1=NULL; l1 = appendList(l1,t1); l1 = appendList(l1,t2); l1 = appendList(l1,t3); l1 = appendList(l1,t4);
@@ -68,54 +72,20 @@ int main(void){
 	node* l4=NULL; l4 = appendList(l4,t8);
 	node* l5=NULL; l5 = appendList(l5,t9);
 	node* l6=NULL; l6 = appendList(l6,t10);
+	node* l7=NULL; l7 = appendList(l7,t11);
 
 
 	hashTable* ht = createHT(HTSIZE);
 
 	addtoHT(ht, s1, BUCKETSIZE, l1);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s2, BUCKETSIZE, l2);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s3, BUCKETSIZE, l3);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s4, BUCKETSIZE ,l4);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s5, BUCKETSIZE ,l5);
-	printf("--------------------------------------\n");
 	addtoHT(ht, s6, BUCKETSIZE ,l6);
+	addtoHT(ht, s7, BUCKETSIZE ,l7);
 
 	//__END_INITIALIZING_HASH_TABLE____________________________________________________________________________________
-
-	//__CHECK_THAT_FOUND_INT_HT_FUNCTION_WORKS_________________________________________________________________________
-
-	printf("\n");
-
-	unsigned int entryNum;
-	bucket* bucketFound;
-
-	bool found=false;
-	
-	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s1, BUCKETSIZE, &entryNum, &bucketFound );
-		if(found) break;
-	}
-
-	if(found) printf("found\n");
-	else printf("not found\n");
-
-	found=false;
-
-	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, "an to vreis sfira mou", BUCKETSIZE, &entryNum, &bucketFound );
-		if(found) break;
-	}
-
-	if(found) printf("found\n");
-	else printf("not found\n");
-
-	printf("\n");
-
-	//__END__CHECK_THAT_FOUND_INT_HT_FUNCTION_WORKS____________________________________________________________________
 
 	//__PLAY_WITH_POINTERS_____________________________________________________________________________________________
 
@@ -123,7 +93,25 @@ int main(void){
 	bucket* bucketFound1;
 	bucket* bucketFound2;
 
+	bool found=false;
+
 	found=false;
+	
+	for( unsigned int i=0; i<HTSIZE; i++ ){
+		found = foundInHT(ht, s2, BUCKETSIZE, &entryNum1, &bucketFound1 );
+		if(found) break;
+	}
+
+	found=false;
+
+	for( unsigned int i=0; i<HTSIZE; i++ ){
+		found = foundInHT(ht, s6, BUCKETSIZE, &entryNum2, &bucketFound2 );
+		if(found) break;
+	}
+
+	adjustPointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+
+
 	
 	for( unsigned int i=0; i<HTSIZE; i++ ){
 		found = foundInHT(ht, s1, BUCKETSIZE, &entryNum1, &bucketFound1 );
@@ -155,10 +143,29 @@ int main(void){
 
 	changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
 
+
 	found=false;
 	
 	for( unsigned int i=0; i<HTSIZE; i++ ){
-		found = foundInHT(ht, s6, BUCKETSIZE, &entryNum1, &bucketFound1 );
+		found = foundInHT(ht, s2, BUCKETSIZE, &entryNum1, &bucketFound1 );
+		if(found) break;
+	}
+
+	found=false;
+
+	for( unsigned int i=0; i<HTSIZE; i++ ){
+		found = foundInHT(ht, s5, BUCKETSIZE, &entryNum2, &bucketFound2 );
+		if(found) break;
+	}
+
+	changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+
+
+
+	found=false;
+
+	for( unsigned int i=0; i<HTSIZE; i++ ){
+		found = foundInHT(ht, s5, BUCKETSIZE, &entryNum1, &bucketFound1 );
 		if(found) break;
 	}
 
@@ -169,21 +176,35 @@ int main(void){
 		if(found) break;
 	}
 
+	adjustPointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+
+	found=false;
+	
+	for( unsigned int i=0; i<HTSIZE; i++ ){
+		found = foundInHT(ht, s3, BUCKETSIZE, &entryNum1, &bucketFound1 );
+		if(found) break;
+	}
+
+	found=false;
+
+	for( unsigned int i=0; i<HTSIZE; i++ ){
+		found = foundInHT(ht, s7, BUCKETSIZE, &entryNum2, &bucketFound2 );
+		if(found) break;
+	}
+
 	changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
 
-	//printHT(ht);
+	printHT(ht);
+	
+	//________________________________________________________________________________________________________________
 
 	makeOutputFile(ht, BUCKETSIZE);
-
 
 	//__END_PLAY_WITH_POINTERS_________________________________________________________________________________________
 
 	//_MEM_DEALLOC_____________________________________________________________________________________________________
 
 	destroyHT(ht,BUCKETSIZE);
-
-	//free(s1); s1=NULL; free(s2); s2=NULL; free(s3); s3=NULL; free(s4); s4=NULL; free(s5); s5=NULL; free(s6); s6=NULL;
-	
 
 	return 0;
 }

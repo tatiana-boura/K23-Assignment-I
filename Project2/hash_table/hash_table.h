@@ -3,15 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "../../list/list.h"
+#include "../list/list.h"
 #include "../../tuples/tuples.h"
-
-typedef struct bucketEntry{
-    char* path;
-    node* listOfTuples;
-    node* clique;
-    node* notClique; 
-}bucketEntry;
+#include "bucket.h"
 
 typedef node bucket;
 

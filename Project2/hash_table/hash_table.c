@@ -147,7 +147,7 @@ bucketEntry* createEntry(char* _path_, node* _listOfTuples_){
     // create list of tuples <char*,char*>
     entry->listOfTuples = _listOfTuples_;
     // create clique -- list of paths
-    entry->clique = NULL; entry->clique = appendList(entry->clique,entry->path);
+    entry->clique = NULL; entry->clique = appendList(entry->clique,entry);
     // create not clique -- list of pointers to not cliques
     entry->notClique = NULL; 
 
@@ -195,30 +195,34 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     // first go to the first one and get the clique(list)
     bucketEntry**  entryTable1 = (*bucketFound1)->data;
     node* clique1 = entryTable1[entryNum1]->clique;
+    node* notClique1 = entryTable1[entryNum1]->notClique;
+
+    bool goThroughBothLists=false;
+    if(notClique1==NULL) goThroughBothLists=true;
 
     // then go to second one and do the same
     bucketEntry** entryTable2 = (*bucketFound2)->data;
     node* clique2 = entryTable2[entryNum2]->clique;
+    node* notClique2 = entryTable2[entryNum2]->notClique;
 
     // if cliques aren't already the same
     if (clique1!=clique2){
         // merge the two lists
         clique1=mergeTwoLists(clique1,clique2);
+        notClique1=mergeTwoLists(notClique1,notClique2);
     
         // now adjust the pointers of all items in clique to show to the same list(clique)
-        unsigned int entryNum; 
-        bucket* bucketFound;
-        bucketEntry**  entryTable;
+        bucketEntry* entry;
 
         // go through the clique (only the elements of the second)
-        node* tempNode=clique2;
+        node* tempNode;
+        (goThroughBothLists) ? (tempNode=clique1) : (tempNode=clique2);
+
         while(tempNode != NULL){
-        // for each path
-            // find path in hash table 
-            foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
-            // make it point to the new clique
-            entryTable = bucketFound->data;
-            entryTable[entryNum]->clique=clique1;
+        	entry = (bucketEntry*)tempNode->data;
+            entry->clique=clique1;
+            entry->notClique=notClique1;
+
             tempNode=tempNode->next;
         }
     }
@@ -234,34 +238,26 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     node* clique2 = entryTable2[entryNum2]->clique;
 
     // now add to list of noCliques each other 
-    unsigned int entryNum; 
-    bucket* bucketFound;
-    bucketEntry**  entryTable;
+    bucketEntry* entry;
 
-    // go through the clique
+    // go through the 1st clique
     node* tempNode=clique1;
     while(tempNode != NULL){
     // for each path
-        // find path in hash table 
-        foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
-        // append to list of no cliques
-        entryTable = bucketFound->data;
-        entryTable[entryNum]->notClique = appendList(entryTable[entryNum]->notClique,clique2);
+        entry = (bucketEntry*)tempNode->data;
+        entry->notClique = appendList(entry->notClique,clique2);
         tempNode=tempNode->next;
     }
 
-    // go through the clique
+    // go through the 2nd clique
     tempNode=clique2;
     while(tempNode != NULL){
     // for each path
-        // find path in hash table 
-        foundInHT(ht,(char*)tempNode->data,bucketSize, &entryNum, &bucketFound );
-        // append to list of no cliques
-        entryTable = bucketFound->data;
-        entryTable[entryNum]->notClique = appendList(entryTable[entryNum]->notClique,clique1);
+        entry = (bucketEntry*)tempNode->data;
+        entry->notClique = appendList(entry->notClique,clique1);
         tempNode=tempNode->next;
     }
-    
+
     return;
 }
 
@@ -275,12 +271,43 @@ void printBucket(node* b){
     while(temp!=NULL){
 
         bucketEntry** entryTable = temp->data;
+
         for(int i = 0;i<5;i++){
+
             if((entryTable[i]!=NULL)){
-                printList(entryTable[i]->listOfTuples,(void*)printTuple);
-                //printf("%s is equal to\n\n",entryTable[i]->path );
-                //printList(entryTable[i]->clique,NULL);
-                printf("\n");
+
+            	printf("__________________________________________________________________________\n");
+                printf("\n%s is equal to\n\n",entryTable[i]->path );
+
+                node* n;
+                bucketEntry* entryIn;
+                node* tempNode=entryTable[i]->clique;
+			    while( tempNode !=  NULL ){
+
+			        entryIn = (bucketEntry*)tempNode->data;
+			        printf("%s\n", (char*)entryIn->path );
+
+			        tempNode=tempNode->next;
+			    }
+               
+                printf("\n%s is not equal to\n\n",entryTable[i]->path );
+
+                tempNode=entryTable[i]->notClique;
+			    while( tempNode !=  NULL ){
+
+			    	n = tempNode->data;
+			    	bucketEntry* entryOut = n->data;
+			    	node* innerTemp = entryOut->clique;
+
+			        while( innerTemp != NULL ){
+			        	entryIn = (bucketEntry*)innerTemp->data;
+			        	printf("%s\n", (char*)entryIn->path );
+			        	innerTemp = innerTemp->next;
+	        		}
+
+			        tempNode=tempNode->next;
+			        printf("\n");
+			    }
             }
         }
         temp=temp->next;
