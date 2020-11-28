@@ -275,7 +275,7 @@ int main(int argc, char* argv[]){
         	// if label == 1 : the two items belong to the same clique
         	if(!strcmp(label,"1")) // make both point to the same clique
                 changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
-            else // label == 0 : the two items don't belong to the same clique
+            else // label == 0 : the two items don't belong to the same clique -- mark them as -1
             	adjustPointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
         }       
     }
