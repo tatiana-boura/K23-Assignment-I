@@ -38,7 +38,7 @@ extra notes:
 #include "../hash_table/hash_table.h"
 
 #define BUFFER_SIZE 51000
-#define BUCKETSIZE 100
+#define BUCKETSIZE 200
 #define STRSIZE 100
 
 
@@ -255,27 +255,29 @@ int main(int argc, char* argv[]){
         strcpy(right_spec_id,data[1]);
         strcpy(label,data[2]); 
 
-        // if label == 1 : the two items belong to the same clique
-        if(!strcmp(label,"1")){
-            //find left_spec_id and right_spec_id in hash table
-            unsigned int entryNum1, entryNum2;
-            bucket* bucketFound1;
-            bucket* bucketFound2;
+        unsigned int entryNum1, entryNum2;
+        bucket* bucketFound1;
+        bucket* bucketFound2;
 
-            bool found_left=false; bool found_right = false;
-            for( unsigned int i=0; i<hash_size; i++ ){
-                found_left = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );
-                if(found_left) break;
-            }
-            for( unsigned int i=0; i<hash_size; i++ ){
-                found_right = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
-                if(found_right) break;
-            }
-            // make both point to the same clique
-            if(found_left&&found_right)
-                changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
-            
+        //find left_spec_id and right_spec_id in hash table
+        bool found_left=false; bool found_right = false;
+        for( unsigned int i=0; i<hash_size; i++ ){
+            found_left = foundInHT(ht, left_spec_id, BUCKETSIZE, &entryNum1, &bucketFound1 );
+            if(found_left) break;
         }
+        for( unsigned int i=0; i<hash_size; i++ ){
+            found_right = foundInHT(ht, right_spec_id, BUCKETSIZE, &entryNum2, &bucketFound2 );
+            if(found_right) break;
+        }
+
+        // if they are found
+        if(found_left&&found_right){
+        	// if label == 1 : the two items belong to the same clique
+        	if(!strcmp(label,"1")) // make both point to the same clique
+                changePointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+            else // label == 0 : the two items don't belong to the same clique
+            	adjustPointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
+        }       
     }
     
     //----make the output file---------------------------------------------------------
