@@ -279,6 +279,8 @@ int main(int argc, char* argv[]){
             	adjustPointers(ht, BUCKETSIZE,&bucketFound1, entryNum1, &bucketFound2, entryNum2 );
         }       
     }
+
+    //printHT(ht);
     
     //----make the output file---------------------------------------------------------
     makeOutputFile(ht, BUCKETSIZE);

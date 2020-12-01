@@ -20,6 +20,28 @@ node* mergeTwoLists(node* n1, node* n2){
     
 }
 
+void deleteNode(node** n, void* addr){ 
+      
+    node* temp = *n; 
+    node* prev = NULL; 
+      
+    if (temp != NULL && temp->data == addr) { 
+        *n = temp->next;
+        free(temp); temp=NULL;          
+        return; 
+    } 
+  
+    while (temp != NULL && temp->data != addr){ 
+        prev = temp; 
+        temp = temp->next; 
+    } 
+  
+    if (temp == NULL) return; 
+  
+    prev->next = temp->next; 
+    free(temp); temp=NULL; 
+} 
+
 void destroyList(node* n, unsigned int* size, bool del, void(*deleteData)(void*,void*)){
     
     node* oldhead = NULL;
@@ -119,7 +141,7 @@ void makeOutputFileList(node* n, FILE* outputFile){
         // and begins printing it with the item that follow
         innerTemp=outterTemp->next;
 
-        while( innerTemp!= NULL ){
+        while( innerTemp!= NULL ){ 
             // clique is a list of pointers to bucketEntries
             bucketEntry* inner = innerTemp->data;
             bucketEntry* outter = outterTemp->data;

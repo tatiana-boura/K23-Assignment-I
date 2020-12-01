@@ -1,6 +1,7 @@
 #include "hash_table.h"
 
 node* listOfCliques=NULL;
+node* listOfNotCliques=NULL;
 
 //__hash_function________________________________________________________________________________________
 
@@ -104,6 +105,8 @@ void destroyHT(hashTable* ht,unsigned int bucketSize){
     free(ht->table); ht->table=NULL;
     free(ht); ht=NULL;
 
+    destroyListOfStrings(listOfNotCliques,false);
+
     return;
 }
 
@@ -116,9 +119,19 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
             //free bucketEntry's fields
             
             // if we haven't come across this clique yet, destroy it 
-            if( table[i]->clique != NULL )
+            if( table[i]->clique != NULL ){
                 destroyListOfStrings(table[i]->clique,false);
+            	//destroyListOfStrings(table[i]->notClique,false);
+            	
+            }
+            if( !addrFoundinList(listOfNotCliques,table[i]->notClique)){
+            		listOfNotCliques = appendList(listOfNotCliques,table[i]->notClique);
+            		destroyListOfStrings(table[i]->notClique,false);
+            		//table[i]->notClique=NULL;
+            	}
             
+            //destroyListOfStrings(table[i]->notClique,false);
+
             destroyListOfTuples(table[i]->listOfTuples,(void*)tupleDeletion); 
             free(table[i]->path); table[i]->path=NULL;
             free(table[i]); table[i]=NULL;
@@ -211,23 +224,39 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     if (clique1!=clique2){
         // merge the two lists
         clique1=mergeTwoLists(clique1,clique2);
-        notClique1=mergeTwoLists(notClique1,notClique2);
-    
+
+        node* t=notClique2;
+
+        if( notClique1 != notClique2 ){
+	        while( t!=NULL ){
+	        	// make a compact notClique list
+	        	if( !addrFoundinList(notClique1,t->data) )
+	        		notClique1 = appendList(notClique1,t->data);
+	        	
+	        	t=t->next;
+	        }
+			// destroy the previus one      
+	        destroyListOfStrings(notClique2,false);
+	    }
+
+	        //destroyListOfStrings(notClique2,false);
+
+
         // now adjust the pointers of all items in clique to show to the same list(clique)
         bucketEntry* entry;
+        // go through the clique (usually only the elements of the second)
+	    node* tempNode; 
+	    (goThroughBothLists) ? (tempNode=clique1) : (tempNode=clique2);
 
-        // go through the clique (usually sonly the elements of the second)
-        node* tempNode;
-        (goThroughBothLists) ? (tempNode=clique1) : (tempNode=clique2);
         // adjust -1 clique to the rest of the clique
         while(tempNode != NULL){
         	entry = (bucketEntry*)tempNode->data;
             entry->clique=clique1;
             entry->notClique=notClique1;
-
             tempNode=tempNode->next;
         }
     }
+
     return;
 }
 
@@ -244,20 +273,42 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     bucketEntry* entry;
 
     // for each clique mark the other as -1
-
+    node* n;
     // go through the 1st clique
     node* tempNode=clique1;
+    bool firstIter=true;
+
     while(tempNode != NULL){
         entry = (bucketEntry*)tempNode->data;
-        entry->notClique = appendList(entry->notClique,clique2);
+        // the point is that the members of the same clique should 
+        // have the same notClique (pointer is the same)
+        //if( !addrFoundinList(entry->notClique,clique2) ){
+        	if(firstIter){
+        		entry->notClique = appendList(entry->notClique,clique2);
+        		n = entry->notClique;
+        		firstIter=false;
+        	
+        	}else entry->notClique = n;
+    	//}
+
         tempNode=tempNode->next;
     }
 
     // go through the 2nd clique
     tempNode=clique2;
+    firstIter=true;
+
     while(tempNode != NULL){
         entry = (bucketEntry*)tempNode->data;
-        entry->notClique = appendList(entry->notClique,clique1);
+        //if( !addrFoundinList(entry->notClique,clique1) ){
+        	if(firstIter){
+        		entry->notClique = appendList(entry->notClique,clique1);
+        		n = entry->notClique;
+        		firstIter=false;
+        	
+        	}else entry->notClique = n;
+    	//}
+
         tempNode=tempNode->next;
     }
 
@@ -268,7 +319,7 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 //__PRINTS__________________________________________________________________________________
 void printBucket(node* b){
     
-    if(b == NULL){ printf("Empty Bucket\n"); return; }
+    if(b == NULL){ /*printf("Empty Bucket\n");*/ return; }
     node* temp = b;
 
     while(temp!=NULL){
@@ -279,23 +330,29 @@ void printBucket(node* b){
 
             if((entryTable[i]!=NULL)){
 
-            	printf("__________________________________________________________________________\n");
-                printf("\n%s is equal to\n\n",entryTable[i]->path );
-
-                node* n;
+            	node* n;
                 bucketEntry* entryIn;
                 node* tempNode=entryTable[i]->clique;
-			    while( tempNode !=  NULL ){
 
-			        entryIn = (bucketEntry*)tempNode->data;
-			        printf("%s\n", (char*)entryIn->path );
+                if( strcmp(entryTable[i]->path,"buy.net//6145")==0) printf("[%s]\n",entryTable[i]->path);
 
-			        tempNode=tempNode->next;
-			    }
+                if(tempNode!=NULL && tempNode->next!=NULL){
+            		printf("__________________________________________________________________________\n");
+                	printf("\n%s is equal to\n\n",entryTable[i]->path );
+                
+				    while( tempNode !=  NULL ){
+
+				        entryIn = (bucketEntry*)tempNode->data;
+				        printf("%s\n", (char*)entryIn->path );
+
+				        tempNode=tempNode->next;
+				    }
+				}
+
+			    tempNode=entryTable[i]->notClique;
                
-                printf("\n%s is not equal to\n\n",entryTable[i]->path );
+               if(tempNode!=NULL) printf("\n%s is not equal to\n\n",entryTable[i]->path );
 
-                tempNode=entryTable[i]->notClique;
 			    while( tempNode !=  NULL ){
 
 			    	n = tempNode->data;
@@ -307,9 +364,8 @@ void printBucket(node* b){
 			        	printf("%s\n", (char*)entryIn->path );
 			        	innerTemp = innerTemp->next;
 	        		}
-
+	        		printf("\n");
 			        tempNode=tempNode->next;
-			        printf("\n");
 			    }
             }
         }
