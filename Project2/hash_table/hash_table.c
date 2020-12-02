@@ -285,14 +285,14 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         entry = (bucketEntry*)tempNode->data;
         // the point is that the members of the same clique should 
         // have the same notClique (pointer is the same)
-        //if( !addrFoundinList(entry->notClique,clique2) ){
+        if( !addrFoundinList(entry->notClique,clique2) ){
         	if(firstIter){
         		entry->notClique = appendList(entry->notClique,clique2);
         		n = entry->notClique;
         		firstIter=false;
         	
         	}else entry->notClique = n;
-    	//}
+    	}
 
         tempNode=tempNode->next;
     }
@@ -303,14 +303,14 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 
     while(tempNode != NULL){
         entry = (bucketEntry*)tempNode->data;
-        //if( !addrFoundinList(entry->notClique,clique1) ){
+        if( !addrFoundinList(entry->notClique,clique1) ){
         	if(firstIter){
         		entry->notClique = appendList(entry->notClique,clique1);
         		n = entry->notClique;
         		firstIter=false;
         	
         	}else entry->notClique = n;
-    	//}
+    	}
 
         tempNode=tempNode->next;
     }
