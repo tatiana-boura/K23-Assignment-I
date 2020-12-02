@@ -253,7 +253,11 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 	        destroyListOfStrings(notClique2,false);
 	    }
 
-
+	    /*
+	    now nodes:
+	    clique1 = merged lists of given cliques
+	    notClique1 = merged lists of given cliques
+	    */
 
         // now adjust the pointers of all items in clique to show to the same list(clique)
         bucketEntry* entry;
@@ -267,6 +271,19 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
             entry->notClique=notClique1;
             tempNode=tempNode->next;
         }
+
+        //now all the enties of clique1 have pointers to merged clique and notClique of qiven cliques (if dat makes sense) 
+        //---addition: adjust pointers of clique2 too--------------------------------
+        tempNode=clique2;
+        // adjust -1 clique to the rest of the clique
+        while(tempNode != NULL){
+        	entry = (bucketEntry*)tempNode->data;
+            entry->clique=clique1;
+            entry->notClique=notClique1;
+            tempNode=tempNode->next;
+        }
+        //now all the enties of clique2 have pointers to merged clique and notClique of qiven cliques (-//- -//-)
+        //---------------------------------------------------------------------------
     }
 
     return;
