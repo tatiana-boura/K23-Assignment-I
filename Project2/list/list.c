@@ -25,6 +25,7 @@ void deleteNode(node** n, void* addr){
     node* temp = *n; 
     node* prev = NULL; 
       
+    // is head  
     if (temp != NULL && temp->data == addr) { 
         *n = temp->next;
         free(temp); temp=NULL;          
@@ -36,11 +37,14 @@ void deleteNode(node** n, void* addr){
         temp = temp->next; 
     } 
   
+    // not found
     if (temp == NULL) return; 
   
+    // find and delete
     prev->next = temp->next; 
     free(temp); temp=NULL; 
 } 
+ 
 
 void destroyList(node* n, unsigned int* size, bool del, void(*deleteData)(void*,void*)){
     

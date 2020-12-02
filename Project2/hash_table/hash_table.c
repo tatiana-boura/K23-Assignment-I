@@ -210,11 +210,6 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     node* clique1 = entryTable1[entryNum1]->clique;
     node* notClique1 = entryTable1[entryNum1]->notClique;
 
-    // this is needed only for the occasion if the first of  
-    // the two bucketentries is not linked to a -1 clique
-    bool goThroughBothLists=false;
-    if(notClique1==NULL) goThroughBothLists=true;
-
     // then go to second one and do the same
     bucketEntry** entryTable2 = (*bucketFound2)->data;
     node* clique2 = entryTable2[entryNum2]->clique;
@@ -227,27 +222,44 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 
         node* t=notClique2;
 
-        if( notClique1 != notClique2 ){
+        if( notClique1!=notClique2 ){
 	        while( t!=NULL ){
 	        	// make a compact notClique list
-	        	if( !addrFoundinList(notClique1,t->data) )
+	        	if( !addrFoundinList(notClique1,t->data) ){
+	        		// if notCliques have not that element in common 
 	        		notClique1 = appendList(notClique1,t->data);
-	        	
-	        	t=t->next;
+	        	}else{
+	        		// in order to delete duplicates in noClique clique
+	        		node* n_ = t->data; bucketEntry* e_ = n_->data;
+	        		deleteNode(&(e_->notClique),clique2);
+	        		
+	        		/*node* _t_=notClique1;
+	        		while( _t_ !=  NULL ){
+
+			    		node* _n = _t_->data; bucketEntry* _e = _n->data;
+			    		n_ = t->data; e_ = n_->data;
+			    		
+			    		if( !strcmp(e_->path,_e->path) ){
+			    			deleteNode(&(_e->notClique),clique1);
+			    			break;
+			    		}
+
+			        	_t_=_t_->next;
+			   		}*/
+	        	}
+	        	t = t->next;
 	        }
-			// destroy the previus one      
+			// destroy the previous one      
 	        destroyListOfStrings(notClique2,false);
 	    }
 
-	        //destroyListOfStrings(notClique2,false);
 
 
         // now adjust the pointers of all items in clique to show to the same list(clique)
         bucketEntry* entry;
         // go through the clique (usually only the elements of the second)
 	    node* tempNode; 
-	    (goThroughBothLists) ? (tempNode=clique1) : (tempNode=clique2);
-
+	    tempNode=clique1;
         // adjust -1 clique to the rest of the clique
         while(tempNode != NULL){
         	entry = (bucketEntry*)tempNode->data;
@@ -333,8 +345,6 @@ void printBucket(node* b){
             	node* n;
                 bucketEntry* entryIn;
                 node* tempNode=entryTable[i]->clique;
-
-                if( strcmp(entryTable[i]->path,"buy.net//6145")==0) printf("[%s]\n",entryTable[i]->path);
 
                 if(tempNode!=NULL && tempNode->next!=NULL){
             		printf("__________________________________________________________________________\n");
