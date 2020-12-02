@@ -232,20 +232,6 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 	        		// in order to delete duplicates in noClique clique
 	        		node* n_ = t->data; bucketEntry* e_ = n_->data;
 	        		deleteNode(&(e_->notClique),clique2);
-	        		
-	        		/*node* _t_=notClique1;
-	        		while( _t_ !=  NULL ){
-
-			    		node* _n = _t_->data; bucketEntry* _e = _n->data;
-			    		n_ = t->data; e_ = n_->data;
-			    		
-			    		if( !strcmp(e_->path,_e->path) ){
-			    			deleteNode(&(_e->notClique),clique1);
-			    			break;
-			    		}
-
-			        	_t_=_t_->next;
-			   		}*/
 	        	}
 	        	t = t->next;
 	        }
