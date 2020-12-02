@@ -258,18 +258,6 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
             tempNode=tempNode->next;
         }
 
-        //now all the enties of clique1 have pointers to merged clique and notClique of qiven cliques (if dat makes sense) 
-        //---addition: adjust pointers of clique2 too--------------------------------
-        tempNode=clique2;
-        // adjust -1 clique to the rest of the clique
-        while(tempNode != NULL){
-        	entry = (bucketEntry*)tempNode->data;
-            entry->clique=clique1;
-            entry->notClique=notClique1;
-            tempNode=tempNode->next;
-        }
-        //now all the enties of clique2 have pointers to merged clique and notClique of qiven cliques (-//- -//-)
-        //---------------------------------------------------------------------------
     }
 
     return;
