@@ -231,7 +231,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 	        	}else{
 	        		// in order to delete duplicates in noClique clique
 	        		node* n_ = t->data; bucketEntry* e_ = n_->data;
-	        		deleteNode(&(e_->notClique),clique2);
+	        		//deleteNode(&(e_->notClique),clique2);
 	        	}
 	        	t = t->next;
 	        }
@@ -242,7 +242,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 	    /*
 	    now nodes:
 	    clique1 = merged lists of given cliques
-	    notClique1 = merged lists of given cliques
+	    notClique1 = merged lists of given no cliques
 	    */
 
         // now adjust the pointers of all items in clique to show to the same list(clique)
@@ -292,7 +292,7 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         		firstIter=false;
         	
         	}else entry->notClique = n;
-    	}
+    	}else break;
 
         tempNode=tempNode->next;
     }
@@ -310,7 +310,7 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         		firstIter=false;
         	
         	}else entry->notClique = n;
-    	}
+    	}else break;
 
         tempNode=tempNode->next;
     }
