@@ -239,7 +239,7 @@ int main(int argc, char* argv[]){
     getline(&buffMatces,&buffSize,dataset_matches); 
     
     //for every line in dataset_matches
-    while(getline(&buffMatces,&buffSize,dataset_matches) != EOF){  
+    while(getline(&buffMatces,&buffSize,dataset_matches) != EOF){
 
         if((nline = strchr(buffMatces,'\n')))   //find '\n' and erase
             *nline = 0;

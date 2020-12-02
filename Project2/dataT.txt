@@ -1,3 +1,6 @@
 left_spec_id,right_spec_id,label
-www.ebay.com//42173,www.ebay.com//54482,1
-buy.net//6145,www.ebay.com//54482,0
+www.camerafarm.com.au//740,www.ebay.com//24608,0
+www.camerafarm.com.au//740,www.ebay.com//57000,1
+www.ebay.com//48059,www.ebay.com//57000,0
+www.ebay.com//24608,www.ebay.com//48059,1
+www.ebay.com//57000,www.ebay.com//57071,0

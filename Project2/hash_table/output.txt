@@ -1,6 +1,0 @@
-https://ebay/home.com 	 https://aegeanairlines/tickets.com
-https://ebay/home.com 	 https://skroutz/chilly.com
-https://ebay/home.com 	 https://amazon/lavie.com
-https://aegeanairlines/tickets.com 	 https://skroutz/chilly.com
-https://aegeanairlines/tickets.com 	 https://amazon/lavie.com
-https://skroutz/chilly.com 	 https://amazon/lavie.com

@@ -221,7 +221,6 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         clique1=mergeTwoLists(clique1,clique2);
 
         node* t=notClique2;
-
         if( notClique1!=notClique2 ){
 	        while( t!=NULL ){
 	        	// make a compact notClique list
@@ -231,7 +230,10 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 	        	}else{
 	        		// in order to delete duplicates in noClique clique
 	        		node* n_ = t->data; bucketEntry* e_ = n_->data;
-	        		//deleteNode(&(e_->notClique),clique2);
+	        		deleteNode(&(e_->notClique),clique2);
+                    bucketEntry* bb = clique2->data;
+                    printf("%p\n",clique2 );
+                    //printf("{%s}--{%s}\n", e_->path,bb->path);
 	        	}
 	        	t = t->next;
 	        }
@@ -304,11 +306,10 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
     while(tempNode != NULL){
         entry = (bucketEntry*)tempNode->data;
         if( !addrFoundinList(entry->notClique,clique1) ){
-        	if(firstIter){
+            if(firstIter){
         		entry->notClique = appendList(entry->notClique,clique1);
         		n = entry->notClique;
         		firstIter=false;
-        	
         	}else entry->notClique = n;
     	}else break;
 
