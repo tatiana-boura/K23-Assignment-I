@@ -32,6 +32,5 @@ bucket* getBucket(hashTable* ht, char* key, unsigned int* index);
 bucketEntry* createEntry(char* key,node* _listOfTuples_);
 
 void makeOutputFile(hashTable* ht, unsigned int bucketSize);
-void makeTestNoCliqueFile(hashTable* ht, unsigned int bucketSize);
 
 #endif
