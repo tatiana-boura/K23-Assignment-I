@@ -286,6 +286,10 @@ int main(int argc, char* argv[]){
     makeOutputFile(ht, BUCKETSIZE);
     printf("\nOutput file with name [output.txt] has now been created.\n");
 
+	//----make the test not cliques file---------------------------------------------------------
+    makeTestNoCliqueFile(ht, BUCKETSIZE);
+    printf("\nOutput file with name [notcliques.txt] has now been created.\n");
+
     //--destroy tree and all not needed memo--------------------------------------------
     printf("\nNow, the memory used in this program is being freed.\n");
     destroyHT(ht,BUCKETSIZE);
