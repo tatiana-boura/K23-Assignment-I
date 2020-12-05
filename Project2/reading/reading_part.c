@@ -280,7 +280,7 @@ int main(int argc, char* argv[]){
         }       
     }
 
-    printHT(ht);
+    //printHT(ht);
     
     //----make the output file---------------------------------------------------------
     makeOutputFile(ht, BUCKETSIZE);

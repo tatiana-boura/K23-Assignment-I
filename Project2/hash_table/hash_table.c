@@ -124,11 +124,15 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
             	//destroyListOfStrings(table[i]->notClique,false);
             	
             }
-            if( !addrFoundinList(listOfNotCliques,table[i]->notClique,false)){
-            		listOfNotCliques = appendList(listOfNotCliques,table[i]->notClique);
-            		destroyListOfStrings(table[i]->notClique,false);
-            		//table[i]->notClique=NULL;
-            	}
+
+            if(table[i]->notClique != NULL){
+                if( !addrFoundinList(listOfNotCliques,table[i]->notClique,false)){
+                   // printf("here\n");
+            	   listOfNotCliques = appendList(listOfNotCliques,table[i]->notClique);
+            	   destroyListOfStrings(table[i]->notClique,false);
+            	   table[i]->notClique=NULL;
+                }
+            }        
             
             //destroyListOfStrings(table[i]->notClique,false);
 
@@ -230,7 +234,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 	        	}else{
 	        		// in order to delete duplicates in noClique clique
 	        		node* n_ = t->data; bucketEntry* e_ = n_->data;
-                    printf("((%s))\n",e_->path );
+                    //printf("((%s))\n",e_->path );
                     node* _n_;
 	        		//_n_ = deleteNode(&(e_->notClique),clique2);
                     
@@ -245,7 +249,7 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
                     while(_tempNode_ != NULL){
                         e_ = (bucketEntry*)_tempNode_->data;
                         //if( strcmp(e_->path,"www.ebay.com//57000")==0)
-                        printf("<<%s>>\n",e_->path );
+                        //printf("<<%s>>\n",e_->path );
                         _n_ = deleteNode(&(e_->notClique),clique2);
                         
                         _tempNode_=_tempNode_->next;
