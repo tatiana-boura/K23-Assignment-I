@@ -124,7 +124,7 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
             	//destroyListOfStrings(table[i]->notClique,false);
             	
             }
-            if( !addrFoundinList(listOfNotCliques,table[i]->notClique)){
+            if( !addrFoundinList(listOfNotCliques,table[i]->notClique,false)){
             		listOfNotCliques = appendList(listOfNotCliques,table[i]->notClique);
             		destroyListOfStrings(table[i]->notClique,false);
             		//table[i]->notClique=NULL;
@@ -224,16 +224,36 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         if( notClique1!=notClique2 ){
 	        while( t!=NULL ){
 	        	// make a compact notClique list
-	        	if( !addrFoundinList(notClique1,t->data) ){
+	        	if( !addrFoundinList(notClique1,t->data,false) ){
 	        		// if notCliques have not that element in common 
 	        		notClique1 = appendList(notClique1,t->data);
 	        	}else{
 	        		// in order to delete duplicates in noClique clique
 	        		node* n_ = t->data; bucketEntry* e_ = n_->data;
-	        		deleteNode(&(e_->notClique),clique2);
-                    bucketEntry* bb = clique2->data;
-                    printf("%p\n",clique2 );
+                    printf("((%s))\n",e_->path );
+                    node* _n_;
+	        		//_n_ = deleteNode(&(e_->notClique),clique2);
+                    
+                    unsigned int _entryNum_; bucket* _bucketFound_;
+                    foundInHT(ht, e_->path, bucketSize, &_entryNum_, &_bucketFound_ );
+
+                    bucketEntry**  _entryTable_ = (_bucketFound_)->data;
+                    node* _clique_ = _entryTable_[_entryNum_]->clique;
+
+                    node* _tempNode_; 
+                    _tempNode_=_clique_;
+                    while(_tempNode_ != NULL){
+                        e_ = (bucketEntry*)_tempNode_->data;
+                        //if( strcmp(e_->path,"www.ebay.com//57000")==0)
+                        printf("<<%s>>\n",e_->path );
+                        _n_ = deleteNode(&(e_->notClique),clique2);
+                        
+                        _tempNode_=_tempNode_->next;
+                    }
+
+                    //bucketEntry* bb = clique2->data;
                     //printf("{%s}--{%s}\n", e_->path,bb->path);
+                    free(_n_); _n_=NULL;
 	        	}
 	        	t = t->next;
 	        }
@@ -287,7 +307,7 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         entry = (bucketEntry*)tempNode->data;
         // the point is that the members of the same clique should 
         // have the same notClique (pointer is the same)
-        if( !addrFoundinList(entry->notClique,clique2) ){
+        if( !addrFoundinList(entry->notClique,clique2,true) ){
         	if(firstIter){
         		entry->notClique = appendList(entry->notClique,clique2);
         		n = entry->notClique;
@@ -305,7 +325,7 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 
     while(tempNode != NULL){
         entry = (bucketEntry*)tempNode->data;
-        if( !addrFoundinList(entry->notClique,clique1) ){
+        if( !addrFoundinList(entry->notClique,clique1,false) ){
             if(firstIter){
         		entry->notClique = appendList(entry->notClique,clique1);
         		n = entry->notClique;
@@ -330,7 +350,7 @@ void printBucket(node* b){
 
         bucketEntry** entryTable = temp->data;
 
-        for(int i = 0;i<15;i++){
+        for(int i = 0;i<5;i++){
 
             if((entryTable[i]!=NULL)){
 
@@ -416,7 +436,7 @@ void makeOutputFile(hashTable* ht, unsigned int bucketSize){
             
             for( unsigned int j=0; j<numOfEntries && entryTable[j]!=NULL; j++){
                 // if this clique hasn't been visited before, go and print what it has inside
-                if( !addrFoundinList(listOfCliques,entryTable[j]->clique)){
+                if( !addrFoundinList(listOfCliques,entryTable[j]->clique,false)){
                     listOfCliques=appendList(listOfCliques,entryTable[j]->clique);
                     makeOutputFileList(entryTable[j]->clique, outputFile);
                 }else entryTable[j]->clique=NULL;

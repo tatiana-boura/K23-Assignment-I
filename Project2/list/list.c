@@ -20,7 +20,7 @@ node* mergeTwoLists(node* n1, node* n2){
     
 }
 
-void deleteNode(node** n, void* addr){ 
+node* deleteNode(node** n, void* addr){ 
       
     node* temp = *n; 
     node* prev = NULL; 
@@ -28,8 +28,10 @@ void deleteNode(node** n, void* addr){
     // is head  
     if (temp != NULL && temp->data == addr) { 
         *n = temp->next;
-        free(temp); temp=NULL;          
-        return; 
+        //printf("deleteNode [%p]\n",temp );
+        //free(temp); temp=NULL;          
+        return temp; 
+        return NULL; 
     } 
   
     while (temp != NULL && temp->data != addr){ 
@@ -38,11 +40,14 @@ void deleteNode(node** n, void* addr){
     } 
   
     // not found
-    if (temp == NULL) return; 
+    if (temp == NULL) return NULL; 
   
     // find and delete
     prev->next = temp->next; 
-    free(temp); temp=NULL; 
+    //printf("deleteNode [%p]\n",temp );
+    //free(temp); temp=NULL; 
+    return temp; 
+    return NULL; 
 } 
  
 
@@ -101,13 +106,14 @@ void destroyListOfStrings(node* n, bool destroyDataAsWell ){
 }
 
 // function to help identify the clique
-bool addrFoundinList(node* n,  void* addr ){
+bool addrFoundinList(node* n,  void* addr , bool _print_){
 
     if (n == NULL) return false; 
     // this list is a list of visited address spaces
+    //if( _print_ ) printf("addrFoundinList: %p  --- %p\n", n, n->data );
     if (n->data == addr) return true; 
   
-    return addrFoundinList(n->next, addr); 
+    return addrFoundinList(n->next, addr,_print_); 
 } 
 
 
