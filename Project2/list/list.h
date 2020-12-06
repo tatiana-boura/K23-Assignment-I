@@ -18,11 +18,11 @@ void destroyListOfStrings(node* n, bool destroyDataAsWell);
 
 void printList(node* n, void(*printData)(void*));
 
-bool addrFoundinList(node* n,  void* addr, bool _print_ );
+bool addrFoundinList(node* n,  void* addr );
 
 void makeOutputFileList(node* n,FILE* outputFile);
 
-node* deleteNode(node** n, void* addr);
+node* removeNode(node** n, void* addr);
 
 
 

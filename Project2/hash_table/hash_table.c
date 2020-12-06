@@ -126,8 +126,7 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
             }
 
             if(table[i]->notClique != NULL){
-                if( !addrFoundinList(listOfNotCliques,table[i]->notClique,false)){
-                   // printf("here\n");
+                if( !addrFoundinList(listOfNotCliques,table[i]->notClique)){
             	   listOfNotCliques = appendList(listOfNotCliques,table[i]->notClique);
             	   destroyListOfStrings(table[i]->notClique,false);
             	   table[i]->notClique=NULL;
@@ -228,37 +227,40 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         if( notClique1!=notClique2 ){
 	        while( t!=NULL ){
 	        	// make a compact notClique list
-	        	if( !addrFoundinList(notClique1,t->data,false) ){
+	        	if( !addrFoundinList(notClique1,t->data) ){
 	        		// if notCliques have not that element in common 
 	        		notClique1 = appendList(notClique1,t->data);
 	        	}else{
-	        		// in order to delete duplicates in noClique clique
-	        		node* n_ = t->data; bucketEntry* e_ = n_->data;
-                    //printf("((%s))\n",e_->path );
+                    // the address is found a second time which means that 
+                    // the two notCliques have the same element. Remove that
+                    // element for each element of the notClique of the clique
+
                     node* _n_;
-	        		//_n_ = deleteNode(&(e_->notClique),clique2);
-                    
+                    node* toDel=NULL;
+
+	        		node* n_ = t->data; bucketEntry* e_ = n_->data;
+                    // find clique that if found duplicate in the no list
                     unsigned int _entryNum_; bucket* _bucketFound_;
                     foundInHT(ht, e_->path, bucketSize, &_entryNum_, &_bucketFound_ );
-
+                    // access the data
                     bucketEntry**  _entryTable_ = (_bucketFound_)->data;
                     node* _clique_ = _entryTable_[_entryNum_]->clique;
 
                     node* _tempNode_; 
                     _tempNode_=_clique_;
+                    // go through each member of the clique
                     while(_tempNode_ != NULL){
                         e_ = (bucketEntry*)_tempNode_->data;
-                        //if( strcmp(e_->path,"www.ebay.com//57000")==0)
-                        //printf("<<%s>>\n",e_->path );
-                        _n_ = deleteNode(&(e_->notClique),clique2);
-                        
+                        // remove it but not delete it yet 
+                        _n_ = removeNode(&(e_->notClique),clique2);
+                        if( _n_ != NULL ) toDel = _n_;
+                        // go to next one
                         _tempNode_=_tempNode_->next;
                     }
-
-                    //bucketEntry* bb = clique2->data;
-                    //printf("{%s}--{%s}\n", e_->path,bb->path);
-                    free(_n_); _n_=NULL;
+                    // now delete it
+                    if(toDel!=NULL){ free(toDel); toDel=NULL; }
 	        	}
+
 	        	t = t->next;
 	        }
 			// destroy the previous one      
@@ -311,7 +313,7 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
         entry = (bucketEntry*)tempNode->data;
         // the point is that the members of the same clique should 
         // have the same notClique (pointer is the same)
-        if( !addrFoundinList(entry->notClique,clique2,true) ){
+        if( !addrFoundinList(entry->notClique,clique2) ){
         	if(firstIter){
         		entry->notClique = appendList(entry->notClique,clique2);
         		n = entry->notClique;
@@ -329,7 +331,7 @@ void adjustPointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 
     while(tempNode != NULL){
         entry = (bucketEntry*)tempNode->data;
-        if( !addrFoundinList(entry->notClique,clique1,false) ){
+        if( !addrFoundinList(entry->notClique,clique1) ){
             if(firstIter){
         		entry->notClique = appendList(entry->notClique,clique1);
         		n = entry->notClique;
@@ -354,7 +356,7 @@ void printBucket(node* b){
 
         bucketEntry** entryTable = temp->data;
 
-        for(int i = 0;i<5;i++){
+        for(int i = 0;i<15;i++){
 
             if((entryTable[i]!=NULL)){
 
@@ -440,7 +442,7 @@ void makeOutputFile(hashTable* ht, unsigned int bucketSize){
             
             for( unsigned int j=0; j<numOfEntries && entryTable[j]!=NULL; j++){
                 // if this clique hasn't been visited before, go and print what it has inside
-                if( !addrFoundinList(listOfCliques,entryTable[j]->clique,false)){
+                if( !addrFoundinList(listOfCliques,entryTable[j]->clique)){
                     listOfCliques=appendList(listOfCliques,entryTable[j]->clique);
                     makeOutputFileList(entryTable[j]->clique, outputFile);
                 }else entryTable[j]->clique=NULL;
