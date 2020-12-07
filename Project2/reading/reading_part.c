@@ -130,6 +130,7 @@ int main(int argc, char* argv[]){
 					//--------------create list for json file's property tuples --------------------------------
 					
 					node* spec_list = NULL;
+					node* json_word_list = NULL;
 					
 					//------------Convert properties in json files in tuples ------------------------------------ 
 					while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
@@ -172,7 +173,10 @@ int main(int argc, char* argv[]){
 								// in some files the buffer contains this string "{\n"
 								// -- no info so we are not even consdering using it
 								if( strcmp(buff,"{\n")!=0 ){
-									json_separator(buff,t);
+									//json_separator(buff,t);
+									
+									//break buff into words and add thm to the list
+									json_to_word_list(buff, &json_word_list);
 
 									memset(arbuff ,'\0' , BUFFER_SIZE);
 									memset(buff ,'\0' , BUFFER_SIZE);
@@ -186,6 +190,10 @@ int main(int argc, char* argv[]){
 					}
 				
 					//printf("\nLIST\n");  printList(spec_list, (void*)printTuple); 
+					
+					printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
+					//REMEMBER TO DESTROY THOSE LISTS
+					//destroyListOfStrings(json_word_list, true);  //to be removed just a reminder[!]
 
 					//--------------Convert path to be inserted in data structures-------------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"

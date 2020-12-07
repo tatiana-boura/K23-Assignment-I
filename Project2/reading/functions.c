@@ -203,3 +203,113 @@ void json_array_handler(char* str, TuplePtr t){
 }
 
 //=======================================================================================================================
+
+void json_to_word_list(char* str, node** l){  
+	//printf("given string: %s \n", str);
+
+	//turn string to lower case
+	int i=0;
+	while(str[i]){
+		str[i] = tolower(str[i]);
+		i++;
+	}
+	const char s[3] = "\""; // delimeter: "
+
+	//string to store key
+	char* property_buff;  
+	//strig to store value
+	char* value_buff;
+
+   	char *token;
+    int flag = 0; //flag == 1 buff contains "key" | flag == 2 buff contains "value" 
+   	// get the first token
+   	token = strtok(str, s);
+	  
+   	// walk through other tokens 
+   	while( token != NULL ) {
+   		if((strcmp(token,"{")!=0) && (strcmp(token,"}")!=0) && (strcmp(token,": ")!=0) && (strcmp(token,",")!=0)){
+   			//printf( " token: %s\n", token );
+	   			
+   			if(flag == 1){
+   				property_buff = calloc(strlen(token)+1,sizeof(char));
+   				assert( property_buff != NULL );
+				memset(property_buff, '\0', (strlen(token)+1)*sizeof(char)); 
+				strcpy(property_buff, token);
+
+		      	if(token == NULL){
+		      		strcpy(property_buff, " ");
+		      	}
+		      	
+		    }else if(flag == 2){
+
+   				value_buff = calloc(strlen(token)+1,sizeof(char));
+   				assert( value_buff != NULL );
+				memset(value_buff, '\0', (strlen(token)+1)*sizeof(char)); 
+
+		        strcpy(value_buff, token);
+		       	//printf("k: %s  - v: %s\n", property_buff, value_buff);
+		       	if(value_buff == NULL){
+					strcpy(value_buff, " ");
+				}
+
+		        //add words to list of json words----------------------------------------------
+		        char* tok; 
+		        char* word;
+		        //do not add (<key name> - no )
+				if( strcmp(value_buff,"no")!=0 ){
+					//idea? to add only key with value as "yes"
+		        	//if( strcmp(value_buff,"yes")==0 ){ 
+		        	//	*THE STUFF THAT HAPPEN BELLOW*
+		        	//}
+
+					//break property phrases or sentences..
+		        	tok = strtok(property_buff, " ");
+		        	while(tok != NULL){
+		        		word = calloc(strlen(tok)+1,sizeof(char));
+		        		assert( word != NULL );
+						memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+						if(tok == NULL){
+							strcpy(word, " ");
+						}else{
+							strcpy(word, tok);
+						}
+		        		*l = appendList(*l, word);
+		        		tok = strtok(NULL, " ");
+		        	}
+					
+		        	if( (atoi(value_buff) == 0) && (strcmp(value_buff,"yes")!=0)){ //do not add numbers or "yes"
+
+		        		//break values phrases or sentences..
+			        	tok = strtok(value_buff, " ");
+			        	while(tok != NULL){
+			        		word = calloc(strlen(tok)+1,sizeof(char));
+			        		assert( word != NULL );
+							memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+							if(tok == NULL){
+								strcpy(word, " ");
+							}else{
+								strcpy(word, tok);
+							}
+
+							//it is common to have stuff like  "word,"
+							if(word[strlen(word)-1] == ','){
+								word[strlen(word)-1] = '\0'; //erase the ','
+							} 
+
+							if( (atoi(word) == 0) && (strcmp(word,"yes,")!=0) && (strlen(word)>3)){  //strlen(word) >1, 2 or 3 ? 
+			        			*l = appendList(*l, word);
+			        		}
+			        		tok = strtok(NULL, " ");
+			        	}
+		        	}
+		        }
+		       //--------------------------------------------------------------------------------
+
+		    }
+		    flag++;
+		}		
+        token = strtok(NULL, s); 
+    }
+    
+    return;
+}
