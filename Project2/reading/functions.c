@@ -251,65 +251,54 @@ void json_to_word_list(char* str, node** l){
 		       	if(value_buff == NULL){
 					strcpy(value_buff, " ");
 				}
+				//now: property_buff = word/phrase/sentence & value_buff = word/phrase/sentence 
 
-		        //add words to list of json words----------------------------------------------
+		        //add words to list of json words
 		        char* tok; 
 		        char* word;
 		        //do not add (<key name> - no )
 				if( strcmp(value_buff,"no")!=0 ){
-					//idea? to add only key with value as "yes"
-		        	//if( strcmp(value_buff,"yes")==0 ){ 
-		        	//	*THE STUFF THAT HAPPEN BELLOW*
-		        	//}
 
-					//break property phrases or sentences..
+					//break <property> phrases or sentences..
 		        	tok = strtok(property_buff, " ");
 		        	while(tok != NULL){
 		        		word = calloc(strlen(tok)+1,sizeof(char));
 		        		assert( word != NULL );
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
-						if(tok == NULL){
-							strcpy(word, " ");
-						}else{
-							strcpy(word, tok);
-						}
+						strcpy(word, tok);
+			
 		        		*l = appendList(*l, word);
-		        		tok = strtok(NULL, " ");
+		        		tok = strtok(NULL, " ");  //take next word
 		        	}
 					
-		        	if( (atoi(value_buff) == 0) && (strcmp(value_buff,"yes")!=0)){ //do not add numbers or "yes"
+		        	//break <value> phrases or sentences..
+			        tok = strtok(value_buff, " ");
+			        while(tok != NULL){
+			        	word = calloc(strlen(tok)+1,sizeof(char));
+			        	assert( word != NULL );
+						memset(word, '\0', (strlen(tok)+1)*sizeof(char));
+						strcpy(word, tok);
 
-		        		//break values phrases or sentences..
-			        	tok = strtok(value_buff, " ");
-			        	while(tok != NULL){
-			        		word = calloc(strlen(tok)+1,sizeof(char));
-			        		assert( word != NULL );
-							memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
-							if(tok == NULL){
-								strcpy(word, " ");
-							}else{
-								strcpy(word, tok);
-							}
+						//it is common to have stuff like  "word,"
+						if(word[strlen(word)-1] == ','){
+							word[strlen(word)-1] = '\0'; //erase the ','
+						} 
 
-							//it is common to have stuff like  "word,"
-							if(word[strlen(word)-1] == ','){
-								word[strlen(word)-1] = '\0'; //erase the ','
-							} 
-
-							if( (atoi(word) == 0) && (strcmp(word,"yes,")!=0) && (strlen(word)>3)){  //strlen(word) >1, 2 or 3 ? 
-			        			*l = appendList(*l, word);
-			        		}
-			        		tok = strtok(NULL, " ");
+						if( (atoi(word) == 0) && (strcmp(word,"yes")!=0) && (strlen(word)>3)){  //strlen(word) >1, 2 or 3 ? 
+			        		*l = appendList(*l, word);
+			        	}else{
+			        		free(word);
 			        	}
-		        	}
+			        	tok = strtok(NULL, " "); //take next word
+			       	}		        	
 		        }
-		       //--------------------------------------------------------------------------------
-
 		    }
+
 		    flag++;
 		}		
         token = strtok(NULL, s); 
     }
-    
+    free(value_buff);
+    free(property_buff);
     return;
 }

@@ -1,28 +1,5 @@
 /* JJ project, part 1   
-This code is supposed to open and read JSON files
 
-what it is capable for at the moment:
-call format: ./reading_part 2013_camera_specs
--opens 2013_camera_specs directory
->for each entry of 2013_camera_specs
-	*prints directory name
-	*'creates' path to access directory
-	*opens this directory
-	*prints  all .json file entries
-	>for each .json file
-		+prints json name
-		+creates a path to access .json file
-		+opens .json file
-		+prints contents of .json file  
-
--------------------------------------------
-extra notes:
-- ignores current '.' & parent '..' directories while checking a directory's entries
-- to open all the web spec  directory entries from 2013_camera_specs
-  creates each pathname "2013_camera_specs/<entry->d_name>" in dirpath using strcat
-
-
->>>>> CODE LINES 91 & 106: commented for obvious reasons, get rid of the '//' stuff to observe the printfs   <<<<<  
 */
 
 
@@ -40,17 +17,6 @@ extra notes:
 #define BUFFER_SIZE 51000
 #define BUCKETSIZE 200
 #define STRSIZE 100
-
-
-/*
-Name changes
-============
-Dataset_X --> main_dir
-dirX -->  sub_dir
-json_spec_file --> json_file
-entry--> main_dir_entry
-sub_entry--> sub_dir_entry
-*/
 
 
 int main(int argc, char* argv[]){
@@ -176,7 +142,7 @@ int main(int argc, char* argv[]){
 									//json_separator(buff,t);
 									
 									//break buff into words and add thm to the list
-									json_to_word_list(buff, &json_word_list);
+									json_to_word_list(buff, &json_word_list);  //***************************
 
 									memset(arbuff ,'\0' , BUFFER_SIZE);
 									memset(buff ,'\0' , BUFFER_SIZE);
@@ -191,9 +157,9 @@ int main(int argc, char* argv[]){
 				
 					//printf("\nLIST\n");  printList(spec_list, (void*)printTuple); 
 					
-					printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
+					//printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
 					//REMEMBER TO DESTROY THOSE LISTS
-					//destroyListOfStrings(json_word_list, true);  //to be removed just a reminder[!]
+					destroyListOfStrings(json_word_list, true);  //to be removed just a reminder[!]
 
 					//--------------Convert path to be inserted in data structures-------------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
