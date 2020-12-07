@@ -339,8 +339,9 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 		    // made the property name 
 			pNameNotYet=true;
 
-			
-
+			//standard form *space*"property":*space*[  --> property (remove " " and :)
+			property_buff[4] = ' ';
+			property_buff[strlen(property_buff)-4] = '\0';
 
 			//to add <property> into list of words
 			//break <property> phrases or sentences..
@@ -351,9 +352,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 				memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
 				strcpy(word, tok);
 			
-				
-				if( strlen(word)>3){  //strlen(word) >1, 2 or 3 ? 
-					//printf("%s - %ld\n",word, strlen(word));
+				if( strlen(word)>3){  //strlen(word) >1, 2 or 3 ?
 			        *l = appendList(*l, word);
 			    }else{
 			      	free(word);

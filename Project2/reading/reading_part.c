@@ -159,7 +159,7 @@ int main(int argc, char* argv[]){
 				
 					//printf("\nLIST\n");  printList(spec_list, (void*)printTuple); 
 					
-					printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
+					//printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
 					//REMEMBER TO DESTROY THOSE LISTS
 					destroyListOfStrings(json_word_list, true);  //to be removed just a reminder[!]
 
