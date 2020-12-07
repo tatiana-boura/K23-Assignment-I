@@ -302,3 +302,105 @@ void json_to_word_list(char* str, node** l){
     free(property_buff);
     return;
 }
+
+
+
+//function that takes a string {that contains array!} and stores key and value into a tuple
+void json_to_word_list_value_array_edition(char* str,  node** l){
+	//printf("given string: %s \n", str);
+	const char s[3] = "\"";
+	char* property_buff=NULL;
+	char* value_buff=NULL;
+	char *token;
+
+	const char sa[2] = "#"; // delimeter: #
+
+	// get the first token 
+   	token = strtok(str, sa);
+	bool pNameNotYet=false;
+	//bool firstTime=true;
+
+	char* tok; 
+	char* word;
+
+   	// walk through other tokens 
+   	while( token != NULL ) {
+			
+		if(pNameNotYet == 0){
+   			
+   			property_buff = calloc(strlen(token)+1,sizeof(char));
+   			assert( property_buff != NULL );
+			memset(property_buff, '\0', (strlen(token)+1)*sizeof(char)); 
+   			
+			strcpy(property_buff, token);
+			if(property_buff == NULL){
+		      	strcpy(property_buff, " ");
+		    }
+		    // made the property name 
+			pNameNotYet=true;
+
+			
+
+
+			//to add <property> into list of words
+			//break <property> phrases or sentences..
+		    tok = strtok(property_buff, " ");
+		    while(tok != NULL){
+		       	word = calloc(strlen(tok)+1,sizeof(char));
+		   		assert( word != NULL );
+				memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+				strcpy(word, tok);
+			
+				
+				if( strlen(word)>3){  //strlen(word) >1, 2 or 3 ? 
+					//printf("%s - %ld\n",word, strlen(word));
+			        *l = appendList(*l, word);
+			    }else{
+			      	free(word);
+			    }
+		       
+		        tok = strtok(NULL, " ");  //take next word
+		    }
+
+			//if(property_buff==NULL) printf("here\n");
+		}else{
+			// time to make the values
+			if((token[0] != ',') && (token[0] != '#') && (token[0] != ' ')){
+
+				value_buff = calloc(strlen(token)+1,sizeof(char));
+				memset(value_buff, '\0', (strlen(token)+1)*sizeof(char));
+				strcpy(value_buff, token);
+				if(value_buff == NULL){ strcpy(value_buff, " ");}
+
+				//to add <value> into list of words
+				//break <value> phrases or sentences..
+				tok = strtok(value_buff, " ");
+			    while(tok != NULL){
+			        word = calloc(strlen(tok)+1,sizeof(char));
+			        assert( word != NULL );
+					memset(word, '\0', (strlen(tok)+1)*sizeof(char));
+					strcpy(word, tok);
+					printf("%s - %ld\n",word, strlen(word));
+
+					//it is common to have stuff like  "word,"
+					if(word[strlen(word)-1] == ','){
+						word[strlen(word)-1] = '\0'; //erase the ','
+					} 
+
+					if( (atoi(word) == 0) && (strlen(word)>3)){  //strlen(word) >1, 2 or 3 ? 
+			        	*l = appendList(*l, word);
+			        }else{
+			        	free(word);
+			        }
+			       	tok = strtok(NULL, " "); //take next word
+			    }
+			}
+		}
+		
+        token = strtok(NULL, s); // get next value
+    }
+
+    if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
+
+    return;
+}

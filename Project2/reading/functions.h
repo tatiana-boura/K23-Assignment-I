@@ -20,5 +20,6 @@ void json_separator(char* str, TuplePtr t);
 void json_array_handler(char* string, TuplePtr t);
 
 void json_to_word_list(char* str, node** l);  
+void json_to_word_list_value_array_edition(char* str,  node** l);
 
 #endif

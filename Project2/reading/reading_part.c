@@ -126,7 +126,9 @@ int main(int argc, char* argv[]){
 									}		
 								}
 
-								json_array_handler(buff, t); 
+								//json_array_handler(buff, t); 
+
+								json_to_word_list_value_array_edition(buff, &json_word_list);
 								
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
@@ -157,7 +159,7 @@ int main(int argc, char* argv[]){
 				
 					//printf("\nLIST\n");  printList(spec_list, (void*)printTuple); 
 					
-					//printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
+					printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
 					//REMEMBER TO DESTROY THOSE LISTS
 					destroyListOfStrings(json_word_list, true);  //to be removed just a reminder[!]
 
