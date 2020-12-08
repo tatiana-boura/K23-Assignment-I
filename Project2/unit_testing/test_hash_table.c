@@ -25,38 +25,30 @@ void test_addtoHT(void){
     unsigned int size = 755;
     hashTable* ht = createHT(size);
 
-    //create listOfTuples just like in test_list.c
-    unsigned int Nentries=1000; unsigned int Ntuples=100;
-	char** arrayOfNames = calloc(Ntuples,sizeof(char*));
+    //create wordInfoList just like in test_list.c
+    unsigned int Nentries=1000; unsigned int NwordInfos=100;
+	char** arrayOfNames = calloc(NwordInfos,sizeof(char*));
 	char* path; char* str;
 
-    // for example if k=2 then the entry must be 2 | [0,[0]] , [2,[0,2]] , [4,[0,2,4]]
+    // for example if k=2 then the entry must be 2 | [0,0] , [2,0] , [4,0]
     for(unsigned int k=0;k<Nentries;k++){
 
-        node* listOfTuples=NULL;
+        node* wordInfoList=NULL;
         path = calloc(STRSIZE,sizeof(char));
         sprintf(path,"%d",k);
 
-        for( unsigned int j=0; j<Ntuples; j++ ){
+        for( unsigned int j=0; j<NwordInfos; j++ ){
             
             arrayOfNames[j]=calloc(STRSIZE,sizeof(char));
             sprintf(arrayOfNames[j],"%d",k*j);
-            TuplePtr t=calloc(1,sizeof(Tuple));
+            wordInfo* w=calloc(1,sizeof(wordInfo));
 
-            for( unsigned int i = 0; i<=j; i++ ){
-                // in this loop we are making the listOfStrings
-                str = calloc(STRSIZE,sizeof(char));
-                sprintf(str,"%d",i*k);
+            wordInfoInitialization(w,arrayOfNames[j]);
 
-                if(i==0) // first time
-                    tupleInitialization(t,arrayOfNames[j],str);
-                else insertAtValueList(t,str);
-            }
-
-            listOfTuples = appendList(listOfTuples,t);
+            wordInfoList = appendList(wordInfoList,w);
         }
 
-        addtoHT(ht,path,BUCK_SIZE,listOfTuples);
+        addtoHT(ht,path,BUCK_SIZE,wordInfoList);
 
         unsigned int entryNum; bucket* bucketFound;
         // test if path string is found in hash table(foundInHT is tested below)
@@ -66,9 +58,9 @@ void test_addtoHT(void){
         TEST_ASSERT(!strcmp(entryTable[entryNum]->path,path));
 
         // test if the list contain the same elements as it should be
-        node* tempList = listOfTuples;
-        node* tempEntryList = entryTable[entryNum]->listOfTuples; 
-        for( unsigned int j=0; j<Ntuples; j++ ){
+        node* tempList = wordInfoList;
+        node* tempEntryList = entryTable[entryNum]->wordInfoList; 
+        for( unsigned int j=0; j<NwordInfos; j++ ){
             TEST_ASSERT(!strcmp(tempEntryList->data,tempList->data));
             tempEntryList = tempEntryList->next;
             tempList = tempList->next;
@@ -113,7 +105,7 @@ void test_foundInHT(void){
     strcpy(str4,"black sheep");
     // test if str4 is found in hash table [should not be found - not added to ht]
     TEST_ASSERT(foundInHT(ht,str4,bucket_size,&entryNum,&bucketFound)!=true);
-
+    free(str4);
 
 	// free not needed memo
 	destroyHT(ht, bucket_size );
