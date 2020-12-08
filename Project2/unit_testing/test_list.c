@@ -206,7 +206,7 @@ void test_removeNode(void){
 	/* function to check if node with certain address(we have a list of addresses) 
 	is correctly removed from a list */
 
-	unsigned int N=10;
+	unsigned int N=1000;
 	
 	node* n=NULL;
 
