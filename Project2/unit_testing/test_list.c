@@ -264,7 +264,6 @@ void test_removeNode(void){
 				TEST_ASSERT(temp->data==keepRandomAddressToSearch);
 			} 
 		}
-
 		temp=temp->next;
 	}
 

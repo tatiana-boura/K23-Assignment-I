@@ -151,7 +151,7 @@ void test_changePointers(void){
     /* these three entries are in the same clique */
     /* NOTE: we change the pointers three times even though two should be enough
     because that is an action that was observed in our project. By making this 
-    'cycling' changing there whould be a problem of a cyclic queue where every 
+    'cycling' changing there would be a problem of a cyclic queue where every 
     item points to another. Our program avoids such problems and operates properly.*/
     changePointers(ht,BUCK_SIZE,&bucketFound1,entryNum1,&bucketFound2,entryNum2);
     changePointers(ht,BUCK_SIZE,&bucketFound3,entryNum3,&bucketFound1,entryNum1);
@@ -161,10 +161,81 @@ void test_changePointers(void){
     bucketEntry** entryTable2 = bucketFound2->data;
     bucketEntry** entryTable3 = bucketFound3->data;
 
+    node* n1 = entryTable1[entryNum1]->clique;
+    node* n2 = entryTable2[entryNum2]->clique;
+    node* n3 = entryTable3[entryNum3]->clique;
+
+    bucketEntry* e1 = (bucketEntry*)n1->data;
+    bucketEntry* e2 = (bucketEntry*)n2->data;
+    bucketEntry* e3 = (bucketEntry*)n3->data;
+
     // now check if the entries point to the same clique (point to the same address)
-    TEST_ASSERT(entryTable1[entryNum1]->clique==entryTable2[entryNum2]->clique);
-    TEST_ASSERT(entryTable2[entryNum2]->clique==entryTable3[entryNum3]->clique);
-    TEST_ASSERT(entryTable3[entryNum3]->clique==entryTable1[entryNum1]->clique);
+    TEST_ASSERT(e1==e2);
+    TEST_ASSERT(e2==e3);
+    TEST_ASSERT(e3==e1);
+
+    makeOutputFile(ht,BUCK_SIZE);
+
+    destroyHT(ht,BUCK_SIZE);
+    return;
+}
+
+//___test_adjustPointers______________________________________________________________
+void test_adjustPointers(void){
+    /* function to check if, after going through the (merged) clique, the pointers are 
+       pointing to the correct clique */
+
+    unsigned int size = 20;
+    hashTable* ht = createHT(size);
+
+    // create two entries
+    char* str1 = calloc(STRSIZE,sizeof(char)); strcpy(str1,"string1");
+    char* str2 = calloc(STRSIZE,sizeof(char)); strcpy(str2,"string2");
+    // add them to ht
+    addtoHT(ht,str1,BUCK_SIZE,NULL);
+    addtoHT(ht,str2,BUCK_SIZE,NULL);
+
+    // locate these entries in the hash table (foundInHT has been checked above)
+    unsigned int entryNum1; bucket* bucketFound1;
+    foundInHT(ht,str1,BUCK_SIZE,&entryNum1,&bucketFound1);
+
+    unsigned int entryNum2; bucket* bucketFound2;
+    foundInHT(ht,str2,BUCK_SIZE,&entryNum2,&bucketFound2);
+
+    /* these three entries are NOT in the same clique */
+    adjustPointers(ht,BUCK_SIZE,&bucketFound1,entryNum1,&bucketFound2,entryNum2);
+    adjustPointers(ht,BUCK_SIZE,&bucketFound2,entryNum2,&bucketFound1,entryNum1);
+
+    bucketEntry**  entryTable1 = bucketFound1->data;
+    bucketEntry** entryTable2 = bucketFound2->data;
+
+    node* c1 = entryTable1[entryNum1]->clique;
+    node* c2 = entryTable2[entryNum2]->clique;
+
+    bucketEntry* e1 = (bucketEntry*)c1->data;
+    bucketEntry* e2 = (bucketEntry*)c2->data;
+
+    node* n1 = entryTable1[entryNum1]->notClique;
+    node* n2 = entryTable2[entryNum2]->notClique;
+
+    // check if the noClique of each clique
+    // has the expected element inside
+
+    // first for the one
+    node* n;
+    for( unsigned int i=0; i<1; i++ ){
+        n = n1->data;
+        bucketEntry* e = n->data;
+        TEST_ASSERT(n->data==e2);
+    }
+    // then for the other
+    for( unsigned int i=0; i<1; i++ ){
+        n = n2->data;
+        bucketEntry* e = n->data;
+        TEST_ASSERT(n->data==e1);
+    }
+    
+    //makeOutputFile(ht,BUCK_SIZE);
 
     destroyHT(ht,BUCK_SIZE);
     return;
@@ -175,5 +246,6 @@ TEST_LIST = {
     { "addtoHT", test_addtoHT },
     { "foundInHT", test_foundInHT },
     { "changePointers", test_changePointers },
+    { "adjustPointers", test_adjustPointers },
 	{ NULL, NULL } // end of tests
 };

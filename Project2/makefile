@@ -40,6 +40,7 @@ clean:
 
 clean_tests:
 	rm -f $(OUTS)
+	rm -f output.txt
 
 
 
