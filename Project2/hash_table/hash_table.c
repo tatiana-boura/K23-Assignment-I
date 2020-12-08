@@ -37,7 +37,7 @@ hashTable* createHT(unsigned int size){
 
 //__addToHashTable_______________________________________________________________________________________ 
 
-void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTuples_){
+void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoList_){
 
     bucket* bucketPtr; unsigned int index; 
     
@@ -49,7 +49,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTup
     if(bucketPtr==NULL){
 
         //create entries table and add this entry
-        bucketEntry* entry = createEntry(key,_listOfTuples_);
+        bucketEntry* entry = createEntry(key,_wordInfoList_);
         bucketEntry** entryTable = calloc(numOfEntries,sizeof(bucketEntry*)); assert(entryTable!=NULL); 
         
         for(unsigned int i=0; i<numOfEntries; i++) entryTable[i]=NULL;
@@ -62,7 +62,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _listOfTup
     }
     else{
         //create bucketEntry
-        bucketEntry* entry = createEntry(key,_listOfTuples_);
+        bucketEntry* entry = createEntry(key,_wordInfoList_);
         bucketEntry** entryTable = bucketPtr->data;
 
         int position=-1;
@@ -135,7 +135,7 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
             
             //destroyListOfStrings(table[i]->notClique,false);
 
-            destroyListOfTuples(table[i]->listOfTuples,(void*)tupleDeletion); 
+            destroyListOfWordInfo(table[i]->wordInfoList,(void*)wordInfoDeletion); 
             free(table[i]->path); table[i]->path=NULL;
             free(table[i]); table[i]=NULL;
         }
@@ -155,13 +155,13 @@ bucket* getBucket(hashTable* ht, char* key, unsigned int* index){
 
 
 
-bucketEntry* createEntry(char* _path_, node* _listOfTuples_){
+bucketEntry* createEntry(char* _path_, node* _wordInfoList_){
     // create entry of the bucket with name key(path)
     bucketEntry* entry = calloc(1,sizeof(bucketEntry)); assert(entry!=NULL);
 
     entry->path = _path_;
-    // create list of tuples <char*,char*>
-    entry->listOfTuples = _listOfTuples_;
+    // create list of wordInfo <char*,unsigned int>
+    entry->wordInfoList = _wordInfoList_;
     // create clique -- list of paths
     entry->clique = NULL; entry->clique = appendList(entry->clique,entry);
     // create not clique -- list of pointers to not cliques
