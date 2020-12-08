@@ -194,7 +194,9 @@ void json_array_handler(char* str, TuplePtr t){
 			}
 		}
 		// get next value
+		printf("^^^^^^^^^^^^^^^^%s\n",token);
         token = strtok(NULL, s); 
+        printf("----------------%s\n",token);
     }
 
     if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
@@ -338,29 +340,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 		    }
 		    // made the property name 
 			pNameNotYet=true;
-
-			//standard form *space*"property":*space*[  --> property (remove " " and :)
-			property_buff[4] = ' ';
-			property_buff[strlen(property_buff)-4] = '\0';
-
-			//to add <property> into list of words
-			//break <property> phrases or sentences..
-		    tok = strtok(property_buff, " ");
-		    while(tok != NULL){
-		       	word = calloc(strlen(tok)+1,sizeof(char));
-		   		assert( word != NULL );
-				memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
-				strcpy(word, tok);
 			
-				if( strlen(word)>3){  //strlen(word) >1, 2 or 3 ?
-			        *l = appendList(*l, word);
-			    }else{
-			      	free(word);
-			    }
-		       
-		        tok = strtok(NULL, " ");  //take next word
-		    }
-
 			//if(property_buff==NULL) printf("here\n");
 		}else{
 			// time to make the values
@@ -379,7 +359,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 			        assert( word != NULL );
 					memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 					strcpy(word, tok);
-					printf("%s - %ld\n",word, strlen(word));
+					
 
 					//it is common to have stuff like  "word,"
 					if(word[strlen(word)-1] == ','){
@@ -395,9 +375,30 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 			    }
 			}
 		}
-		
         token = strtok(NULL, s); // get next value
     }
+
+    //standard form: *space*"property":*space*[  --> property (remove " " and :)
+	property_buff[4] = ' ';
+	property_buff[strlen(property_buff)-4] = '\0';
+
+	//to add <property> into list of words
+	//break <property> phrases or sentences..
+   	tok = strtok(property_buff, " ");
+	while(tok != NULL){
+		word = calloc(strlen(tok)+1,sizeof(char));
+		assert( word != NULL );
+		memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+		strcpy(word, tok);
+			
+		if( strlen(word)>3){  //strlen(word) >1, 2 or 3 ?
+		    *l = appendList(*l, word);
+		}else{
+			free(word);
+		}
+		       
+		tok = strtok(NULL, " ");  //take next word
+	}
 
     if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
 

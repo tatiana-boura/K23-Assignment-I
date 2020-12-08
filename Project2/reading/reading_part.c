@@ -127,7 +127,6 @@ int main(int argc, char* argv[]){
 								}
 
 								//json_array_handler(buff, t); 
-
 								json_to_word_list_value_array_edition(buff, &json_word_list);
 								
 								memset(arbuff ,'\0' , BUFFER_SIZE);
