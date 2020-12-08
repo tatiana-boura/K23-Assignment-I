@@ -237,7 +237,10 @@ void test_removeNode(void){
 	
 	// remove that address
 	node* _n_ = removeNode(&n,keepRandomAddressToRemove);
-
+	if( _n_!=NULL ){
+		free(_n_->data); _n_->data=NULL;
+		free(_n_); _n_=NULL;
+	}
 	// try and find the removed address [IT SHOULD NOT BE FOUND]
 	node* temp=n;
 	for( unsigned int i = 0; i<N-1; i++ ){
@@ -266,7 +269,6 @@ void test_removeNode(void){
 	}
 
 	// free not needed memo
-	free(_n_); _n_=NULL;
 	destroyListOfStrings(n, true );
 
 	return;
