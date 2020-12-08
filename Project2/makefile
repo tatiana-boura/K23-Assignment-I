@@ -25,8 +25,21 @@ functions.o: ./reading/functions.c
 tuples.o: ../tuples/tuples.c
 	$(CC) $(FLAGS) ../tuples/tuples.c
 
+# UNIT TESTING #
+DEF_SRC = ./list/list.c ../tuples/tuples.c
+OUTS    = test_hash_table test_list test_tuples
+
+tests:	
+	cc -g ./unit_testing/test_hash_table.c ./hash_table/hash_table.c $(DEF_SRC) -o test_hash_table
+	cc -g ./unit_testing/test_list.c $(DEF_SRC) -o test_list
+	cc -g ../unit_testing/test_tuples.c $(DEF_SRC) -o test_tuples
+
 clean:
 	rm -f $(OBJS) $(OUT)
 	rm -f output.txt
+
+clean_tests:
+	rm -f $(OUTS)
+
 
 
