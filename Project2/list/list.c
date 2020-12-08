@@ -84,6 +84,25 @@ void destroyListOfTuples(node* n, void(*deleteData)(void*)){
     return;
 }
 
+void destroyListOfWordInfo(node* n, void(*deleteData)(void*)){
+    
+    node* oldhead = NULL;
+    node* newhead = n;
+    
+    if(newhead==NULL) return;   //empty list
+    //else remove current head and move on to the next one
+    oldhead = newhead; 
+    newhead = oldhead->next;
+    
+    (*deleteData)(oldhead->data);
+    //free the actual node
+    free(oldhead); oldhead = NULL;
+    
+    destroyListOfWordInfo(newhead,deleteData);
+
+    return;
+}
+
 void destroyListOfStrings(node* n, bool destroyDataAsWell ){
 
     if (n == NULL) return;
