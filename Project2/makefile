@@ -1,8 +1,8 @@
 
 # MAIN PROGRAM #
-OBJS 	  = reading_part.o list.o hash_table.o functions.o tuples.o
-SOURCE	  = ./reading/reading_part.c ./list/list.c ./hash_table/hash_table.c ../tuples/tuples.c ./reading/functions.c
-HEADER    = ./list/list.h ./list/node.h ./list/node.h ./hash_table/hash_table.h ../tuples/tuples.h ./reading/functions.h ./hash_table/bucket.h
+OBJS 	  = reading_part.o list.o hash_table.o functions.o tuples.o word_info.o
+SOURCE	  = ./reading/reading_part.c ./list/list.c ./hash_table/hash_table.c ../tuples/tuples.c ./reading/functions.c ./word_info/word_info.c
+HEADER    = ./list/list.h ./list/node.h ./list/node.h ./hash_table/hash_table.h ../tuples/tuples.h ./reading/functions.h ./hash_table/bucket.h ./word_info/word_info.h
 OUT  	  = prog
 CC	  = gcc
 FLAGS     = -g -c -Wall
@@ -24,6 +24,9 @@ functions.o: ./reading/functions.c
 
 tuples.o: ../tuples/tuples.c
 	$(CC) $(FLAGS) ../tuples/tuples.c
+
+word_info.o: ./word_info/word_info.c
+	$(CC) $(FLAGS) ./word_info/word_info.c
 
 # UNIT TESTING #
 DEF_SRC = ./list/list.c ../tuples/tuples.c
