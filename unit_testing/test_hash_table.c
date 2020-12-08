@@ -166,6 +166,8 @@ void test_changePointers(void){
     TEST_ASSERT(entryTable2[entryNum2]->clique==entryTable3[entryNum3]->clique);
     TEST_ASSERT(entryTable3[entryNum3]->clique==entryTable1[entryNum1]->clique);
 
+    makeOutputFile(ht,BUCK_SIZE);
+
     destroyHT(ht,BUCK_SIZE);
     return;
 }
