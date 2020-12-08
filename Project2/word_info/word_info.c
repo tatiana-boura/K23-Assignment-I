@@ -27,7 +27,6 @@ void printWordInfo(wordInfo* w){
 	if(w==NULL){ printf("NULL wordInfo\n"); return;}
 
 	printf("[word] = [%s],[count] = %d\n",w->word,w->count);
-	printList(t->propertyValueList,NULL);
 
 	return;
 }
