@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "../list/list.h"
 #include "../../tuples/tuples.h"
-#include "../../word_info/word_info.h"
+#include "../word_info/word_info.h"
 #include "bucket.h"
 
 typedef node bucket;
