@@ -201,10 +201,82 @@ void test_addrFoundinList(void){
 	return;
 }
 
+//___test_removeNodet___________________________________________________________
+void test_removeNode(void){
+	/* function to check if node with certain address(we have a list of addresses) 
+	is correctly removed from a list */
+
+	unsigned int N=10;
+	
+	node* n=NULL;
+
+	// keep random position of address in list
+	srand(time(NULL));
+	unsigned int randomNumForListPositionR=rand()%N;
+	unsigned int randomNumForListPositionS;
+	/* make sure that the two positions are different
+	so that we don't remove the same and after look at something
+	we have removed*/
+	do{
+		randomNumForListPositionS=rand()%N;
+	}while(randomNumForListPositionS==randomNumForListPositionR);
+
+	int* keepRandomAddressToRemove;
+	int* keepRandomAddressToSearch;
+
+	/* we will insert addresses and keep a random one to remove later */
+	for( unsigned int i = 0; i<N; i++ ){
+		
+		int* addr = calloc(1,sizeof(int)); *addr = i;
+		// at a random position keep address in order to remove later
+		if(i==randomNumForListPositionR) keepRandomAddressToRemove = addr;
+		if(i==randomNumForListPositionS) keepRandomAddressToSearch = addr;
+
+		n = appendList(n,addr);
+	}
+	
+	// remove that address
+	node* _n_ = removeNode(&n,keepRandomAddressToRemove);
+
+	// try and find the removed address [IT SHOULD NOT BE FOUND]
+	node* temp=n;
+	for( unsigned int i = 0; i<N-1; i++ ){
+		// checking if randomStoredAddress is found
+		TEST_ASSERT(temp->data!=keepRandomAddressToRemove);
+		temp=temp->next;
+	}
+
+	// try and find the not removed address [IT SHOULD BE FOUND]
+	temp=n;
+	for( unsigned int i = 0; i<N-1; i++ ){
+		/* checking if randomStoredAddress is found and in expected position
+		   the position depends on the removed address, if it is before the one
+		   we are going to search, or after */
+		if( randomNumForListPositionR > randomNumForListPositionS ){
+			if(i==N-randomNumForListPositionS-2){
+				TEST_ASSERT(temp->data==keepRandomAddressToSearch);
+			} 
+		}else{
+			if(i==N-randomNumForListPositionS-1){
+				TEST_ASSERT(temp->data==keepRandomAddressToSearch);
+			} 
+		}
+
+		temp=temp->next;
+	}
+
+	// free not needed memo
+	free(_n_); _n_=NULL;
+	destroyListOfStrings(n, true );
+
+	return;
+}
+
 TEST_LIST = {
 	{ "appendList_string", test_appendList_string },
 	{ "appendList_tuple", test_appendList_Tuple },
 	{ "merge", test_mergeTwoLists },
 	{ "addrFoundinList", test_addrFoundinList },
+	{ "removeNode", test_removeNode },
 	{ NULL, NULL } // end of tests
 };
