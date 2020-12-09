@@ -3,13 +3,12 @@
 #define NAME_SIZE 100
 #define VALUE_SIZE 300
 
+/* WordInfoList: if word foundinlist then node->count++ else wordInfo* w; wordInfoInitialization(w,word); list=appendlist(list,w); */
+
 void wordInfoInitialization(wordInfo* w, char* _word_){ 
 
-	/*w = calloc(1,sizeof(wordInfo));
-	assert(w!=NULL);*/
-
 	w->word=_word_;
-	w->count = 0;
+	w->count = 1;
 
 	return;
 }
