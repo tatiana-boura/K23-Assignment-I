@@ -92,8 +92,35 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
 
     return;
 }
-//_______________________________________________________________________________________________________
+//___makeBOW_vectors______________________________________________________________________________________
 
+void makeBOW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize ){
+
+    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
+
+    for( unsigned int i=0; i<ht->size; i++ ){
+        
+        if(ht->table[i] != NULL){
+            
+            node* temp = ht->table[i];
+
+            while(temp!=NULL){
+
+                bucketEntry** entryTable = temp->data;
+
+                for(unsigned int j = 0;j<numOfEntries;j++){
+
+                    if((entryTable[j]!=NULL)){
+                        printf("{%s}\n",entryTable[j]->path );
+                        entryTable[j]->bow = calloc(vocabSize,sizeof(short));
+                    }
+                }
+                temp=temp->next;
+            }
+        }    
+    }
+}    
+ 
 
 //__destroyHashTable______________________________________________________________________________________
 
@@ -162,6 +189,8 @@ bucketEntry* createEntry(char* _path_, node* _wordInfoList_){
     entry->path = _path_;
     // create list of wordInfo <char*,unsigned int>
     entry->wordInfoList = _wordInfoList_;
+    // initialize bow
+    entry->bow = NULL;
     // create clique -- list of paths
     entry->clique = NULL; entry->clique = appendList(entry->clique,entry);
     // create not clique -- list of pointers to not cliques
@@ -222,14 +251,17 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 
     // if cliques aren't already the same
     if (clique1!=clique2){
+        
         // merge the two lists
         clique1=mergeTwoLists(clique1,clique2);
 
         node* t=notClique2;
         if( notClique1!=notClique2 ){
+            
 	        while( t!=NULL ){
 	        	// make a compact notClique list
 	        	if( !addrFoundinList(notClique1,t->data) ){
+                    
 	        		// if notCliques have not that element in common 
 	        		notClique1 = appendList(notClique1,t->data);
 	        	}else{
