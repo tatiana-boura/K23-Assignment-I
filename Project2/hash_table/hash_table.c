@@ -206,6 +206,8 @@ bool foundInHT(hashTable* ht, char* _path_, unsigned int bucketSize, unsigned in
     return false;
 }
 
+//void updateWordInfoList(hashTable* ht, )
+
 void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound1, unsigned int entryNum1, bucket** bucketFound2, unsigned int entryNum2 ){
 
     // first go to the first one and get the clique(list)
@@ -361,6 +363,8 @@ void printBucket(node* b){
             if((entryTable[i]!=NULL)){
 
             	node* n;
+                printf("path: %s wordInfoList: ",entryTable[i]->path);
+                printList(entryTable[i]->wordInfoList,(void*)printWordInfo); printf("\n");
                 bucketEntry* entryIn;
                 node* tempNode=entryTable[i]->clique;
 
