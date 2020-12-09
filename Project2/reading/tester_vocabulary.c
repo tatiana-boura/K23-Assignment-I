@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
     /* WordInfoListA gets w1-w6  */
     node* wordInfoListA=NULL; 
     
-    addToVoc(&vocabulary,w1,wordInfoListA);
+    addToVoc(&vocabulary,w1, wordInfoListA);
     addToWordInfoList(&wordInfoListA,w1); 
    
     addToVoc(&vocabulary,w2,wordInfoListA);

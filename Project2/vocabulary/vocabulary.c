@@ -21,7 +21,7 @@ void addToWordInfoList(node** word_info_list,char* _word_){
     } 
 }
 
-void addToVoc(node** voc,char* _word_,node* word_info_list){ 
+void addToVoc(node** voc,char* _word_, node* word_info_list){ 
     // If _word_ has been added in word_info_list then it 
     // already represents the .json in vocabulary count
     bool found = false; wordInfo* voc_w = NULL;
