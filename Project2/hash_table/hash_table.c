@@ -37,7 +37,7 @@ hashTable* createHT(unsigned int size){
 
 //__addToHashTable_______________________________________________________________________________________ 
 
-void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoList_, unsigned int _vocabCount_){
+void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoList_){
 
     bucket* bucketPtr; unsigned int index; 
     
@@ -49,7 +49,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
     if(bucketPtr==NULL){
 
         //create entries table and add this entry
-        bucketEntry* entry = createEntry(key,_wordInfoList_,_vocabCount_);
+        bucketEntry* entry = createEntry(key,_wordInfoList_);
         bucketEntry** entryTable = calloc(numOfEntries,sizeof(bucketEntry*)); assert(entryTable!=NULL); 
         
         for(unsigned int i=0; i<numOfEntries; i++) entryTable[i]=NULL;
@@ -62,7 +62,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
     }
     else{
         //create bucketEntry
-        bucketEntry* entry = createEntry(key,_wordInfoList__vocabCount_);
+        bucketEntry* entry = createEntry(key,_wordInfoList_);
         bucketEntry** entryTable = bucketPtr->data;
 
         int position=-1;
@@ -96,7 +96,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
 
 void makeBOW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize ){
 
-    unsigned int numOfEntries =(*bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
+    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
 
     for( unsigned int i=0; i<ht->size; i++ ){
         

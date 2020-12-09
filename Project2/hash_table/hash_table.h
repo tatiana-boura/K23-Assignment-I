@@ -17,7 +17,7 @@ typedef struct hashTable{
 
 unsigned int hash(char* string, hashTable* ht);
 hashTable* createHT(unsigned int size);
-void addtoHT(hashTable* ht, char* key, unsigned int bucketSize,node* _wordInfoList_, );
+void addtoHT(hashTable* ht, char* key, unsigned int bucketSize,node* _wordInfoList_ );
 void destroyHT(hashTable* ht,unsigned int bucketSize);
 void deleteBucketTable(bucketEntry** table,unsigned int* bucketSize);
 
