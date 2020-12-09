@@ -12,7 +12,7 @@
 #define HTSIZE 20
 #define STRSIZE 100
 
-//Compile:  gcc -g -o test ./reading/tester_vocabulary.c ./list/list.c ./word_info/word_info.c ./hash_table/hash_table.c 
+//Compile:  gcc -g -o test ./reading/tester_vocabulary.c ./list/list.c ./word_info/word_info.c ./hash_table/hash_table.c  ./vocabulary/vocabulary.c
 //Run:   valgrind -s -q --leak-check=full --show-leak-kinds=all ./test
 
 node* vocabulary = NULL;
@@ -32,22 +32,22 @@ int main(int argc, char* argv[]){
     /* WordInfoListA gets w1-w6  */
     node* wordInfoListA=NULL; 
     
-    addToVoc(&vocabulary,w1);
+    addToVoc(&vocabulary,w1,wordInfoListA);
     addToWordInfoList(&wordInfoListA,w1); 
    
-    addToVoc(&vocabulary,w2);
+    addToVoc(&vocabulary,w2,wordInfoListA);
     addToWordInfoList(&wordInfoListA,w2); 
    
-    addToVoc(&vocabulary,w3);
+    addToVoc(&vocabulary,w3,wordInfoListA);
     addToWordInfoList(&wordInfoListA,w3); 
   
-    addToVoc(&vocabulary,w4);
+    addToVoc(&vocabulary,w4,wordInfoListA);
     addToWordInfoList(&wordInfoListA,w4);
     
-    addToVoc(&vocabulary,w5);
+    addToVoc(&vocabulary,w5,wordInfoListA);
     addToWordInfoList(&wordInfoListA,w5); 
    
-    addToVoc(&vocabulary,w6);
+    addToVoc(&vocabulary,w6,wordInfoListA);
     addToWordInfoList(&wordInfoListA,w6); 
 
     /* Second sentence / .json */
@@ -61,23 +61,23 @@ int main(int argc, char* argv[]){
     node* wordInfoListB=NULL; 
     
     
-    addToVoc(&vocabulary,w7);
+    addToVoc(&vocabulary,w7,wordInfoListB);
     addToWordInfoList(&wordInfoListB,w7); 
 
     
-    addToVoc(&vocabulary,w8);
+    addToVoc(&vocabulary,w8,wordInfoListB);
     addToWordInfoList(&wordInfoListB,w8); 
 
    
-    addToVoc(&vocabulary,w9);
+    addToVoc(&vocabulary,w9,wordInfoListB);
     addToWordInfoList(&wordInfoListB,w9); 
 
     
-    addToVoc(&vocabulary,w10);
+    addToVoc(&vocabulary,w10,wordInfoListB);
     addToWordInfoList(&wordInfoListB,w10);
 
     
-    addToVoc(&vocabulary,w11);
+    addToVoc(&vocabulary,w11,wordInfoListB);
     addToWordInfoList(&wordInfoListB,w11); 
 
     printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
