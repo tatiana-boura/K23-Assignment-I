@@ -37,7 +37,7 @@ hashTable* createHT(unsigned int size){
 
 //__addToHashTable_______________________________________________________________________________________ 
 
-void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoList_){
+void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoList_, unsigned int _vocabCount_){
 
     bucket* bucketPtr; unsigned int index; 
     
@@ -49,7 +49,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
     if(bucketPtr==NULL){
 
         //create entries table and add this entry
-        bucketEntry* entry = createEntry(key,_wordInfoList_);
+        bucketEntry* entry = createEntry(key,_wordInfoList_,_vocabCount_);
         bucketEntry** entryTable = calloc(numOfEntries,sizeof(bucketEntry*)); assert(entryTable!=NULL); 
         
         for(unsigned int i=0; i<numOfEntries; i++) entryTable[i]=NULL;
@@ -62,7 +62,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
     }
     else{
         //create bucketEntry
-        bucketEntry* entry = createEntry(key,_wordInfoList_);
+        bucketEntry* entry = createEntry(key,_wordInfoList__vocabCount_);
         bucketEntry** entryTable = bucketPtr->data;
 
         int position=-1;
@@ -92,8 +92,35 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
 
     return;
 }
-//_______________________________________________________________________________________________________
+//___makeBOW_vectors______________________________________________________________________________________
 
+void makeBOW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize ){
+
+    unsigned int numOfEntries =(*bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
+
+    for( unsigned int i=0; i<ht->size; i++ ){
+        
+        if(ht->table[i] != NULL){
+            
+            node* temp = ht->table[i];
+
+            while(temp!=NULL){
+
+                bucketEntry** entryTable = temp->data;
+
+                for(unsigned int j = 0;j<numOfEntries;j++){
+
+                    if((entryTable[j]!=NULL)){
+                        printf("{%s}\n",entryTable[j]->path );
+                        entryTable[j]->bow = calloc(vocabSize,sizeof(short));
+                    }
+                }
+                temp=temp->next;
+            }
+        }    
+    }
+}    
+ 
 
 //__destroyHashTable______________________________________________________________________________________
 
@@ -162,6 +189,8 @@ bucketEntry* createEntry(char* _path_, node* _wordInfoList_){
     entry->path = _path_;
     // create list of wordInfo <char*,unsigned int>
     entry->wordInfoList = _wordInfoList_;
+    // initialize bow
+    entry->bow = NULL;
     // create clique -- list of paths
     entry->clique = NULL; entry->clique = appendList(entry->clique,entry);
     // create not clique -- list of pointers to not cliques
