@@ -194,7 +194,9 @@ void json_array_handler(char* str, TuplePtr t){
 			}
 		}
 		// get next value
+		printf("^^^^^^^^^^^^^^^^%s\n",token);
         token = strtok(NULL, s); 
+        printf("----------------%s\n",token);
     }
 
     if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
@@ -203,7 +205,7 @@ void json_array_handler(char* str, TuplePtr t){
 }
 
 //=======================================================================================================================
-
+//MIGHT DELETE
 void json_to_word_list(char* str, node** l){  
 	//printf("given string: %s \n", str);
 
@@ -259,6 +261,10 @@ void json_to_word_list(char* str, node** l){
 		        //do not add (<key name> - no )
 				if( strcmp(value_buff,"no")!=0 ){
 
+					//get rid of symbols
+					property_buff = no_symbols(property_buff);
+
+					//now string contains only letters and numbers
 					//break <property> phrases or sentences..
 		        	tok = strtok(property_buff, " ");
 		        	while(tok != NULL){
@@ -271,6 +277,10 @@ void json_to_word_list(char* str, node** l){
 		        		tok = strtok(NULL, " ");  //take next word
 		        	}
 					
+					//get rid of symbols
+					value_buff = no_symbols(value_buff);
+
+					//now string contains only letters and numbers
 		        	//break <value> phrases or sentences..
 			        tok = strtok(value_buff, " ");
 			        while(tok != NULL){
@@ -278,11 +288,6 @@ void json_to_word_list(char* str, node** l){
 			        	assert( word != NULL );
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 						strcpy(word, tok);
-
-						//it is common to have stuff like  "word,"
-						if(word[strlen(word)-1] == ','){
-							word[strlen(word)-1] = '\0'; //erase the ','
-						} 
 
 						if( (atoi(word) == 0) && (strcmp(word,"yes")!=0) && (strlen(word)>3)){  //strlen(word) >1, 2 or 3 ? 
 			        		*l = appendList(*l, word);
@@ -304,10 +309,16 @@ void json_to_word_list(char* str, node** l){
 }
 
 
-
+//MIGHT DELETE
 //function that takes a string {that contains array!} and stores key and value into a tuple
 void json_to_word_list_value_array_edition(char* str,  node** l){
 	//printf("given string: %s \n", str);
+	//turn string to lower case
+	int i=0;
+	while(str[i]){
+		str[i] = tolower(str[i]);
+		i++;
+	}
 	const char s[3] = "\"";
 	char* property_buff=NULL;
 	char* value_buff=NULL;
@@ -338,29 +349,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 		    }
 		    // made the property name 
 			pNameNotYet=true;
-
-			//standard form *space*"property":*space*[  --> property (remove " " and :)
-			property_buff[4] = ' ';
-			property_buff[strlen(property_buff)-4] = '\0';
-
-			//to add <property> into list of words
-			//break <property> phrases or sentences..
-		    tok = strtok(property_buff, " ");
-		    while(tok != NULL){
-		       	word = calloc(strlen(tok)+1,sizeof(char));
-		   		assert( word != NULL );
-				memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
-				strcpy(word, tok);
 			
-				if( strlen(word)>3){  //strlen(word) >1, 2 or 3 ?
-			        *l = appendList(*l, word);
-			    }else{
-			      	free(word);
-			    }
-		       
-		        tok = strtok(NULL, " ");  //take next word
-		    }
-
 			//if(property_buff==NULL) printf("here\n");
 		}else{
 			// time to make the values
@@ -372,6 +361,11 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 				if(value_buff == NULL){ strcpy(value_buff, " ");}
 
 				//to add <value> into list of words
+				//get rid of symbols
+				value_buff = no_symbols(value_buff);
+				
+				//now string contains only letters and numbers
+
 				//break <value> phrases or sentences..
 				tok = strtok(value_buff, " ");
 			    while(tok != NULL){
@@ -379,7 +373,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 			        assert( word != NULL );
 					memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 					strcpy(word, tok);
-					printf("%s - %ld\n",word, strlen(word));
+					
 
 					//it is common to have stuff like  "word,"
 					if(word[strlen(word)-1] == ','){
@@ -395,11 +389,87 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 			    }
 			}
 		}
-		
         token = strtok(NULL, s); // get next value
     }
+
+    //get rid of symbols
+	property_buff = no_symbols(property_buff);
+	//now string contains only letters and numbers
+
+	//to add <property> into list of words
+	//break <property> phrases or sentences..
+   	tok = strtok(property_buff, " ");
+	while(tok != NULL){
+		word = calloc(strlen(tok)+1,sizeof(char));
+		assert( word != NULL );
+		memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+		strcpy(word, tok);
+			
+		if( strlen(word)>3){  //strlen(word) >1, 2 or 3 ?
+		    *l = appendList(*l, word);
+		}else{
+			free(word);
+		}
+		       
+		tok = strtok(NULL, " ");  //take next word
+	}
 
     if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
 
     return;
 }
+
+char* no_symbols(char* str){
+	int i=0;
+	//get rid of symbols
+	for(i=0 ; i<strlen(str); i++){
+		if(( (str[i]<48)||(str[i]>57) )&&( (str[i]<97)||(str[i]>122) )){
+			str[i] = ' ';
+		}
+	}
+	return str;
+}
+
+
+//MIGHT BE ENOUGH?
+void json_to_list(char* str,  node** l){
+	//printf("given string: %s \n", str);
+	//turn string to lower case
+	int i=0;
+	while(str[i]){
+		str[i] = tolower(str[i]);
+		i++;
+	}
+
+	//get rid of symbols
+	for(i=0 ; i<strlen(str); i++){
+		if(( (str[i]<48)||(str[i]>57) )&&( (str[i]<97)||(str[i]>122) )){
+			str[i] = ' ';
+		}
+	}
+	//now string contains only letters and numbers
+
+	//break into words
+	char* tok; 
+	char* word;
+
+	tok = strtok(str, " ");
+	while(tok != NULL){
+		word = calloc(strlen(tok)+1,sizeof(char));
+		assert( word != NULL );
+		memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+		strcpy(word, tok);
+			
+		if( (atoi(word) == 0) && strlen(word)>3){  //not number and >3 char
+		    *l = appendList(*l, word);
+		}else{
+			free(word);
+		}
+		       
+		tok = strtok(NULL, " ");  //take next word
+	}
+
+
+}
+
+

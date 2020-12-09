@@ -14,6 +14,7 @@ void destroyList(node* n, unsigned int* size, bool del, void(*deleteData)(void*,
 node* mergeTwoLists(node* n1, node* n2);
 
 void destroyListOfTuples(node* n, void(*deleteData)(void*));
+void destroyListOfWordInfo(node* n, void(*deleteData)(void*));
 void destroyListOfStrings(node* n, bool destroyDataAsWell);
 
 void printList(node* n, void(*printData)(void*));

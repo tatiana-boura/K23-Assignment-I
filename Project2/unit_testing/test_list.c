@@ -2,14 +2,14 @@
 
 #include <time.h>
 #include "../list/list.h"
-#include "../../tuples/tuples.h"
+#include "../word_info/word_info.h"
 
 #define STRSIZE 100
 
 //___test_appendList_string_________________________________________________________
 void test_appendList_string(void){
 	/* this is a test function for lists that contain strings.
-	In our code these are: cliques and propertyValueList */
+	In our code these are: cliques and wordInfoList */
 
 	unsigned int N=200000;
 	char** array = calloc(N,sizeof(char*));
@@ -38,61 +38,50 @@ void test_appendList_string(void){
 	return;
 }
 
-//___test_appendList_Tuple_________________________________________________________
-void test_appendList_Tuple(void){
-	//this is a test function for lists that tuples that are <string,
-	//listOfValues>
+
+//___test_appendList_wordInfo_________________________________________________________
+void test_appendList_wordInfo(void){
+	//this is a test function for lists of wordInfo (<string,count>)
 
 	unsigned int N=1000;
-	char** arrayOfNames = calloc(N,sizeof(char*));
-	node* listOfTuples=NULL;
+	char** arrayOfWords = calloc(N,sizeof(char*));
+	node* wordInfoList=NULL;
 
 	char* str;
 	
-	// for example if j=5 then the tuple must be [5,[5,4,3,2,1,0]]
+	// for example if j=5 then the wordInfo must be [5,0]
 	for( unsigned int j=0; j<N; j++ ){
 		
-		arrayOfNames[j]=calloc(STRSIZE,sizeof(char));
-		sprintf(arrayOfNames[j],"%d",j);
-		TuplePtr t=calloc(1,sizeof(Tuple));
+		arrayOfWords[j]=calloc(STRSIZE,sizeof(char));
+		sprintf(arrayOfWords[j],"%d",j);
+		wordInfo* w=calloc(1,sizeof(wordInfo));
 
-		for( unsigned int i = 0; i<=j; i++ ){
-			// in this loop we are making the listOfStrings
-			str = calloc(STRSIZE,sizeof(char));
-			sprintf(str,"%d",i);
+		wordInfoInitialization(w,arrayOfWords[j]);
 
-			if(i==0) // first time
-				tupleInitialization(t,arrayOfNames[j],str);
-			else insertAtValueList(t,str);
-		}
+		wordInfoList = appendList(wordInfoList,w);
+	}
 
-		listOfTuples = appendList(listOfTuples,t);
+	// update wordInfoList with counts: i.e. wordInfo that was inserted 5th has count 4 
+	node* tempWords=wordInfoList;
+	for( int j=N-1; j>=0; j-- ){
+		((wordInfo *)(tempWords->data))->count=j;
+		tempWords=tempWords->next;
 	}
 
 	// time to check if values have been inserted as expected
-	node* tempTuples=listOfTuples;
+	tempWords=wordInfoList;
 
 	for( int j=N-1; j>=0; j-- ){
-		// checking if values at name are the same
-		TEST_ASSERT(!strcmp(((TuplePtr)(tempTuples->data))->propertyName,arrayOfNames[j]));
+		// checking if values at word are the same
+		TEST_ASSERT(!strcmp(((wordInfo *)(tempWords->data))->word,arrayOfWords[j]));
 
-		str = calloc(STRSIZE,sizeof(char));
-		node* tempValues=(((TuplePtr)(tempTuples->data))->propertyValueList);
-
-		for( int i = j; i>=0; i-- ){
-			sprintf(str,"%d",i);
-			// checking if value at propertyValues list are the same
-			TEST_ASSERT(!strcmp((char*)(tempValues->data),str));
-
-			tempValues=tempValues->next;
-		}
-		free(str); str=NULL;
-		tempTuples=tempTuples->next;
+		TEST_ASSERT(((wordInfo *)(tempWords->data))->count==j);
+		tempWords=tempWords->next;
 	}
 
 	// free not needed memo
-	destroyListOfTuples(listOfTuples, (void*)tupleDeletion );
-	free(arrayOfNames); arrayOfNames=NULL;
+	destroyListOfWordInfo(wordInfoList, (void*)wordInfoDeletion );
+	free(arrayOfWords); arrayOfWords=NULL;
 
 	return;
 }
@@ -275,7 +264,7 @@ void test_removeNode(void){
 
 TEST_LIST = {
 	{ "appendList_string", test_appendList_string },
-	{ "appendList_tuple", test_appendList_Tuple },
+	{ "appendList_wordInfo", test_appendList_wordInfo },
 	{ "merge", test_mergeTwoLists },
 	{ "addrFoundinList", test_addrFoundinList },
 	{ "removeNode", test_removeNode },

@@ -5,7 +5,7 @@
 
 typedef struct bucketEntry{
     char* path;
-    node* listOfTuples;
+    node* wordInfoList;
     node* clique;
     node* notClique; 
 }bucketEntry;

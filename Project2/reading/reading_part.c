@@ -127,9 +127,9 @@ int main(int argc, char* argv[]){
 								}
 
 								//json_array_handler(buff, t); 
+								//json_to_word_list_value_array_edition(buff, &json_word_list);
+								json_to_list(buff, &json_word_list);
 
-								json_to_word_list_value_array_edition(buff, &json_word_list);
-								
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
 
@@ -144,7 +144,8 @@ int main(int argc, char* argv[]){
 									//json_separator(buff,t);
 									
 									//break buff into words and add thm to the list
-									json_to_word_list(buff, &json_word_list);  //***************************
+									//json_to_word_list(buff, &json_word_list);  //***************************
+									json_to_list(buff, &json_word_list);
 
 									memset(arbuff ,'\0' , BUFFER_SIZE);
 									memset(buff ,'\0' , BUFFER_SIZE);
@@ -168,7 +169,8 @@ int main(int argc, char* argv[]){
 				    // cut "2013_camera_specs/"
 					memmove(json_path,json_path+strlen(argv[1])+1, strlen(json_path)-strlen(argv[1]));
 					char* path = convertPath(json_path);   // fix special character '//' and .json
-										
+					
+					//printf("%s\n",path);					
 					//----ADD PATH & LIST in HT -----------------------------------------------------
 					addtoHT(ht, path, BUCKETSIZE, spec_list);
 

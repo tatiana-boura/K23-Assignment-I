@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "../list/list.h"
 #include "../../tuples/tuples.h"
+#include "../word_info/word_info.h"
 #include "bucket.h"
 
 typedef node bucket;
@@ -16,7 +17,7 @@ typedef struct hashTable{
 
 unsigned int hash(char* string, hashTable* ht);
 hashTable* createHT(unsigned int size);
-void addtoHT(hashTable* ht, char* key, unsigned int bucketSize,node* _listOfTuples_);
+void addtoHT(hashTable* ht, char* key, unsigned int bucketSize,node* _wordInfoList_);
 void destroyHT(hashTable* ht,unsigned int bucketSize);
 void deleteBucketTable(bucketEntry** table,unsigned int* bucketSize);
 
@@ -29,7 +30,7 @@ void printHT(hashTable* ht);
 void printBucket(node* b);
 
 bucket* getBucket(hashTable* ht, char* key, unsigned int* index);
-bucketEntry* createEntry(char* key,node* _listOfTuples_);
+bucketEntry* createEntry(char* key,node* _wordInfoList_);
 
 void makeOutputFile(hashTable* ht, unsigned int bucketSize);
 
