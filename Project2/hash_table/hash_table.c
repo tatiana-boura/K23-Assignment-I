@@ -220,14 +220,17 @@ void changePointers(hashTable* ht, unsigned int bucketSize, bucket** bucketFound
 
     // if cliques aren't already the same
     if (clique1!=clique2){
+        
         // merge the two lists
         clique1=mergeTwoLists(clique1,clique2);
 
         node* t=notClique2;
         if( notClique1!=notClique2 ){
+            
 	        while( t!=NULL ){
 	        	// make a compact notClique list
 	        	if( !addrFoundinList(notClique1,t->data) ){
+                    
 	        		// if notCliques have not that element in common 
 	        		notClique1 = appendList(notClique1,t->data);
 	        	}else{
