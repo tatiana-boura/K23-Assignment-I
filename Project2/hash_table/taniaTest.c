@@ -12,7 +12,7 @@
 #define HTSIZE 20
 #define STRSIZE 100
 
-//Compile:  gcc -g -o test ./reading/tester_vocabulary.c ./list/list.c ./word_info/word_info.c ./hash_table/hash_table.c 
+//Compile:  gcc -g -o test ./taniaTest.c ../list/list.c ../word_info/word_info.c ./hash_table.c ../vocabulary/vocabulary.c 
 //Run:   valgrind -s -q --leak-check=full --show-leak-kinds=all ./test
 
 node* vocabulary = NULL;
@@ -94,7 +94,7 @@ int main(int argc, char* argv[]){
 	addtoHT(ht, sA, BUCKETSIZE, wordInfoListA);
     addtoHT(ht, sB, BUCKETSIZE, wordInfoListB);
 
-    makeBOW_vectors( ht, BUCKETSIZE, 10 );
+    make_tfidf_vectors( ht, BUCKETSIZE, 8, vocabulary );
 
     //__END_INITIALIZING_HASH_TABLE____________________________________________________________________________________
 

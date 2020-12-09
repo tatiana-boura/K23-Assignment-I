@@ -92,27 +92,66 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
 
     return;
 }
-//___makeBOW_vectors______________________________________________________________________________________
+//___make_tfidf_vectors______________________________________________________________________________________
+void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary ){
 
-void makeBOW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize ){
-
+// go through every entry in the hash and make the bow vector
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
-
+    // for all hash table
     for( unsigned int i=0; i<ht->size; i++ ){
-        
+        // go to the bucket of ht
         if(ht->table[i] != NULL){
-            
             node* temp = ht->table[i];
-
             while(temp!=NULL){
-
                 bucketEntry** entryTable = temp->data;
-
+                // and every entry of the bucket
                 for(unsigned int j = 0;j<numOfEntries;j++){
 
-                    if((entryTable[j]!=NULL)){
-                        printf("{%s}\n",entryTable[j]->path );
-                        entryTable[j]->bow = calloc(vocabSize,sizeof(short));
+                    if(entryTable[j]!=NULL){
+
+                        // initialize the needed size for the tf
+                        entryTable[j]->tfidf = calloc(vocabSize,sizeof(float));
+                        // for all the words in the vocabulary
+                        node* _word_ = vocabulary;
+                        for( unsigned int k = 0; k<vocabSize; k++ ){
+
+                            wordInfo* info = (wordInfo*)(_word_->data);
+                            char* word = info->word;
+
+                            /* if current word of the vocabulary exists in current JSON then
+                            count := how many times the current word is spotted in current JSON.*/
+                            int count = -1;
+                            // counts total number of words in current JSON
+                            unsigned int totalWordsJSON = 0;
+
+                            // get vocabulary of the current JSON
+                            node* wordJSON = entryTable[j]->wordInfoList;
+
+                            while( wordJSON != NULL ){
+
+                                wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
+                                char* w = infoJSON->word;
+
+                                // the word has been found
+                                if( strcmp(word,w) == 0){
+                                    //printf("word found -- %s\n", w);
+                                    count = infoJSON->count;
+                                }
+                                // update total words of this JSON
+                                totalWordsJSON+=infoJSON->count;
+                                // go to next word of this JSON
+                                wordJSON = wordJSON->next;
+                            }
+                            // if the word exists in this json -- create tf vector
+                            if( count != -1 ) entryTable[j]->tfidf[k] = (float)count/totalWordsJSON;
+                            // go to the next word of the vocabulary
+                            _word_ = _word_->next;
+                        }
+
+                        
+                        printf("\nPrint the tf array\n");
+                        for( unsigned int k = 0; k<vocabSize; k++ ) printf("%f\t",(entryTable[j]->tfidf)[k] );
+                        printf("\n");
                     }
                 }
                 temp=temp->next;
@@ -164,6 +203,7 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
 
             destroyListOfWordInfo(table[i]->wordInfoList,(void*)wordInfoDeletion); 
             free(table[i]->path); table[i]->path=NULL;
+            free(table[i]->tfidf); table[i]->tfidf=NULL;
             free(table[i]); table[i]=NULL;
         }
     }
@@ -189,8 +229,8 @@ bucketEntry* createEntry(char* _path_, node* _wordInfoList_){
     entry->path = _path_;
     // create list of wordInfo <char*,unsigned int>
     entry->wordInfoList = _wordInfoList_;
-    // initialize bow
-    entry->bow = NULL;
+    // initialize tfidf
+    entry->tfidf = NULL;
     // create clique -- list of paths
     entry->clique = NULL; entry->clique = appendList(entry->clique,entry);
     // create not clique -- list of pointers to not cliques

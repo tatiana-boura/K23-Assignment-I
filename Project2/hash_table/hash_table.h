@@ -31,7 +31,7 @@ void printBucket(node* b);
 bucket* getBucket(hashTable* ht, char* key, unsigned int* index);
 bucketEntry* createEntry(char* key,node* _wordInfoList_);
 
-void makeBOW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize );
+void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary  );
 
 void makeOutputFile(hashTable* ht, unsigned int bucketSize);
 
