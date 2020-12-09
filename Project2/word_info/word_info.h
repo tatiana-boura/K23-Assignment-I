@@ -8,7 +8,7 @@
 
 typedef struct wordInfo{
 	char* word;
-	unsigned int count;
+	unsigned int count;	/*wordInfoList in HT: # of times word appeared in file | vocabulary: # of files that containted the word */
 }wordInfo;
 
 void wordInfoInitialization(wordInfo* w, char* _word_);

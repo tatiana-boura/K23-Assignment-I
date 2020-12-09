@@ -255,16 +255,18 @@ void json_to_word_list(char* str, node** l){
 				}
 				//now: property_buff = word/phrase/sentence & value_buff = word/phrase/sentence 
 
-		        //add words to list of json words
+		        //add words to list of json words----------------------------------------------
 		        char* tok; 
 		        char* word;
-		        //do not add (<key name> - no )
-				if( strcmp(value_buff,"no")!=0 ){
+
+		        //get rid of symbols 
+				value_buff = no_symbols(value_buff);
+
+				if( strcmp(value_buff,"yes")==0 ){ 				//1) If vallue == yes: add property
 
 					//get rid of symbols
 					property_buff = no_symbols(property_buff);
 
-					//now string contains only letters and numbers
 					//break <property> phrases or sentences..
 		        	tok = strtok(property_buff, " ");
 		        	while(tok != NULL){
@@ -276,27 +278,23 @@ void json_to_word_list(char* str, node** l){
 		        		*l = appendList(*l, word);
 		        		tok = strtok(NULL, " ");  //take next word
 		        	}
-					
-					//get rid of symbols
-					value_buff = no_symbols(value_buff);
-
-					//now string contains only letters and numbers
-		        	//break <value> phrases or sentences..
-			        tok = strtok(value_buff, " ");
-			        while(tok != NULL){
-			        	word = calloc(strlen(tok)+1,sizeof(char));
-			        	assert( word != NULL );
+				}else if( strcmp(value_buff,"no")!=0  ){  		//2)if vallue!=yes/no: add value
+			        //break <value> phrases or sentences..
+				    tok = strtok(value_buff, " ");
+				    while(tok != NULL){
+				    	word = calloc(strlen(tok)+1,sizeof(char));
+				        assert( word != NULL );
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 						strcpy(word, tok);
 
-						if( (atoi(word) == 0) && (strcmp(word,"yes")!=0) && (strlen(word)>3)){  //strlen(word) >1, 2 or 3 ? 
-			        		*l = appendList(*l, word);
-			        	}else{
-			        		free(word);
-			        	}
-			        	tok = strtok(NULL, " "); //take next word
-			       	}		        	
-		        }
+						if( (atoi(word) == 0) && (strlen(word)>1)){ 
+				        	*l = appendList(*l, word);
+				        }else{
+				        	free(word);
+				        }
+				        tok = strtok(NULL, " "); //take next word
+				    }		        	
+		        }//3)if value == no: do NOT add value and property in list of words
 		    }
 
 		    flag++;
@@ -345,7 +343,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
    			
 			strcpy(property_buff, token);
 			if(property_buff == NULL){
-		      	strcpy(property_buff, " ");
+		      	strcpy(property_buff, " "); //store property
 		    }
 		    // made the property name 
 			pNameNotYet=true;
@@ -360,27 +358,18 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 				strcpy(value_buff, token);
 				if(value_buff == NULL){ strcpy(value_buff, " ");}
 
-				//to add <value> into list of words
-				//get rid of symbols
 				value_buff = no_symbols(value_buff);
-				
 				//now string contains only letters and numbers
 
-				//break <value> phrases or sentences..
+				//to add <value> into list of words --> break <value> phrases or sentences..
 				tok = strtok(value_buff, " ");
 			    while(tok != NULL){
 			        word = calloc(strlen(tok)+1,sizeof(char));
 			        assert( word != NULL );
 					memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 					strcpy(word, tok);
-					
 
-					//it is common to have stuff like  "word,"
-					if(word[strlen(word)-1] == ','){
-						word[strlen(word)-1] = '\0'; //erase the ','
-					} 
-
-					if( (atoi(word) == 0) && (strlen(word)>3)){  //strlen(word) >1, 2 or 3 ? 
+					if( (atoi(word) == 0) && (strlen(word)>1)){  
 			        	*l = appendList(*l, word);
 			        }else{
 			        	free(word);
@@ -392,12 +381,10 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
         token = strtok(NULL, s); // get next value
     }
 
-    //get rid of symbols
-	property_buff = no_symbols(property_buff);
-	//now string contains only letters and numbers
+    //in arrays property carries information [!]
 
-	//to add <property> into list of words
-	//break <property> phrases or sentences..
+	property_buff = no_symbols(property_buff); //now string contains only letters and numbers
+	//to add <property> into list of words --> break <property> phrases or sentences..
    	tok = strtok(property_buff, " ");
 	while(tok != NULL){
 		word = calloc(strlen(tok)+1,sizeof(char));
@@ -405,7 +392,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 		memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
 		strcpy(word, tok);
 			
-		if( strlen(word)>3){  //strlen(word) >1, 2 or 3 ?
+		if( strlen(word)>1){  
 		    *l = appendList(*l, word);
 		}else{
 			free(word);
@@ -429,47 +416,3 @@ char* no_symbols(char* str){
 	}
 	return str;
 }
-
-
-//MIGHT BE ENOUGH?
-void json_to_list(char* str,  node** l){
-	//printf("given string: %s \n", str);
-	//turn string to lower case
-	int i=0;
-	while(str[i]){
-		str[i] = tolower(str[i]);
-		i++;
-	}
-
-	//get rid of symbols
-	for(i=0 ; i<strlen(str); i++){
-		if(( (str[i]<48)||(str[i]>57) )&&( (str[i]<97)||(str[i]>122) )){
-			str[i] = ' ';
-		}
-	}
-	//now string contains only letters and numbers
-
-	//break into words
-	char* tok; 
-	char* word;
-
-	tok = strtok(str, " ");
-	while(tok != NULL){
-		word = calloc(strlen(tok)+1,sizeof(char));
-		assert( word != NULL );
-		memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
-		strcpy(word, tok);
-			
-		if( (atoi(word) == 0) && strlen(word)>3){  //not number and >3 char
-		    *l = appendList(*l, word);
-		}else{
-			free(word);
-		}
-		       
-		tok = strtok(NULL, " ");  //take next word
-	}
-
-
-}
-
-
