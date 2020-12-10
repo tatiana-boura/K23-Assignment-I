@@ -8,7 +8,7 @@ CC	  = gcc
 FLAGS     = -g -c -Wall
 
 $(OUT): $(OBJS)
-	$(CC) -g $(OBJS) -o $@
+	$(CC) -g $(OBJS) -o $@ -lm
 
 reading_part.o: ./reading/reading_part.c
 	$(CC) $(FLAGS) ./reading/reading_part.c
@@ -30,13 +30,12 @@ word_info.o: ./word_info/word_info.c
 
 # UNIT TESTING #
 DEF_SRC = ./list/list.c ./word_info/word_info.c  ../tuples/tuples.c
-OUTS    = test_hash_table test_list test_word_info test_tuples
+OUTS    = test_hash_table test_list test_word_info
 
 tests:	
 	cc -g ./unit_testing/test_hash_table.c ./hash_table/hash_table.c $(DEF_SRC) -o test_hash_table
 	cc -g ./unit_testing/test_list.c $(DEF_SRC) -o test_list
 	cc -g ./unit_testing/test_word_info.c $(DEF_SRC) -o test_word_info
-	cc -g ../unit_testing/test_tuples.c $(DEF_SRC) -o test_tuples
 
 clean:
 	rm -f $(OBJS) $(OUT)
