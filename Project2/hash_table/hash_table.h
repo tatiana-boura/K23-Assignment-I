@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <math.h>
+
 #include "../list/list.h"
 #include "../../tuples/tuples.h"
 #include "../word_info/word_info.h"
@@ -31,7 +33,7 @@ void printBucket(node* b);
 bucket* getBucket(hashTable* ht, char* key, unsigned int* index);
 bucketEntry* createEntry(char* key,node* _wordInfoList_);
 
-void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary  );
+void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON  );
 
 void makeOutputFile(hashTable* ht, unsigned int bucketSize);
 
