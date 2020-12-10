@@ -206,7 +206,7 @@ void json_array_handler(char* str, TuplePtr t){
 
 //=======================================================================================================================
 //MIGHT DELETE
-void json_to_word_list(char* str, node** l){  
+void json_to_word_list(char* str, node** l, node* stopwords){  
 	//printf("given string: %s \n", str);
 
 	//turn string to lower case
@@ -287,7 +287,7 @@ void json_to_word_list(char* str, node** l){
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 						strcpy(word, tok);
 
-						if( (atoi(word) == 0) && (strlen(word)>1)){ 
+						if( (atoi(word) == 0) && (strlen(word)>1) && (inlist(stopwords, word) == 1)){ 
 				        	*l = appendList(*l, word);
 				        }else{
 				        	free(word);
@@ -309,7 +309,7 @@ void json_to_word_list(char* str, node** l){
 
 //MIGHT DELETE
 //function that takes a string {that contains array!} and stores key and value into a tuple
-void json_to_word_list_value_array_edition(char* str,  node** l){
+void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords){
 	//printf("given string: %s \n", str);
 	//turn string to lower case
 	int i=0;
@@ -369,7 +369,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 					memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 					strcpy(word, tok);
 
-					if( (atoi(word) == 0) && (strlen(word)>1)){  
+					if( (atoi(word) == 0) && (strlen(word)>1) && (inlist(stopwords, word) == 1)){  
 			        	*l = appendList(*l, word);
 			        }else{
 			        	free(word);
@@ -392,7 +392,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 		memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
 		strcpy(word, tok);
 			
-		if( strlen(word)>1){  
+		if( strlen(word)>1 && (inlist(stopwords, word) == 1) ){  
 		    *l = appendList(*l, word);
 		}else{
 			free(word);
@@ -403,6 +403,8 @@ void json_to_word_list_value_array_edition(char* str,  node** l){
 
     if( value_buff == NULL ){ free(property_buff); property_buff=NULL; }
 
+    if(value_buff != NULL){free(value_buff);}
+    if(property_buff != NULL){free(property_buff);}
     return;
 }
 
@@ -415,4 +417,18 @@ char* no_symbols(char* str){
 		}
 	}
 	return str;
+}
+
+
+//if word w is part of list l reurn 0
+int inlist(node* n, char* w){
+	node* tempNode=n;
+
+    while(tempNode!=NULL){
+        if(strcmp((char*)tempNode->data,w) == 0){
+        	return 0; //in list
+        }
+        tempNode=tempNode->next;
+    }
+    return 1; //NOT in list
 }

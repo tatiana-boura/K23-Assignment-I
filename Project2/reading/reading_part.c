@@ -56,7 +56,39 @@ int main(int argc, char* argv[]){
 	strcpy(dirpath, argv[1]);
 	strcat(dirpath, "/");        //current dirpath: "2013_camera_specs/"
 
-	 
+	//-----[create stopwords list]---------------------------------
+	FILE* stopwords = fopen(argv[3], "r");
+	if(stopwords == NULL){
+		perror("Unable to open file :(");
+		exit(-1);
+	} 
+	fgets(buff, BUFFER_SIZE, stopwords);
+					
+	//create list for stop words
+	node* stopwords_list = NULL;
+
+	//insert words from .txt file to list
+	char* tok; 
+	char* word;
+
+	tok = strtok(buff, ",");
+	while(tok != NULL){
+		word = calloc(strlen(tok)+1,sizeof(char));
+		assert( word != NULL );
+		memset(word, '\0', (strlen(tok)+1)*sizeof(char));
+		strcpy(word, tok);
+
+		//printf("%s\n",word);
+							
+		stopwords_list = appendList(stopwords_list, word);
+					
+		tok = strtok(NULL, ","); //take next word 
+	}
+	memset(buff ,'\0' , BUFFER_SIZE); //reinitialise buff
+	//printList(stopwords_list, NULL);
+	fclose(stopwords);
+			
+	//------------------------------------------------------------
 	int dirs=0; //num of files in main_dir --> 2013_camera_specs
 	while( (main_dir_entry = readdir(main_dir)) ){  //check each entry in the directory
 		//ignore open current & parent dir
@@ -71,6 +103,7 @@ int main(int argc, char* argv[]){
 				printf("Unable to read sub-directory\n");
 				exit(-1); 
 			}
+
 
 			//printf("Sub-directory opend successfully!\n");
 			while( (sub_dir_entry = readdir(sub_dir)) ){
@@ -127,7 +160,7 @@ int main(int argc, char* argv[]){
 								}
 
 								//json_array_handler(buff, t); 
-								json_to_word_list_value_array_edition(buff, &json_word_list);
+								json_to_word_list_value_array_edition(buff, &json_word_list, stopwords_list);
 
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
@@ -143,7 +176,7 @@ int main(int argc, char* argv[]){
 									//json_separator(buff,t);
 									
 									//break buff into words and add thm to the list
-									json_to_word_list(buff, &json_word_list);  
+									json_to_word_list(buff, &json_word_list, stopwords_list);  
 
 									memset(arbuff ,'\0' , BUFFER_SIZE);
 									memset(buff ,'\0' , BUFFER_SIZE);
@@ -182,6 +215,7 @@ int main(int argc, char* argv[]){
 		strcpy(dirpath, argv[1]);
 		strcat(dirpath, "/");
 	}
+	destroyListOfStrings(stopwords_list, true);
 
 	closedir(main_dir);
 	free(buff); buff=NULL;
