@@ -205,7 +205,7 @@ void json_array_handler(char* str, TuplePtr t){
 }
 
 //=======================================================================================================================
-//MIGHT DELETE
+
 void json_to_word_list(char* str, node** l, node* stopwords){  
 	//printf("given string: %s \n", str);
 
@@ -275,7 +275,8 @@ void json_to_word_list(char* str, node** l, node* stopwords){
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
 						strcpy(word, tok);
 			
-		        		*l = appendList(*l, word);
+		        		//*l = appendList(*l, word);
+		        		addToWordInfoList(l,word);
 		        		tok = strtok(NULL, " ");  //take next word
 		        	}
 				}else if( strcmp(value_buff,"no")!=0  ){  		//2)if vallue!=yes/no: add value
@@ -288,7 +289,8 @@ void json_to_word_list(char* str, node** l, node* stopwords){
 						strcpy(word, tok);
 
 						if( (atoi(word) == 0) && (strlen(word)>1) && (inlist(stopwords, word) == 1)){ 
-				        	*l = appendList(*l, word);
+				        	//*l = appendList(*l, word);
+				        	addToWordInfoList(l,word);
 				        }else{
 				        	free(word);
 				        }
@@ -307,7 +309,6 @@ void json_to_word_list(char* str, node** l, node* stopwords){
 }
 
 
-//MIGHT DELETE
 //function that takes a string {that contains array!} and stores key and value into a tuple
 void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords){
 	//printf("given string: %s \n", str);
@@ -370,7 +371,8 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 					strcpy(word, tok);
 
 					if( (atoi(word) == 0) && (strlen(word)>1) && (inlist(stopwords, word) == 1)){  
-			        	*l = appendList(*l, word);
+			        	//*l = appendList(*l, word);
+			        	addToWordInfoList(l,word);
 			        }else{
 			        	free(word);
 			        }
@@ -393,7 +395,8 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 		strcpy(word, tok);
 			
 		if( strlen(word)>1 && (inlist(stopwords, word) == 1) ){  
-		    *l = appendList(*l, word);
+		    //*l = appendList(*l, word);
+		    addToWordInfoList(l,word); 
 		}else{
 			free(word);
 		}

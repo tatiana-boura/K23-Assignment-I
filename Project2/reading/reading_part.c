@@ -13,6 +13,8 @@
 
 #include "functions.h" 
 #include "../hash_table/hash_table.h"
+#include "../vocabulary/vocabulary.h"
+#include "../word_info/word_info.h"
 
 #define BUFFER_SIZE 51000
 #define BUCKETSIZE 200
@@ -192,8 +194,10 @@ int main(int argc, char* argv[]){
 					//printf("\nLIST\n");  printList(spec_list, (void*)printTuple); 
 					
 					//printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
+					//printf("\nLIST\n");  printList(json_word_list, (void*)printWordInfo);
 					//REMEMBER TO DESTROY THOSE LISTS
-					destroyListOfStrings(json_word_list, true);  //to be removed just a reminder[!]
+					//destroyListOfStrings(json_word_list, true);  //to be removed just a reminder[!]
+					destroyListOfWordInfo(json_word_list,(void*)wordInfoDeletion);
 
 					//--------------Convert path to be inserted in data structures-------------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
