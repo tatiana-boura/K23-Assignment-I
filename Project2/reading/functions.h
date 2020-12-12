@@ -12,6 +12,7 @@
 
 #include "../../tuples/tuples.h"
 #include "../list/list.h"
+#include "../vocabulary/vocabulary.h"
 
 
 char* convertPath(char* _path_ );
