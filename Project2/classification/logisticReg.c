@@ -20,12 +20,26 @@ float hypothesis(float* x_i, float* w, float bias, unsigned int r){
 	return sigmoid(innerProduct( x_i, w, r) + bias);
 }
 
-void gradient_descent(float** x, float* y, float* w, float* bias, unsigned int m, unsigned int r, float eta, float epsilon){
+bool* predict( float** x_test, float* y_test, float* w, float bias, unsigned int m, unsigned int r ){
+	// predict class of x_test
+	/* return a boolean array where: 
+	   true -- classified correctly, false -- not classified correctly */
 
+	bool* correctClass = calloc(m,sizeof(bool)); assert( correctClass != NULL );
+
+	for( unsigned int i=0; i<m; i++ ){
+		correctClass[i] = (hypothesis(x_test[i], w, bias, r) == y_test[i]);
+	}
+
+	return correctClass;
+}
+
+void gradient_descent(float** x_train, float* y_train, float* w, float* bias, unsigned int m, unsigned int r, float eta, float epsilon){
+	// train the model
 	float _hypothesis_, sum_weights;
 	float sum_bias;
 
-	float* J_weight = calloc(r,sizeof(float));
+	float* J_weight = calloc(r,sizeof(float)); assert(J_weight!=NULL);
 	float J_bias;
   
   	// this sould be changed -- needed the abs(w_new - w_prev) < epsilon
@@ -37,15 +51,13 @@ void gradient_descent(float** x, float* y, float* w, float* bias, unsigned int m
 	    	sum_weights = 0.0;
 	    	// for every observation
 		    for (unsigned int i = 0; i < m; i++){
-
 		    	// compute the predicted value
-			    _hypothesis_ = hypothesis(x[i], w, (*bias), r);
-
+			    _hypothesis_ = hypothesis(x_train[i], w, (*bias), r);
 			    // update d/dw_j J(w,b) or bias
 			    if( j!= r) // weights
-			    	sum_weights += (_hypothesis_- y[i])*x[i][j];      
+			    	sum_weights += (_hypothesis_- y_train[i])*x_train[i][j];      
 			    else	   // bias
-			    	sum_bias += (_hypothesis_- y[i]);
+			    	sum_bias += (_hypothesis_- y_train[i]);
 		    }
 
 		    // J_weight/bias[j]/m ?????? 
