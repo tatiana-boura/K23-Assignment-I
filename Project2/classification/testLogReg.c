@@ -1,5 +1,7 @@
 #include "logisticReg.h"
 
+// gcc -g -o test testLogReg.c logisticReg.c -lm
+
 int main(void){
 
 	float* a = calloc(10,sizeof(float));
@@ -11,6 +13,9 @@ int main(void){
 	}
 
 	printf("%f\n", hypothesis(a, b, 1, 10) );
+
+	free(a); a=NULL;
+	free(b); b=NULL;
 
 	return 0;
 }
