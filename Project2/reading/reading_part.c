@@ -106,7 +106,6 @@ int main(int argc, char* argv[]){
 				exit(-1); 
 			}
 
-
 			//printf("Sub-directory opend successfully!\n");
 			while( (sub_dir_entry = readdir(sub_dir)) ){
 				//ignore current & parent dir
@@ -128,23 +127,19 @@ int main(int argc, char* argv[]){
 						perror("Unable to open file :(");
 						exit(-1);
 					} 
-					//--------------create list for json file's property tuples --------------------------------
-					
-					node* spec_list = NULL;
+					//--------------create list for json file's words --------------------------------
 					node* json_word_list = NULL;
 					
 					//------------Convert properties in json files in tuples ------------------------------------ 
 					while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
 					
-						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){ 
-
-							TuplePtr t = calloc(1,sizeof(Tuple));                                      
+						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){                                 
 							
 							if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //(the 2nd condition came up for www.cambuy.com.au/17.json) 
 								//DETECTED PROPERTY WITH ARRAY OF VALUES !
 								//process: 
 								//strcat all the lines of .json file until the end of the array
-								//use json_array_handler 
+								//use json_to_word_list_value_array_edition
 
 								int array_off=0;
 								while(array_off == 0){
@@ -160,55 +155,41 @@ int main(int argc, char* argv[]){
 										array_off = 1;  //reached the end of the array
 									}		
 								}
-
-								//json_array_handler(buff, t); 
 								json_to_word_list_value_array_edition(buff, &json_word_list, stopwords_list);
 
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
-
-								//---add tuple to spec-list for json file ----------------------
-								spec_list = appendList(spec_list, t);
 								
 							}else{
 
 								// in some files the buffer contains this string "{\n"
 								// -- no info so we are not even consdering using it
 								if( strcmp(buff,"{\n")!=0 ){
-									//json_separator(buff,t);
 									
 									//break buff into words and add thm to the list
 									json_to_word_list(buff, &json_word_list, stopwords_list);  
 
 									memset(arbuff ,'\0' , BUFFER_SIZE);
 									memset(buff ,'\0' , BUFFER_SIZE);
-
-									//---add tuple to spec-list for json file ----------------------
-									spec_list = appendList(spec_list, t);
-
-								}else{ free(t); t=NULL; }
+								}
 							}
 						}
 					}
-				
-					//printf("\nLIST\n");  printList(spec_list, (void*)printTuple); 
 					
-					//printf("\nLIST\n");  printList(json_word_list, NULL);   //*******************************
 					//printf("\nLIST\n");  printList(json_word_list, (void*)printWordInfo);
 					//REMEMBER TO DESTROY THOSE LISTS
-					//destroyListOfStrings(json_word_list, true);  //to be removed just a reminder[!]
-					destroyListOfWordInfo(json_word_list,(void*)wordInfoDeletion);
+					//destroyListOfWordInfo(json_word_list,(void*)wordInfoDeletion);
 
 					//--------------Convert path to be inserted in data structures-------------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
 				    // cut "2013_camera_specs/"
 					memmove(json_path,json_path+strlen(argv[1])+1, strlen(json_path)-strlen(argv[1]));
 					char* path = convertPath(json_path);   // fix special character '//' and .json
-					
-					//printf("%s\n",path);					
+									
 					//----ADD PATH & LIST in HT -----------------------------------------------------
-					addtoHT(ht, path, BUCKETSIZE, spec_list);
-
+					//addtoHT(ht, path, BUCKETSIZE, spec_list);
+					addtoHT(ht, path, BUCKETSIZE, json_word_list);
+					
 					free(json_path);  
 					fclose(json_file);
 				}
