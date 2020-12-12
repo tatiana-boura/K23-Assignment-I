@@ -1,13 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
-// w[0] has b , w[1]..w[r] the weights
+#include "logisticReg.h"
 
 float innerPoduct(float* x_i, float* w, unsigned int r){
 
 	float innerProduct = 0.0;
-	for( unsigned int j=1; j<=r; j++ ){
+	for( unsigned int j=0; j<r; j++ ){
 		innerProduct += x_i[j]*w[j];
 	}
 	return innerProduct;
@@ -19,66 +15,54 @@ float sigmoid(float t){
 	return 1.0/(1 + exp(-t));
 }
 
-float hypothesis(float* x_i, float* w, unsigned int r){
-  /* compute sigmod value for current tfidf vector (line)*/
-  return sigmoid(innerPoduct( x_i, w, r) + w[0]);
+float hypothesis(float* x_i, float* w, float bias, unsigned int r){
+	/* compute sigmod value for current tfidf vector (line)*/
+	return sigmoid(innerPoduct( x_i, w, r) + bias);
 }
 
-void gradient_descent(float** x, float* y, float* w, unsigned int n, unsigned int r, float alpha){
+void gradient_descent(float** x, float* y, float* w, float* bias, unsigned int m, unsigned int r, float eta, float epsilon){
 
-  float _hypothesis_, error, sum_e, e_mul_x, sum_e_mul_x;
+	float _hypothesis_, sum_weights;
+	float sum_bias = 0.0;
+
+	float* J_weight = calloc(r,sizeof(float));
+	float J_bias;
   
-  for (unsigned int k = 0; k < 100; k++){
-    
-    // Clear variable
-    _hypothesis_ = 0.0;
-    error = 0.0;
+	for (unsigned int k = 0; k < 100; k++){
+	
+	    for( unsigned int j = 0; j < r+1; j++ ){
 
-    sum_e = 0.0;
-    e_mul_x = 0.0;
-    sum_e_mul_x = 0.0;
-    
-    for (unsigned int i = 0; i < n; i++){
-	    // Calculate hypothesis
-	    _hypothesis_ = hypothesis(x[i]);
-	    // Calculate error
-	    error = _hypothesis_ - y[i];
-	    // Calculate sum of error
-	    sum_e = sum_e + error;      
-	    // Calculate error*x
-	    e_mul_x = error * x[i];
-	    // Calculate sum of error*x
-	    sum_e_mul_x = sum_e_mul_x + e_mul_x;
-    }
- 
-    // Calculate d_J/d_theta_0
-    float d_J_d_theta_0 = sum_e / m;  
-    // Calculate d_J/d_theta_1
-    float d_J_d_theta_1 = sum_e_mul_x / m;
-    
-    // simultaneous update
-    //for( unsigned int j=0; j<r; j++ ){
-    	//update w's here here
-    //}
-    theta_0 = theta_0 - alpha*d_J_d_theta_0;    
-    theta_1 = theta_1 - alpha*d_J_d_theta_1;
-  }
-}
+	    	sum_weights = 0.0;
 
+		    for (unsigned int i = 0; i < m; i++){
 
+			    _hypothesis_ = hypothesis(x[i], w, (*bias), r);
+			    if( j!= r) // weights
+			    	sum_weights += (_hypothesis_- y[i])*x[i][j];      
+			    else	   // bias
+			    	sum_bias += (_hypothesis_- y[i]);
+		    }
 
+		    J_weight[j] = sum_weights;
+		    if( j==r ) J_bias = sum_bias;
+		}  
 
-int main(void){
+		// J_weight/bias[j]/m ??????
 
-	float* a = calloc(10,sizeof(float));
-	float* b = calloc(10,sizeof(float));
-
-	for( unsigned int i = 0; i<10; i++){
-		a[i] = 1;
-		b[i] = 1;
+		// simultaneous update
+		// update bias:
+		*bias = *bias - eta*J_bias;
+		// update other weights
+		for( unsigned int j = 0; j < r; j++ )
+		    w[j] = w[j] - eta*J_weight[j];
+		
 	}
 
-	printf("%f\n", hypothesis(a, b, 10) );
+	for( unsigned int j=0; j<r; j++ ){
+		free(J_weight); J_weight=NULL;
+	}
 
-	return 0;
+
+	return;
 }
+
