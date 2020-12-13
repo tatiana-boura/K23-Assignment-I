@@ -138,7 +138,7 @@ void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vo
 
                                 // the word has been found
                                 if( strcmp(word,w) == 0){
-                                    printf("word found -- %s\t", w);
+                                    //printf("word found -- %s\t", w);
                                     count = infoJSON->count;
                                 }
                                 // update total words of this JSON
@@ -151,11 +151,11 @@ void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vo
                                 /* compute the tf vector --:
                                 -- num_of_times_word_is_found_in_curr_JSON / total_num_of_words_in_curr_JSON */
                                 entryTable[j]->tfidf[k] = (float)count/totalWordsJSON;
-                                printf("tf value is %f\t\t", entryTable[j]->tfidf[k] );
+                                //printf("tf value is %f\t\t", entryTable[j]->tfidf[k] );
                                 /* compute the tfidf vector --:
                                 -- use the type tf*log(n/nt) */
                                 entryTable[j]->tfidf[k] *= (float)log10((double)(numOfJSON/info->count));
-                                printf("tfidtf value is %f\n", entryTable[j]->tfidf[k]);
+                                //printf("tfidtf value is %f\n", entryTable[j]->tfidf[k]);
                             }    
                             // go to the next word of the vocabulary
                             _word_ = _word_->next;
