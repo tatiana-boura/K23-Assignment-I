@@ -17,8 +17,8 @@
 char* convertPath(char* _path_ );
 int count_json(char* given_directory);
 
-void json_to_word_list(char* str, node** l, node* stopwords);  
-void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords);
+void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary);  
+void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords, node** vocabulary);
 char* no_symbols(char* str);
 int inlist(node* n, char* w);
 

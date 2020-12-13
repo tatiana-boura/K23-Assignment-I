@@ -1,8 +1,3 @@
-/* JJ project, part 1   
-
-*/
-
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -20,6 +15,7 @@
 #define BUCKETSIZE 200
 #define STRSIZE 100
 
+node* vocabulary = NULL;
 
 int main(int argc, char* argv[]){
 	DIR* main_dir;       // [no inspo for the name] 
@@ -155,7 +151,7 @@ int main(int argc, char* argv[]){
 										array_off = 1;  //reached the end of the array
 									}		
 								}
-								json_to_word_list_value_array_edition(buff, &json_word_list, stopwords_list);
+								json_to_word_list_value_array_edition(buff, &json_word_list, stopwords_list,&vocabulary);
 
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
@@ -167,7 +163,7 @@ int main(int argc, char* argv[]){
 								if( strcmp(buff,"{\n")!=0 ){
 									
 									//break buff into words and add thm to the list
-									json_to_word_list(buff, &json_word_list, stopwords_list);  
+									json_to_word_list(buff, &json_word_list, stopwords_list,&vocabulary);  
 
 									memset(arbuff ,'\0' , BUFFER_SIZE);
 									memset(buff ,'\0' , BUFFER_SIZE);
@@ -177,8 +173,6 @@ int main(int argc, char* argv[]){
 					}
 					
 					//printf("\nLIST\n");  printList(json_word_list, (void*)printWordInfo);
-					//REMEMBER TO DESTROY THOSE LISTS
-					//destroyListOfWordInfo(json_word_list,(void*)wordInfoDeletion);
 
 					//--------------Convert path to be inserted in data structures-------------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
@@ -187,7 +181,6 @@ int main(int argc, char* argv[]){
 					char* path = convertPath(json_path);   // fix special character '//' and .json
 									
 					//----ADD PATH & LIST in HT -----------------------------------------------------
-					//addtoHT(ht, path, BUCKETSIZE, spec_list);
 					addtoHT(ht, path, BUCKETSIZE, json_word_list);
 					
 					free(json_path);  
@@ -206,7 +199,7 @@ int main(int argc, char* argv[]){
 	free(buff); buff=NULL;
 	free(arbuff); arbuff=NULL;
 	free(dirpath); dirpath=NULL;
-
+	//printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
 	//___the hash table has now been created -> start making the cliques__________________________________________________
 
 	FILE* dataset_matches;
@@ -283,6 +276,7 @@ int main(int argc, char* argv[]){
 
     //--destroy tree and all not needed memo--------------------------------------------
     printf("\nNow, the memory used in this program is being freed.\n");
+	destroyListOfWordInfo(vocabulary,(void*)wordInfoDeletion);
     destroyHT(ht,BUCKETSIZE);
 
     free(buffMatces); buffMatces=NULL;
