@@ -200,11 +200,11 @@ int main(int argc, char* argv[]){
 	free(arbuff); arbuff=NULL;
 	free(dirpath); dirpath=NULL;
 
-	printf("vocsize: %d\tjsonnum: %d\n\n",voc_size,json_num);
-	printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
+	//printf("vocsize: %d\tjsonnum: %d\n\n",voc_size,json_num);
+	//printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
 
 	// create vector containing tfidf
-
+	make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num);
 
 	//___the hash table has now been created -> start making the cliques__________________________________________________
 
