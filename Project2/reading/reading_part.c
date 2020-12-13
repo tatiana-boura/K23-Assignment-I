@@ -15,7 +15,7 @@
 #define BUCKETSIZE 200
 #define STRSIZE 100
 
-node* vocabulary = NULL;
+node* vocabulary = NULL; unsigned int voc_size = 0;
 
 int main(int argc, char* argv[]){
 	DIR* main_dir;       // [no inspo for the name] 
@@ -151,7 +151,7 @@ int main(int argc, char* argv[]){
 										array_off = 1;  //reached the end of the array
 									}		
 								}
-								json_to_word_list_value_array_edition(buff, &json_word_list, stopwords_list,&vocabulary);
+								json_to_word_list_value_array_edition(buff, &json_word_list, stopwords_list,&vocabulary,&voc_size);
 
 								memset(arbuff ,'\0' , BUFFER_SIZE);
 								memset(buff ,'\0' , BUFFER_SIZE);
@@ -163,7 +163,7 @@ int main(int argc, char* argv[]){
 								if( strcmp(buff,"{\n")!=0 ){
 									
 									//break buff into words and add thm to the list
-									json_to_word_list(buff, &json_word_list, stopwords_list,&vocabulary);  
+									json_to_word_list(buff, &json_word_list, stopwords_list,&vocabulary,&voc_size);  
 
 									memset(arbuff ,'\0' , BUFFER_SIZE);
 									memset(buff ,'\0' , BUFFER_SIZE);
@@ -199,7 +199,13 @@ int main(int argc, char* argv[]){
 	free(buff); buff=NULL;
 	free(arbuff); arbuff=NULL;
 	free(dirpath); dirpath=NULL;
-	//printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
+
+	printf("vocsize: %d\tjsonnum: %d\n\n",voc_size,json_num);
+	printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
+
+	// create vector containing tfidf
+
+
 	//___the hash table has now been created -> start making the cliques__________________________________________________
 
 	FILE* dataset_matches;

@@ -93,7 +93,7 @@ json format
 
 //=======================================================================================================================
 
-void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary){  
+void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary, unsigned int* vocabSize){  
 	//printf("given string: %s \n", str);
 
 	//turn string to lower case
@@ -161,8 +161,7 @@ void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary){
 		        		assert( word != NULL );
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
 						strcpy(word, tok);
-			
-		        		addToVoc(vocabulary,word,*l);
+		        		addToVoc(vocabulary,word,*l,vocabSize);
 		        		addToWordInfoList(l,word);
 		        		tok = strtok(NULL, " ");  //take next word
 		        	}
@@ -176,8 +175,7 @@ void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary){
 						strcpy(word, tok);
 
 						if( (atoi(word) == 0) && (strlen(word)>1) && (inlist(stopwords, word) == 1)){ 
-				        	//*l = appendList(*l, word);
-							addToVoc(vocabulary,word,*l);
+							addToVoc(vocabulary,word,*l,vocabSize);
 				        	addToWordInfoList(l,word);
 				        }else{
 				        	free(word);
@@ -198,7 +196,7 @@ void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary){
 
 
 //function that takes a string {that contains array!} and stores key and value into a tuple
-void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords,node** vocabulary){
+void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize){
 	//printf("given string: %s \n", str);
 	//turn string to lower case
 	int i=0;
@@ -259,7 +257,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 					strcpy(word, tok);
 
 					if( (atoi(word) == 0) && (strlen(word)>1) && (inlist(stopwords, word) == 1)){  
-			        	addToVoc(vocabulary,word,*l);
+			        	addToVoc(vocabulary,word,*l,vocabSize);
 			        	addToWordInfoList(l,word);
 			        }else{
 			        	free(word);
@@ -283,7 +281,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 		strcpy(word, tok);
 			
 		if( strlen(word)>1 && (inlist(stopwords, word) == 1) ){  
-		    addToVoc(vocabulary,word,*l);
+		    addToVoc(vocabulary,word,*l,vocabSize);
 		    addToWordInfoList(l,word); 
 		}else{
 			free(word);
