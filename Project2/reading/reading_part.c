@@ -276,6 +276,18 @@ int main(int argc, char* argv[]){
 
     //printHT(ht);
     
+	//----TRAINING---------------------------------------------------------------------
+	float** x_array = calloc(1,sizeof(float*));
+	unsigned int n;	 // number of differences (size of x and y array)
+	createTFIDFarray(&x_array,ht,BUCKETSIZE,voc_size,&n);
+
+
+	//---free TDIDF array---------
+	for(unsigned int i=0;i<n;i++){
+		free(x_array[i]);
+	}
+	free(x_array);
+
     //----make the output file---------------------------------------------------------
     makeOutputFile(ht, BUCKETSIZE);
     printf("\nOutput file with name [output.txt] has now been created.\n");
