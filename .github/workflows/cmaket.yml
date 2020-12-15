@@ -9,6 +9,6 @@ jobs:
     - uses: actions/checkout@v2
       
     - name: compileit
-      run: ./Project2/make
+      run: make --directory ./Project2
     - name: runit
       run: ./Project2/prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_large_labelled_dataset.csv Project2/common-english-words.txt
