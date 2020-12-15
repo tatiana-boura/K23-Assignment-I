@@ -141,7 +141,7 @@ void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary, 
 
 		        //get rid of symbols 
 		        //turn string to lower case
-				value_buff = no_symbols(value_buff);
+				value_buff = lc_no_symbols(value_buff);
 				int i=0;
 				while(value_buff[i]){
 					value_buff[i] = tolower(value_buff[i]);
@@ -151,7 +151,7 @@ void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary, 
 				if( strcmp(value_buff,"yes")==0 ){ 				//1) If vallue == yes: add property
 
 					//get rid of symbols
-					property_buff = no_symbols(property_buff);
+					property_buff = lc_no_symbols(property_buff);
 					int i=0;
 					while(property_buff[i]){
 						property_buff[i] = tolower(property_buff[i]);
@@ -244,7 +244,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 				strcpy(value_buff, token);
 				if(value_buff == NULL){ strcpy(value_buff, " ");}
 
-				value_buff = no_symbols(value_buff);
+				value_buff = lc_no_symbols(value_buff);
 				int i=0;
 				while(value_buff[i]){
 					value_buff[i] = tolower(value_buff[i]);
@@ -275,7 +275,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 
     //in arrays property carries information [!]
 
-	property_buff = no_symbols(property_buff); //now string contains only letters and numbers
+	property_buff = lc_no_symbols(property_buff); //now string contains only letters and numbers
 	//to add <property> into list of words --> break <property> phrases or sentences..
 	int i=0;
 	while(property_buff[i]){
@@ -307,11 +307,193 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
     if(property_buff != NULL){free(property_buff);}
     return;
 }
+//=======================================================================================================
 
-char* no_symbols(char* str){
+//gets json - converts into list of wordInfo
+void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize){
+	FILE* json_file;
+	json_file = fopen(file, "r");
+	if(json_file == NULL){
+		perror("Unable to open file :(");
+		exit(-1);
+	}
+
+	char* buff = calloc(BUFFER_SIZE,sizeof(char)); assert( buff != NULL );
+	memset(buff ,'\0' , BUFFER_SIZE); 
+
+	char* property_name = calloc(BUFFER_SIZE,sizeof(char)); assert( property_name != NULL );
+	memset(property_name ,'\0' , BUFFER_SIZE); 
+
+	int array_on=0;
+	char* tok; 
+	char* word;
+	
+	while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
+		
+		if((buff[strlen(buff)-2] != '{')&&(buff[strlen(buff)-1] != '}')){     //cut '{' && '}' from start and end of json file                             
+
+
+			if((buff[strlen(buff)-3] == ']') && (buff[strlen(buff)-2] == ',')){
+				array_on = 0;  //reached the end of the array
+			}
+
+			if((buff[strlen(buff)-2] == ']') && (buff[strlen(buff)-1] == '\n') ){
+				array_on = 0;  //reached the end of the array
+			}
+
+			if(array_on == 0){
+				if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //detected array 
+					array_on = 1;
+				}
+				for(int c=0; c<strlen(buff) ;c++){
+					if(buff[c] == ':'){
+						property_name[c] = '\0';
+						break;
+					}
+					property_name[c] = buff[c];
+					buff[c] = ' ';
+				}
+
+				buff = lc_no_symbols(buff); //now string contains only letters and numbers
+
+				//printf("property: %s \nbuff: %s\n",property_name,buff);
+				if(array_on == 1){ //in arrays name caries info
+					//printf("%s caries info!\n",property_name);
+					//break <property> phrases or sentences..
+		        	tok = strtok(buff, " ");
+		        	while(tok != NULL){
+		        		word = calloc(strlen(tok)+1,sizeof(char));
+		        		assert( word != NULL );
+						memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+						strcpy(word, tok);
+		        		addToVoc(vocabulary,word,*l,vocabSize);
+		        		addToWordInfoList(l,word);
+		        		//printf("%s\n",word);
+		        		tok = strtok(NULL, " ");  //take next word
+		        	}
+				}
+
+				if( strcmp(buff,"yes")==0 ){ 				//1) If vallue == yes: add property
+					property_name = lc_no_symbols(property_name); //now string contains only letters and numbers
+					//break <property> phrases or sentences..
+		        	tok = strtok(property_name, " ");
+		        	while(tok != NULL){
+		        		word = calloc(strlen(tok)+1,sizeof(char));
+		        		assert( word != NULL );
+						memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+						strcpy(word, tok);
+		        		if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
+							addToVoc(vocabulary,word,*l,vocabSize);
+				        	addToWordInfoList(l,word);
+							//printf("%s\n",word);
+				        }else{
+				        	free(word);
+				        }
+		        		//printf("%s\n",word);
+		        		tok = strtok(NULL, " ");  //take next word
+		        	}
+				}else if( strcmp(buff,"no")!=0  ){  		//2)if vallue != yes/no: add value
+			        //break <value> phrases or sentences..
+				    tok = strtok(buff, " ");
+				    while(tok != NULL){
+				    	word = calloc(strlen(tok)+1,sizeof(char));
+				        assert( word != NULL );
+						memset(word, '\0', (strlen(tok)+1)*sizeof(char));
+						strcpy(word, tok);
+
+						if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
+							addToVoc(vocabulary,word,*l,vocabSize);
+				        	addToWordInfoList(l,word);
+							//printf("%s\n",word);
+				        }else{
+				        	free(word);
+				        }
+				        tok = strtok(NULL, " "); //take next word
+				    }		        	
+		        }//3)if value == no: do NOT add value and property in list of words
+		        
+			}else{
+				buff = lc_no_symbols(buff); //now string contains only letters and numbers
+				//printf("in array: %s\n",buff);
+				tok = strtok(buff, " ");
+				while(tok != NULL){
+				    word = calloc(strlen(tok)+1,sizeof(char));
+				    assert( word != NULL );
+					memset(word, '\0', (strlen(tok)+1)*sizeof(char));
+					strcpy(word, tok);
+
+					if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
+						addToVoc(vocabulary,word,*l,vocabSize);
+				       	addToWordInfoList(l,word);
+						//printf("%s\n",word);
+				    }else{
+				       	free(word);
+				    }
+				    tok = strtok(NULL, " "); //take next word
+				}		        	
+			}
+
+		}
+		memset(buff ,'\0' , BUFFER_SIZE);
+	} 
+
+	fclose(json_file);
+	free(buff);
+	free(property_name);
+}
+
+
+//gets json - converts into list of wordInfo
+void magic_poor(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize){
+	//printf("%s\n",file);
+	FILE* json_file;
+	json_file = fopen(file, "r");
+	if(json_file == NULL){
+		perror("Unable to open file :(");
+		exit(-1);
+	}
+
+	char* buff = calloc(BUFFER_SIZE,sizeof(char)); assert( buff != NULL );
+	memset(buff ,'\0' , BUFFER_SIZE); 
+
+	int array_on=0;
+	char* tok; 
+	char* word;
+	
+	while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
+
+		if((buff[strlen(buff)-2] != '{')&&(buff[strlen(buff)-1] != '}')){     //cut '{' && '}' from start and end of json file                             
+			buff = lc_no_symbols(buff); //now string contains only letters and numbers
+			tok = strtok(buff, " ");
+		    while(tok != NULL){
+		        word = calloc(strlen(tok)+1,sizeof(char));
+		        assert( word != NULL );
+				memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
+				strcpy(word, tok);
+				if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
+		        	addToVoc(vocabulary,word,*l,vocabSize);
+		        	addToWordInfoList(l,word);
+		        	//printf("%s\n",word);
+		        }else{
+		        	free(word);
+		        }
+		        tok = strtok(NULL, " ");  //take next word
+		    }
+
+		}
+		memset(buff ,'\0' , BUFFER_SIZE);
+	} 
+
+	fclose(json_file);
+	free(buff);
+}
+
+//=================================================================================================================
+char* lc_no_symbols(char* str){
 	int i=0;
 	//get rid of symbols
 	for(i=0 ; i<strlen(str); i++){
+		str[i] = tolower(str[i]);  //turn letters to lower case
 		if(( (str[i]<48)||(str[i]>57) )&&( (str[i]<97)||(str[i]>122) )){
 			str[i] = ' ';
 		}
