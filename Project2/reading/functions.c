@@ -95,13 +95,6 @@ json format
 
 void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary, unsigned int* vocabSize){  
 	//printf("given string: %s \n", str);
-
-	//turn string to lower case
-	int i=0;
-	while(str[i]){
-		str[i] = tolower(str[i]);
-		i++;
-	}
 	const char s[3] = "\""; // delimeter: "
 
 	//string to store key
@@ -147,12 +140,23 @@ void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary, 
 		        char* word;
 
 		        //get rid of symbols 
+		        //turn string to lower case
 				value_buff = no_symbols(value_buff);
+				int i=0;
+				while(value_buff[i]){
+					value_buff[i] = tolower(value_buff[i]);
+					i++;
+				}
 
 				if( strcmp(value_buff,"yes")==0 ){ 				//1) If vallue == yes: add property
 
 					//get rid of symbols
 					property_buff = no_symbols(property_buff);
+					int i=0;
+					while(property_buff[i]){
+						property_buff[i] = tolower(property_buff[i]);
+						i++;
+					}
 
 					//break <property> phrases or sentences..
 		        	tok = strtok(property_buff, " ");
@@ -199,11 +203,6 @@ void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary, 
 void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize){
 	//printf("given string: %s \n", str);
 	//turn string to lower case
-	int i=0;
-	while(str[i]){
-		str[i] = tolower(str[i]);
-		i++;
-	}
 	const char s[3] = "\"";
 	char* property_buff=NULL;
 	char* value_buff=NULL;
@@ -246,6 +245,11 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 				if(value_buff == NULL){ strcpy(value_buff, " ");}
 
 				value_buff = no_symbols(value_buff);
+				int i=0;
+				while(value_buff[i]){
+					value_buff[i] = tolower(value_buff[i]);
+					i++;
+				}
 				//now string contains only letters and numbers
 
 				//to add <value> into list of words --> break <value> phrases or sentences..
@@ -255,7 +259,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 			        assert( word != NULL );
 					memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 					strcpy(word, tok);
-
+					// if word isn't a number and not in stopwords list
 					if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){  
 			        	addToVoc(vocabulary,word,*l,vocabSize);
 			        	addToWordInfoList(l,word);
@@ -273,6 +277,13 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 
 	property_buff = no_symbols(property_buff); //now string contains only letters and numbers
 	//to add <property> into list of words --> break <property> phrases or sentences..
+	int i=0;
+	while(property_buff[i]){
+		property_buff[i] = tolower(property_buff[i]);
+			i++;
+	}
+
+
    	tok = strtok(property_buff, " ");
 	while(tok != NULL){
 		word = calloc(strlen(tok)+1,sizeof(char));
