@@ -11,4 +11,4 @@ jobs:
     - name: compileit
       run: make --directory ./Project2
     - name: runit
-      run: ./Project2/prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_large_labelled_dataset.csv Project2/common-english-words.txt
+      run: ./Project2/prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_large_labelled_dataset.csv ./Project2/common-english-words.txt
