@@ -175,3 +175,16 @@ void makeOutputFileList(node* n, FILE* outputFile){
 
     return;
 }
+
+//if word w is part of list l reurn 0
+bool inlist(node* n, char* w){
+    node* tempNode=n;
+
+    while(tempNode!=NULL){
+        if(strcmp((char*)tempNode->data,w) == 0){
+            return false; //in list
+        }
+        tempNode=tempNode->next;
+    }
+    return true; //NOT in list
+}

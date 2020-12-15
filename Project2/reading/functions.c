@@ -174,7 +174,7 @@ void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary, 
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 						strcpy(word, tok);
 
-						if( (atoi(word) == 0) && (strlen(word)>1) && (inlist(stopwords, word) == 1)){ 
+						if( (atoi(word) == 0) && (strlen(word)>1) && inlist(stopwords, word) ){ 
 							addToVoc(vocabulary,word,*l,vocabSize);
 				        	addToWordInfoList(l,word);
 				        }else{
@@ -256,7 +256,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 					memset(word, '\0', (strlen(tok)+1)*sizeof(char));
 					strcpy(word, tok);
 
-					if( (atoi(word) == 0) && (strlen(word)>1) && (inlist(stopwords, word) == 1)){  
+					if( (atoi(word) == 0) && (strlen(word)>1) && inlist(stopwords, word) ){  
 			        	addToVoc(vocabulary,word,*l,vocabSize);
 			        	addToWordInfoList(l,word);
 			        }else{
@@ -280,7 +280,7 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 		memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
 		strcpy(word, tok);
 			
-		if( strlen(word)>1 && (inlist(stopwords, word) == 1) ){  
+		if( strlen(word)>1 && inlist(stopwords, word) ){  
 		    addToVoc(vocabulary,word,*l,vocabSize);
 		    addToWordInfoList(l,word); 
 		}else{
@@ -342,18 +342,4 @@ void createTFIDFarray(float*** array,hashTable* ht,unsigned int bucketSize, unsi
         } 
 	}
 
-}
-
-
-//if word w is part of list l reurn 0
-int inlist(node* n, char* w){
-	node* tempNode=n;
-
-    while(tempNode!=NULL){
-        if(strcmp((char*)tempNode->data,w) == 0){
-        	return 0; //in list
-        }
-        tempNode=tempNode->next;
-    }
-    return 1; //NOT in list
 }

@@ -25,6 +25,8 @@ void makeOutputFileList(node* n,FILE* outputFile);
 
 node* removeNode(node** n, void* addr);
 
+bool inlist(node* n, char* w);
+
 
 
 #endif
