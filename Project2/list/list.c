@@ -188,3 +188,45 @@ bool notInlist(node* n, char* w){
     }
     return true; //NOT in list
 }
+
+void sortedInsertStr(node** n, wordInfo* w){
+
+    // create node
+    node* newNode = calloc(1,sizeof(node));
+    newNode->data = w; 
+    newNode->next = NULL;
+
+    // head 
+    node* _n_ =  *n;
+    if (*n == NULL || strcmp(((wordInfo*)(_n_->data))->word,((wordInfo*)newNode->data)->word) > 0) { 
+        newNode->next = *n; 
+        *n = newNode;
+    }else{ 
+        // find the node and insert
+        node* current = *n; 
+        while (current->next != NULL && strcmp(((wordInfo*)current->next->data)->word,((wordInfo*)newNode->data)->word) < 0) { 
+            current = current->next; 
+        } 
+        newNode->next = current->next; 
+        current->next = newNode; 
+    }
+    return; 
+} 
+
+bool foundInSortedListStr(node* n, char* w, bool increaseCounter){
+
+    node* current=n;
+
+    while( current != NULL && strcmp(((wordInfo*)current->data)->word,w) < 0 )
+        current = current->next;
+
+    if( current == NULL ) return false;
+
+    if( strcmp(((wordInfo*)current->data)->word,w) == 0){
+        if( increaseCounter ) (((wordInfo*)current->data)->count)++;
+        return true;
+    } 
+    
+
+    return false;
+}

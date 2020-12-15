@@ -6,10 +6,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-typedef struct wordInfo{
-	char* word;
-	unsigned int count;	/*wordInfoList in HT: # of times word appeared in file | vocabulary: # of files that containted the word */
-}wordInfo;
+#include "word_info_header.h"
 
 void wordInfoInitialization(wordInfo* w, char* _word_);
 void wordInfoDeletion(wordInfo* w);
