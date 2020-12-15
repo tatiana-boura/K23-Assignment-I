@@ -22,5 +22,4 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 char* no_symbols(char* str);
 void createTFIDFarray(float*** array,hashTable* ht,unsigned int bucketSize, unsigned int vocabSize,unsigned int* n);
 
-
 #endif

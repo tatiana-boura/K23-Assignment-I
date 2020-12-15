@@ -177,7 +177,7 @@ void makeOutputFileList(node* n, FILE* outputFile){
 }
 
 //if word w is part of list l reurn 0
-bool inlist(node* n, char* w){
+bool notInlist(node* n, char* w){
     node* tempNode=n;
 
     while(tempNode!=NULL){
