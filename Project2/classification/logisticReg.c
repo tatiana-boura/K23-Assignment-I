@@ -47,9 +47,12 @@ void gradient_descent(float** x_train, float* y_train, float* w, float* bias, un
 
 	float* J_weight = calloc(r,sizeof(float)); assert(J_weight!=NULL);
 	float J_bias;
+
+	bool stopTraining=false;
   
-  	// this sould be changed -- needed the abs(w_new - w_prev) < epsilon
-	for (unsigned int k = 0; k < 100; k++){
+  	// norm(w_new - w_prev) < epsilon
+	while( stopTraining == false ){
+	//for (unsigned int k = 0; k < 100; k++){
 		// for every w_j
 		sum_bias = 0.0;
 	    for( unsigned int j = 0; j < r+1; j++ ){
@@ -66,18 +69,29 @@ void gradient_descent(float** x_train, float* y_train, float* w, float* bias, un
 			    	sum_bias += (_hypothesis_- y_train[i]);
 		    }
 
-		    // J_weight/bias[j]/n ?????? 
-		    // I know that the /n is needed but they don't tell us so
 		    J_weight[j] = sum_weights;
 		    if( j==r ) J_bias = sum_bias;
 		}  
 
-		// simultaneous update -- beceause it is more efficient
+		// simultaneous update -- because it is more efficient
 		// update bias:
 		*bias = *bias - eta*J_bias;
 		// update other weights
-		for( unsigned int j = 0; j < r; j++ )
-		    w[j] = w[j] - eta*J_weight[j];  
+		float weightOld;
+		// if norm(w_new - w_prev) < epsilon the training will stop
+		stopTraining = true;
+
+		for( unsigned int j = 0; j < r; j++ ){
+			// keep old weight j
+			weightOld = w[j];
+			// update new weight j
+		    w[j] = w[j] - eta*J_weight[j];
+
+		    if( abs(w[j] - weightOld) > epsilon ){
+		    	// some weights need more training
+		    	stopTraining = false;  
+		    }
+		}
 		
 	}
 
