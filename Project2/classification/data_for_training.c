@@ -44,12 +44,12 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
     then takes c-- |c-d| and |c-f|, |c-e| and at last reaches d that has no followed element in clique
     and just pairs with |d-f|, |d-e|
     */
-
+   printf("n is %d\n",*n);
     node* outterTemp=entryTable_j->clique;
     node* innerTemp; node* otherTemp;
     bool revisitedNotClique = false;
     if(addrFoundinList(visitedList,entryTable_j->notClique))
-        revisitedNotClique = true;
+        {printf("visited before\n"); revisitedNotClique = true;}
 
     // takes an item
     int times=0;
@@ -68,7 +68,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
             (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));//n:= number of absolute differences
             for( unsigned int k = 0; k<vocabSize; k++ ){
                 //calculate difference |outter->tfidf-inner->tfidf| 
-                float abs_dif = abs(outter->tfidf[k]-inner->tfidf[k]);
+                float abs_dif = fabs(outter->tfidf[k]-inner->tfidf[k]);
                 //add to x_array
                 (*x_array)[(*n)][k] = abs_dif;
                 //store 1 to y_array
@@ -83,25 +83,25 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
            
             // Difference between current (outter) and all of the notClique
            /* if(!revisitedNotClique){
+                printf("not visited\n");
                 while(otherTemp!=NULL){
                     bucketEntry* other = otherTemp->data; 
                     //allocate memory in arrays for difference
                     (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
                     for( unsigned int k = 0; k<vocabSize; k++ ){
                         //calculate difference |outter->tfidf-other->tfidf| 
-                        float abs_dif = abs(outter->tfidf[k]-other->tfidf[k]);
+                        printf("Outter tfidf: %f \t\t other tfidf: %f\n",outter->tfidf[k],other->tfidf[k]);
+                        float abs_dif = fabs(outter->tfidf[k]-other->tfidf[k]);
                         //add to x_array
                         (*x_array)[(*n)][k] = abs_dif;
                         //store 0 to y_array
                         (*y_array)[(*n)]=0;
                         printf("|%f-%f| = %f  %d\n",outter->tfidf[k],other->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
                     }
-                    if(otherTemp->next!=NULL){
-                        //reallocate memory in arrays for next difference
-                        (*n)++;
-                        (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
-                        (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
-                    }
+                    //reallocate memory in arrays for next difference
+                    (*n)++;
+                    (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
+                    (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
                     otherTemp = otherTemp->next;
                 }
             }*/
