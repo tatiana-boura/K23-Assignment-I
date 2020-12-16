@@ -329,9 +329,9 @@ void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int
 	char* word;
 	
 	while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
-		
-		if((buff[strlen(buff)-2] != '{')&&(buff[strlen(buff)-1] != '}')){     //cut '{' && '}' from start and end of json file                             
-
+		//printf("%s ----- %ld\n",buff,strlen(buff));
+		                       
+		if(strlen(buff) > 2){     //cut '{' && '}' from start and end of json file                             
 
 			if((buff[strlen(buff)-3] == ']') && (buff[strlen(buff)-2] == ',')){
 				array_on = 0;  //reached the end of the array
@@ -456,7 +456,6 @@ void magic_poor(char* file,  node** l, node* stopwords,node** vocabulary,unsigne
 	char* buff = calloc(BUFFER_SIZE,sizeof(char)); assert( buff != NULL );
 	memset(buff ,'\0' , BUFFER_SIZE); 
 
-	int array_on=0;
 	char* tok; 
 	char* word;
 	
@@ -472,7 +471,7 @@ void magic_poor(char* file,  node** l, node* stopwords,node** vocabulary,unsigne
 				strcpy(word, tok);
 				if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
 		        	addToVoc(vocabulary,word,*l,vocabSize);
-		        	addToWordInfoList(l,word);
+		        	//addToWordInfoList(l,word);
 		        	//printf("%s\n",word);
 		        }else{
 		        	free(word);
@@ -499,41 +498,4 @@ char* lc_no_symbols(char* str){
 		}
 	}
 	return str;
-}
-
-
-void createTFIDFarray(float*** array,hashTable* ht,unsigned int bucketSize, unsigned int vocabSize,unsigned int* n){
-	*n=0;	//n:= number of absolute differences
-	
-	// go through every entry in the hash and make the bow vector
-    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
-    // for all hash table
-    for( unsigned int i=0; i<ht->size; i++ ){
-		// go to the bucket of ht
-        if(ht->table[i] != NULL){
-            node* temp = ht->table[i];
-
-            while(temp!=NULL){
-                bucketEntry** entryTable = temp->data;
-                // and every entry of the bucket
-                for(unsigned int j = 0;j<numOfEntries;j++){
-                    if(entryTable[j]!=NULL){
-						(*array)[(*n)] = calloc(vocabSize,sizeof(float));
-						// FOR NOW pass every element of tfidf vector in hash to array
-                        for( unsigned int k = 0; k<vocabSize; k++ ){
-							(*array)[(*n)][k] = entryTable[j]->tfidf[k];
-							printf("%f\n",(*array)[(*n)][k]);
-                        }
-						if((j+1)!=numOfEntries){
-							(*n)++;
-							(*array) = realloc((*array),((*n)+1)*sizeof(float*));
-						}
-                    }
-                }
-                temp=temp->next;
-            }
-
-        } 
-	}
-
 }
