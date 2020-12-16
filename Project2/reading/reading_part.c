@@ -238,10 +238,6 @@ int main(int argc, char* argv[]){
 	unsigned int* y_array = calloc(1,sizeof(unsigned int));
 	unsigned int n;	 // number of differences (size of x and y array)
 	createTFIDFarray(&x_array,& y_array,ht,BUCKETSIZE, voc_size,&n);
-
-	for(unsigned int i=0;i<=voc_size;i++){
-		printf("\n\nlast float%f\n",x_array[n-1][i]);
-	}
 	
 	//---free TDIDF array---------
 	for(unsigned int i=0;i<n;i++){
