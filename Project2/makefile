@@ -1,8 +1,8 @@
 
 # MAIN PROGRAM #
-OBJS 	  = reading_part.o list.o hash_table.o functions.o tuples.o word_info.o vocabulary.o
-SOURCE	  = ./reading/reading_part.c ./list/list.c ./hash_table/hash_table.c ../tuples/tuples.c ./reading/functions.c ./word_info/word_info.c ./vocabulary/vocabulary.c
-HEADER    = ./list/list.h ./list/node.h ./list/node.h ./hash_table/hash_table.h ../tuples/tuples.h ./reading/functions.h ./hash_table/bucket.h ./word_info/word_info.h ./vocabulary/vocabulary.h
+OBJS 	  = reading_part.o list.o hash_table.o functions.o tuples.o word_info.o vocabulary.o hash_table_vocabulary.o data_for_training.o
+SOURCE	  = ./reading/reading_part.c ./list/list.c ./hash_table/hash_table.c ../tuples/tuples.c ./reading/functions.c ./word_info/word_info.c ./vocabulary/vocabulary.c ./vocabulary/hash_table_vocabulary.c ./classification/data_for_training.c
+HEADER    = ./list/list.h ./list/node.h ./list/node.h ./hash_table/hash_table.h ../tuples/tuples.h ./reading/functions.h ./hash_table/bucket.h ./word_info/word_info.h ./vocabulary/vocabulary.h ./vocabulary/hash_table_vocabulary.h ./classification/data_for_training.h
 OUT  	  = prog
 CC	  = gcc
 FLAGS     = -g -c -Wall
@@ -30,6 +30,12 @@ word_info.o: ./word_info/word_info.c
 
 vocabulary.o: ./vocabulary/vocabulary.c
 	$(CC) $(FLAGS) ./vocabulary/vocabulary.c
+
+hash_table_vocabulary.o: ./vocabulary/hash_table_vocabulary.c
+	$(CC) $(FLAGS) ./vocabulary/hash_table_vocabulary.c
+
+data_for_training.o: ./classification/data_for_training.c
+	$(CC) $(FLAGS) ./classification/data_for_training.c
 
 # UNIT TESTING #
 DEF_SRC = ./list/list.c ./word_info/word_info.c  ../tuples/tuples.c

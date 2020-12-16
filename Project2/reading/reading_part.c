@@ -15,7 +15,11 @@
 #define BUCKETSIZE 200
 #define STRSIZE 100
 
+#define HTVOCSIZE 200
+#define BUCKETSIZEVOC 100
+
 node* vocabulary = NULL; unsigned int voc_size = 0;
+hashTableVOC* htVOC;
 
 int main(int argc, char* argv[]){
 	DIR* main_dir;       // [no inspo for the name] 
@@ -23,6 +27,9 @@ int main(int argc, char* argv[]){
 	struct dirent* sub_dir_entry;
 	DIR* sub_dir; //sub-directory of main_dir [no inspo for this name either]
 	//FILE* json_file;
+
+	// initialize hash for vocabulary
+	htVOC = createHTVOC(HTVOCSIZE);
 
 	char* buff = calloc(BUFFER_SIZE,sizeof(char)); assert( buff != NULL );
 	memset(buff ,'\0' , BUFFER_SIZE); 
@@ -125,7 +132,7 @@ int main(int argc, char* argv[]){
 					} */
 					//--------------create list for json file's words --------------------------------
 					node* json_word_list = NULL;
-					magic(json_path, &json_word_list, stopwords_list,&vocabulary,&voc_size);
+					magic(json_path, &json_word_list, stopwords_list,&vocabulary,&voc_size,htVOC,BUCKETSIZEVOC);
 					//------------Convert properties in json files in tuples ------------------------------------ 
 					/*while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
 					
@@ -203,6 +210,7 @@ int main(int argc, char* argv[]){
 	//printf("vocsize: %d\tjsonnum: %d\n\n",voc_size,json_num);
 	//printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
 
+	printf("\ncreate tfidf vectors\n");
 	// create vector containing tfidf
 	make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num);
 

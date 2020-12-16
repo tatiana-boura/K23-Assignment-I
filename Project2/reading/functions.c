@@ -92,7 +92,7 @@ json format
 */
 
 //=======================================================================================================================
-
+/*
 void json_to_word_list(char* str, node** l, node* stopwords, node** vocabulary, unsigned int* vocabSize){  
 	//printf("given string: %s \n", str);
 	const char s[3] = "\""; // delimeter: "
@@ -306,11 +306,11 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
     if(value_buff != NULL){free(value_buff);}
     if(property_buff != NULL){free(property_buff);}
     return;
-}
+}*/
 //=======================================================================================================
 
 //gets json - converts into list of wordInfo
-void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize){
+void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize, hashTableVOC* htVOC, unsigned int bucketSize ){
 	FILE* json_file;
 	json_file = fopen(file, "r");
 	if(json_file == NULL){
@@ -366,7 +366,7 @@ void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int
 		        		assert( word != NULL );
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
 						strcpy(word, tok);
-		        		addToVoc(vocabulary,word,*l,vocabSize);
+		        		addToVoc(vocabulary,word,*l,vocabSize,htVOC,bucketSize);
 		        		addToWordInfoList(l,word);
 		        		//printf("%s\n",word);
 		        		tok = strtok(NULL, " ");  //take next word
@@ -383,7 +383,7 @@ void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int
 						memset(word, '\0', (strlen(tok)+1)*sizeof(char)); 
 						strcpy(word, tok);
 		        		if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
-							addToVoc(vocabulary,word,*l,vocabSize);
+							addToVoc(vocabulary,word,*l,vocabSize,htVOC,bucketSize);
 				        	addToWordInfoList(l,word);
 							//printf("%s\n",word);
 				        }else{
@@ -402,7 +402,7 @@ void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int
 						strcpy(word, tok);
 
 						if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
-							addToVoc(vocabulary,word,*l,vocabSize);
+							addToVoc(vocabulary,word,*l,vocabSize,htVOC,bucketSize);
 				        	addToWordInfoList(l,word);
 							//printf("%s\n",word);
 				        }else{
@@ -423,7 +423,7 @@ void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int
 					strcpy(word, tok);
 
 					if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
-						addToVoc(vocabulary,word,*l,vocabSize);
+						addToVoc(vocabulary,word,*l,vocabSize,htVOC,bucketSize);
 				       	addToWordInfoList(l,word);
 						//printf("%s\n",word);
 				    }else{
@@ -442,7 +442,7 @@ void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int
 	free(property_name);
 }
 
-
+/*
 //gets json - converts into list of wordInfo
 void magic_poor(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize){
 	//printf("%s\n",file);
@@ -485,7 +485,7 @@ void magic_poor(char* file,  node** l, node* stopwords,node** vocabulary,unsigne
 
 	fclose(json_file);
 	free(buff);
-}
+}*/
 
 //=================================================================================================================
 char* lc_no_symbols(char* str){
@@ -499,6 +499,3 @@ char* lc_no_symbols(char* str){
 	}
 	return str;
 }
-<<<<<<< HEAD
-=======
->>>>>>> b9f014d5b908e402d601803c197957acfef42b3e
