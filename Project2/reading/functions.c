@@ -329,9 +329,9 @@ void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int
 	char* word;
 	
 	while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
-		
-		if((buff[strlen(buff)-2] != '{')&&(buff[strlen(buff)-1] != '}')){     //cut '{' && '}' from start and end of json file                             
-
+		//printf("%s ----- %ld\n",buff,strlen(buff));
+		                       
+		if(strlen(buff) > 2){     //cut '{' && '}' from start and end of json file                             
 
 			if((buff[strlen(buff)-3] == ']') && (buff[strlen(buff)-2] == ',')){
 				array_on = 0;  //reached the end of the array
@@ -456,7 +456,6 @@ void magic_poor(char* file,  node** l, node* stopwords,node** vocabulary,unsigne
 	char* buff = calloc(BUFFER_SIZE,sizeof(char)); assert( buff != NULL );
 	memset(buff ,'\0' , BUFFER_SIZE); 
 
-	int array_on=0;
 	char* tok; 
 	char* word;
 	
@@ -472,7 +471,7 @@ void magic_poor(char* file,  node** l, node* stopwords,node** vocabulary,unsigne
 				strcpy(word, tok);
 				if( (atoi(word) == 0) && (strlen(word)>1) && notInlist(stopwords, word) ){ 
 		        	addToVoc(vocabulary,word,*l,vocabSize);
-		        	addToWordInfoList(l,word);
+		        	//addToWordInfoList(l,word);
 		        	//printf("%s\n",word);
 		        }else{
 		        	free(word);
@@ -500,4 +499,6 @@ char* lc_no_symbols(char* str){
 	}
 	return str;
 }
-
+<<<<<<< HEAD
+=======
+>>>>>>> b9f014d5b908e402d601803c197957acfef42b3e

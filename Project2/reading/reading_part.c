@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
 	struct dirent* main_dir_entry;
 	struct dirent* sub_dir_entry;
 	DIR* sub_dir; //sub-directory of main_dir [no inspo for this name either]
-	FILE* json_file;
+	//FILE* json_file;
 
 	char* buff = calloc(BUFFER_SIZE,sizeof(char)); assert( buff != NULL );
 	memset(buff ,'\0' , BUFFER_SIZE); 
@@ -118,16 +118,16 @@ int main(int argc, char* argv[]){
 					strcat(json_path,sub_dir_entry->d_name); //ex. current dirpath: "2013_camera_specs/buy.net/4233.json"
 
 					//-----------Open json file and print contents-----------------------------------------------
-					json_file = fopen(json_path, "r");
+					/*json_file = fopen(json_path, "r");
 					if(json_file == NULL){
 						perror("Unable to open file :(");
 						exit(-1);
-					} 
+					} */
 					//--------------create list for json file's words --------------------------------
 					node* json_word_list = NULL;
-					//magic(json_path, &json_word_list, stopwords_list,&vocabulary,&voc_size);
+					magic(json_path, &json_word_list, stopwords_list,&vocabulary,&voc_size);
 					//------------Convert properties in json files in tuples ------------------------------------ 
-					while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
+					/*while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
 					
 						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){                                 
 							
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]){
 							}
 						}
 					}
-					
+					*/
 					//printf("\nLIST\n");  printList(json_word_list, (void*)printWordInfo);
 
 					//--------------Convert path to be inserted in data structures-------------------
@@ -184,7 +184,7 @@ int main(int argc, char* argv[]){
 					addtoHT(ht, path, BUCKETSIZE, json_word_list);
 					
 					free(json_path);  
-					fclose(json_file);
+					//fclose(json_file);
 				}
 			}	
 			closedir(sub_dir);
