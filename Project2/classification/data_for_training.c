@@ -111,3 +111,61 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
         times++;
     }
 }
+
+void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** valid_set, unsigned int* m, unsigned int** y_train, unsigned int** y_valid ){
+    /* total_set  : whole set that will be split
+       total_y    : labels for whole set
+       total_size : size of whole set
+       train_set  : training set to be returned
+       n          : size of training set
+       valid_set   : test set to be retuned
+       m          : size of test set            
+       y_train    : labels for training set to be returned
+       y_valid     : labels for test set to be returned */  
+        
+    // the training size will be the 80% of the initial 
+    *n = 0.8 * total_size;
+    // the test size is the rest    
+    *m = total_size - *n;
+    // initialize memo for train and test
+    (*train_set) = calloc(*n, sizeof(float*));
+    (*y_train) = calloc(*n, sizeof(float*));
+    (*valid_set) = calloc(*m, sizeof(float*));
+    (*y_valid) = calloc(*m, sizeof(float*));
+
+    srand(time(NULL));
+
+    /* we will use a boolean array of size as total lines 
+       -- true: will be in train_set 
+       -- false: will be in test set */
+    bool visitedNumbers[total_size];
+    for( unsigned int i=0; i <total_size; i++)
+        visitedNumbers[i] = true;
+
+    unsigned int _n_=0, _m_=0;
+    // until the number needed is succeded
+    while( _m_!= *m ){
+        // choose randomly and number
+        unsigned int randomNumber = rand()%total_size;
+        // if this number has not been discovered yet
+        if(visitedNumbers[randomNumber]){
+            visitedNumbers[randomNumber] = false;
+            _m_++;
+        }
+    }
+    /* not new memory for line -- use pointer from initial array*/
+    _n_=0, _m_=0;
+    for( unsigned int j = 0; j <total_size; j++ ){
+        if( visitedNumbers[j] ){ 
+            (*train_set)[_n_] = total_set[j];
+            (*y_train)[_n_++] = total_y[j];
+        }else{
+            (*valid_set)[_m_] = total_set[j];
+            (*y_valid)[_m_++] = total_y[j];
+        }
+    }
+
+    return;
+}
+
+
