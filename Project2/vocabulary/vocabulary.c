@@ -38,7 +38,7 @@ void addToVoc(node** voc, char* _word_, node* word_info_list, unsigned int* voca
         strcpy(new_word,_word_);
         wordInfoInitialization(voc_w,new_word);
 
-        addtoHTVOC(htVOC, _word_, bucketSize, voc_w);
+        addtoHTVOC(htVOC, _word_, bucketSize, voc_w, *vocabSize);
 
         //sortedInsertStr(voc,voc_w);
         *voc = appendList(*voc,voc_w);  

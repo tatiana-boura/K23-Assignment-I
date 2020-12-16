@@ -29,7 +29,7 @@ hashTableVOC* createHTVOC(unsigned int size){
 }
 
 //__addToHashTable_______________________________________________________________________________________ 
-void addtoHTVOC(hashTableVOC* ht, char* key, unsigned int bucketSize, wordInfo* w){
+void addtoHTVOC(hashTableVOC* ht, char* key, unsigned int bucketSize, wordInfo* w, unsigned int _position_in_voc_){
 
     bucket* bucketPtr; unsigned int index; 
     
@@ -40,7 +40,7 @@ void addtoHTVOC(hashTableVOC* ht, char* key, unsigned int bucketSize, wordInfo* 
     //if the hash table's index points to NULL -- no buckets, create bucket
     if(bucketPtr==NULL){
         //create entries table and add this entry
-        bucketEntryVOC* entry = createEntryVOC(key,w);
+        bucketEntryVOC* entry = createEntryVOC(key,w,_position_in_voc_);
         bucketEntryVOC** entryTable = calloc(numOfEntries,sizeof(bucketEntryVOC*)); assert(entryTable!=NULL); 
         
         for(unsigned int i=0; i<numOfEntries; i++) entryTable[i]=NULL;
@@ -53,7 +53,7 @@ void addtoHTVOC(hashTableVOC* ht, char* key, unsigned int bucketSize, wordInfo* 
 
     }else{
         //create bucketEntryVOC
-        bucketEntryVOC* entry = createEntryVOC(key,w);
+        bucketEntryVOC* entry = createEntryVOC(key,w,_position_in_voc_);
         bucketEntryVOC** entryTable = bucketPtr->data;
 
         int position=-1;
@@ -90,12 +90,13 @@ bucket* getBucketVOC(hashTableVOC* ht, char* key, unsigned int* index){
     return bucketPtr;
 }
 
-bucketEntryVOC* createEntryVOC( char* _key_, wordInfo* _w_){
+bucketEntryVOC* createEntryVOC( char* _key_, wordInfo* _w_, unsigned int _position_in_voc_){
     
     bucketEntryVOC* entry = calloc(1,sizeof(bucketEntryVOC)); assert(entry!=NULL);
 
     entry->key = _key_;
     entry->w = _w_;
+    entry->position_in_voc = _position_in_voc_;
 
     return entry;
 }
@@ -160,6 +161,40 @@ bool foundInHTVOC( hashTableVOC* ht, char* _key_, unsigned int bucketSize ){
     return false;
 }
 
+//_________________________________________________________________________________________________________
+
+int getPositionInAndCountVOC( hashTableVOC* ht, char* _key_, unsigned int bucketSize, unsigned int* count){
+    
+    unsigned int index;
+
+    // get first node of bucket list
+    bucket* bp = getBucketVOC(ht,_key_,&index);
+    bucket* temp = bp;
+
+    bucketEntryVOC** entryTable;
+
+    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntryVOC*);
+    
+    // iterate while temp != NULL and item hasn't been found
+    while(temp!=NULL){
+        
+        entryTable = temp->data;
+        
+        for(unsigned int i=0;i<numOfEntries;i++){
+
+            if(entryTable[i]!=NULL){
+                // if key path has been found, adjust counter
+                if(strcmp(entryTable[i]->key,_key_)==0){ 
+                    *count = ((wordInfo*)entryTable[i]->w)->count;
+                    return entryTable[i]->position_in_voc;
+                }    
+            }
+        }
+        temp = temp->next;
+    }
+    return -1;
+}
+
 //__PRINTS__________________________________________________________________________________
 void printBucketVOC(node* b, unsigned int bucketSize){
 
@@ -176,6 +211,7 @@ void printBucketVOC(node* b, unsigned int bucketSize){
 
             if((entryTable[i]!=NULL)){
 
+                printf("position in list: %d \t ",entryTable[i]->position_in_voc);
                 printf("path: %s \t ",entryTable[i]->key);
                 printWordInfo(entryTable[i]->w);
                 printf("\n");
