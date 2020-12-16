@@ -2,7 +2,7 @@
 
 node* visitedList=NULL;
 
-void createTFIDFarray(float*** x_array,unsigned int** y_array,hashTable* ht,unsigned int bucketSize, unsigned int vocabSize,unsigned int* n){
+void create_x_y_array(float*** x_array,unsigned int** y_array,hashTable* ht,unsigned int bucketSize, unsigned int vocabSize,unsigned int* n){
 	*n=0;	//n:= number of absolute differences
 	
 	// go through every entry in the hash and make the bow vector
@@ -44,7 +44,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
     then takes c-- |c-d| and |c-f|, |c-e| and at last reaches d that has no followed element in clique
     and just pairs with |d-f|, |d-e|
     */
-   
+
     node* outterTemp=entryTable_j->clique;
     node* innerTemp; node* otherTemp;
     bool revisitedNotClique = false;
