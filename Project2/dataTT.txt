@@ -1,9 +1,0 @@
-left_spec_id,right_spec_id,label
-www.garricks.com.au//31,www.ebay.com//53278,1
-www.shopbot.com.au//331,www.mypriceindia.com//155,1
-www.ebay.com//47932,www.shopbot.com.au//331,0
-www.ebay.com//47932,cammarkt.com//203,0
-www.ebay.com//43720,www.ebay.com//53278,1
-www.ebay.com//47725,www.mypriceindia.com//155,0
-www.ebay.com//47725,www.garricks.com.au//31,1
-www.ebay.com//43720,www.ebay.com//47932,1
