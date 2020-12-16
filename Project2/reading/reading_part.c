@@ -253,6 +253,7 @@ int main(int argc, char* argv[]){
     printf("\nNow, the memory used in this program is being freed.\n");
 	destroyListOfWordInfo(vocabulary,(void*)wordInfoDeletion);
     destroyHT(ht,BUCKETSIZE);
+    destroyHT(htVOC,BUCKETSIZEVOC);
 
     free(buffMatces); buffMatces=NULL;
     free(data); data=NULL;
