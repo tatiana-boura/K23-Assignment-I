@@ -8,6 +8,7 @@
 #include "../vocabulary/vocabulary.h"
 
 #define BUFFER_SIZE 51000
+#define BUCKETSIZEVOC 100
 #define BUCKETSIZE 200
 #define HTSIZE 20
 #define HTSIZEVOC 3
@@ -106,7 +107,7 @@ int main(int argc, char* argv[]){
     addtoHT(ht, sB, BUCKETSIZE, wordInfoListB);
 
     //make_tfidf_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZE  );
-    make_tfidf_vectors( ht, BUCKETSIZE, 8, vocabulary, 2 );
+    make_tfidf_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZEVOC );
 
     printf("\n");
 
