@@ -161,7 +161,7 @@ int main(int argc, char* argv[]){
 
 	printf("\ncreate tfidf vectors\n");
 	// create vector containing tfidf
-	make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num);
+	make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
 
 	//___the hash table has now been created -> start making the cliques__________________________________________________
 

@@ -92,10 +92,11 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
 
     return;
 }
-//___make_tfidf_vectors_____________________________________________________________________________________________________________
-void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON ){
 
-    // go through every entry in the hash and make the bow vector
+//___make_tfidf_vectors_________________________________________________________________________________________________________________________________________________________________
+void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
+
+     // go through every entry in the hash and make the bow vector
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
     // for all hash table
     for( unsigned int i=0; i<ht->size; i++ ){
@@ -114,52 +115,49 @@ void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vo
                         // initialize the needed size for the tf
                         entryTable[j]->tfidf = calloc(vocabSize,sizeof(float)); 
                         assert(entryTable[j]->tfidf!=NULL);
-                        // for all the words in the vocabulary
-                        node* _word_ = vocabulary;
+                       
+                        /* count := how many times the current word is spotted in current JSON.
+                        position := what is the position of the word in the vocabulary*/
 
-                        for( unsigned int k = 0; k<vocabSize; k++ ){
+                        // counts total number of words in current JSON
+                        unsigned int totalWordsJSON = 0;
 
-                            wordInfo* info = (wordInfo*)(_word_->data);
-                            char* word = info->word;
+                        // get vocabulary of the current JSON
 
-                            /* if current word of the vocabulary exists in current JSON then
-                            count := how many times the current word is spotted in current JSON.*/
-                            int count = -1;
-                            // counts total number of words in current JSON
-                            unsigned int totalWordsJSON = 0;
-
-                            // get vocabulary of the current JSON
-                            node* wordJSON = entryTable[j]->wordInfoList;
-
-                            while( wordJSON != NULL ){
-
-                                wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
-                                char* w = infoJSON->word;
-
-                                // the word has been found
-                                if( strcmp(word,w) == 0){
-                                    //printf("word found -- %s\t", w);
-                                    count = infoJSON->count;
-                                }
-                                // update total words of this JSON
-                                totalWordsJSON+=infoJSON->count;
-                                // go to next word of this JSON
-                                wordJSON = wordJSON->next;
-                            }
-                            // if the word exists in this json -- create tf vector
-                            if( count != -1 ){ 
-                                /* compute the tf vector --:
-                                -- num_of_times_word_is_found_in_curr_JSON / total_num_of_words_in_curr_JSON */
-                                entryTable[j]->tfidf[k] = (float)count/totalWordsJSON;
-                                //printf("tf value is %f\t\t", entryTable[j]->tfidf[k] );
-                                /* compute the tfidf vector --:
-                                -- use the type tf*log(n/nt) */
-                                entryTable[j]->tfidf[k] *= (float)log10((double)(numOfJSON/info->count));
-                                //printf("tfidtf value is %f\n", entryTable[j]->tfidf[k]);
-                            }    
-                            // go to the next word of the vocabulary
-                            _word_ = _word_->next;
+                        node* wordJSON = entryTable[j]->wordInfoList;
+                        while( wordJSON != NULL ){
+                            // update total words of this JSON
+                            wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
+                            totalWordsJSON+=infoJSON->count;
+                            // go to next word of this JSON
+                            wordJSON = wordJSON->next;
                         }
+
+                        wordJSON = entryTable[j]->wordInfoList;
+                        while( wordJSON != NULL ){
+
+                            wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
+                            char* w = infoJSON->word;
+
+                            unsigned int info_count;
+                            int position = getPositionInAndCountVOC( htVOC, w, bucketSizeVOC, &info_count );
+                            position = vocabSize - position -1;
+
+                            /* compute the tf vector --:
+                            -- num_of_times_word_is_found_in_curr_JSON / total_num_of_words_in_curr_JSON */
+                            entryTable[j]->tfidf[position] = (float)infoJSON->count/totalWordsJSON;
+                            /* compute the tfidf vector --:
+                            -- use the type tf*log(n/nt) */
+                            entryTable[j]->tfidf[position] *= (float)log10((double)(numOfJSON/info_count));
+
+                            //printf("word found -- %s\t", w);
+                            //printf("tf value is %f\t\t", entryTable[j]->tfidf[position] );
+                            //printf("tfidtf value is %f\n", entryTable[j]->tfidf[position]);    
+
+                            // go to next word of this JSON
+                            wordJSON = wordJSON->next;
+                        }  
+                        //printf("\n");
                     }
                 }
                 temp=temp->next;
@@ -168,7 +166,6 @@ void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vo
     }
     return;
 }    
- 
 
 //__destroyHashTable______________________________________________________________________________________
 
@@ -444,8 +441,13 @@ void printBucket(node* b){
             if((entryTable[i]!=NULL)){
 
             	node* n;
-                printf("path: %s wordInfoList: ",entryTable[i]->path);
+                
+
+                printf("\npath: %s wordInfoList: ",entryTable[i]->path);
+                //for(int d=0; d<8; d++) printf("%f\t",entryTable[i]->tfidf[d] ); printf("\n");
                 printList(entryTable[i]->wordInfoList,(void*)printWordInfo); printf("\n");
+
+
                 bucketEntry* entryIn;
                 node* tempNode=entryTable[i]->clique;
 
