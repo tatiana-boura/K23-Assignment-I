@@ -499,3 +499,6 @@ char* lc_no_symbols(char* str){
 	}
 	return str;
 }
+<<<<<<< HEAD
+=======
+>>>>>>> b9f014d5b908e402d601803c197957acfef42b3e
