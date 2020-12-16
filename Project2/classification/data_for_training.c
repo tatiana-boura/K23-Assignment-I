@@ -1,3 +1,5 @@
+#include "./data_for_training.h"
+
 void createTFIDFarray(float*** array,hashTable* ht,unsigned int bucketSize, unsigned int vocabSize,unsigned int* n){
 	*n=0;	//n:= number of absolute differences
 	
