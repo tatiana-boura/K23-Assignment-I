@@ -8,11 +8,14 @@
 
 void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** test_set, unsigned int* m, unsigned int** y_train, unsigned int** y_test ){
 	/* total_set  : whole set that will be split
+	   total_y    : labels for whole set
 	   total_size : size of whole set
 	   train_set  : training set to be returned
 	   n		  : size of training set
 	   test_set   : test set to be retuned
-	   m          : size of test set            */	
+	   m          : size of test set            
+	   y_train    : labels for training set to be returned
+	   y_test     : labels for test set to be returned */	
 		
 	// the training size will be the 80% of the initial	
 	*n = 0.8 * total_size;
