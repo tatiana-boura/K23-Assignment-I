@@ -6,16 +6,16 @@
 #define COLUMNSIZE 5
 
 
-void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** test_set, unsigned int* m, unsigned int** y_train, unsigned int** y_test ){
+void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** valid_set, unsigned int* m, unsigned int** y_train, unsigned int** y_valid ){
 	/* total_set  : whole set that will be split
 	   total_y    : labels for whole set
 	   total_size : size of whole set
 	   train_set  : training set to be returned
 	   n		  : size of training set
-	   test_set   : test set to be retuned
+	   valid_set   : test set to be retuned
 	   m          : size of test set            
 	   y_train    : labels for training set to be returned
-	   y_test     : labels for test set to be returned */	
+	   y_valid     : labels for test set to be returned */	
 		
 	// the training size will be the 80% of the initial	
 	*n = 0.8 * total_size;
@@ -24,8 +24,8 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
 	// initialize memo for train and test
 	(*train_set) = calloc(*n, sizeof(float*));
 	(*y_train) = calloc(*n, sizeof(float*));
-	(*test_set) = calloc(*m, sizeof(float*));
-	(*y_test) = calloc(*m, sizeof(float*));
+	(*valid_set) = calloc(*m, sizeof(float*));
+	(*y_valid) = calloc(*m, sizeof(float*));
 
 	srand(time(NULL));
 
@@ -54,8 +54,8 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
 			(*train_set)[_n_] = total_set[j];
 			(*y_train)[_n_++] = total_y[j];
 		}else{
-			(*test_set)[_m_] = total_set[j];
-			(*y_test)[_m_++] = total_y[j];
+			(*valid_set)[_m_] = total_set[j];
+			(*y_valid)[_m_++] = total_y[j];
 		}
 	}
 
@@ -69,9 +69,9 @@ int main(void){
 	unsigned int n,m;
 
 	float** train_set;
-	float** test_set;
+	float** valid_set;
 	unsigned int* y_train;
-	unsigned int* y_test;
+	unsigned int* y_valid;
 
 	unsigned int total_size = 15;
 
@@ -93,7 +93,7 @@ int main(void){
 		printf("\t %d\n",total_y[i]);
 	}*/
 
-	createSets(total_set, total_y, total_size, &train_set, &n, &test_set, &m, &y_train, &y_test );
+	createSets(total_set, total_y, total_size, &train_set, &n, &valid_set, &m, &y_train, &y_valid );
 
 	/*for( unsigned int i = 0; i < n; i++ ){
 		for( unsigned int j = 0; j< COLUMNSIZE; j++ ){
@@ -106,15 +106,15 @@ int main(void){
 
 	for( unsigned int i = 0; i < m; i++ ){
 		for( unsigned int j = 0; j< COLUMNSIZE; j++ ){
-			printf("%f\t",test_set[i][j] );
+			printf("%f\t",valid_set[i][j] );
 		}
-		printf("\t %d\n",y_test[i]);
+		printf("\t %d\n",y_valid[i]);
 	}
 	*/
 
 	for( unsigned int i=0; i < total_size; i++ ) free(total_set[i]);
-	free(y_train); free(y_test); free(total_y);
-	free(train_set); free(test_set); free(total_set);
+	free(y_train); free(y_valid); free(total_y);
+	free(train_set); free(valid_set); free(total_set);
 
 	return 0;
 }
