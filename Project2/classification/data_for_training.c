@@ -44,7 +44,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
     then takes c-- |c-d| and |c-f|, |c-e| and at last reaches d that has no followed element in clique
     and just pairs with |d-f|, |d-e|
     */
-   printf("n is %d\n",*n);
+   
     node* outterTemp=entryTable_j->clique;
     node* innerTemp; node* otherTemp;
     bool revisitedNotClique = false;
@@ -52,12 +52,9 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
         {printf("visited before\n"); revisitedNotClique = true;}
 
     // takes an item
-    int times=0;
     while( outterTemp!=NULL ){
-        printf("Outter %d\n",times);
         // and begins printing it with the item that follow
         innerTemp=outterTemp->next;
-        otherTemp=entryTable_j->notClique;
 
         while( innerTemp!= NULL ){ 
             // clique is a list of pointers to bucketEntries
@@ -82,33 +79,42 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
             
            
             // Difference between current (outter) and all of the notClique
-           /* if(!revisitedNotClique){
-                printf("not visited\n");
+            if(!revisitedNotClique){
+                otherTemp=entryTable_j->notClique;
                 while(otherTemp!=NULL){
-                    bucketEntry* other = otherTemp->data; 
-                    //allocate memory in arrays for difference
-                    (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
-                    for( unsigned int k = 0; k<vocabSize; k++ ){
-                        //calculate difference |outter->tfidf-other->tfidf| 
-                        printf("Outter tfidf: %f \t\t other tfidf: %f\n",outter->tfidf[k],other->tfidf[k]);
-                        float abs_dif = fabs(outter->tfidf[k]-other->tfidf[k]);
-                        //add to x_array
-                        (*x_array)[(*n)][k] = abs_dif;
-                        //store 0 to y_array
-                        (*y_array)[(*n)]=0;
-                        printf("|%f-%f| = %f  %d\n",outter->tfidf[k],other->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
-                    }
-                    //reallocate memory in arrays for next difference
-                    (*n)++;
-                    (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
-                    (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
+                    //access the clique that is pointed by current notClique
+                    node* temp = otherTemp->data;
+			    	bucketEntry* entryOut = temp->data;
+			    	node* innerTemp = entryOut->clique;
+
+                    while( innerTemp != NULL ){
+			        	bucketEntry* other = (bucketEntry*)innerTemp->data;
+                        //allocate memory in arrays for difference
+                        (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
+                        for( unsigned int k = 0; k<vocabSize; k++ ){
+                            //calculate difference |outter->tfidf-other->tfidf| 
+                            float abs_dif = fabs(outter->tfidf[k]-other->tfidf[k]);
+                            //add to x_array
+                            (*x_array)[(*n)][k] = abs_dif;
+                            //store 0 to y_array
+                            (*y_array)[(*n)]=0;
+                            printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter->path,k,other->path,k,outter->tfidf[k],other->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                        }
+                        //reallocate memory in arrays for next difference
+                        (*n)++;
+                        (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
+                        (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
+                        innerTemp = innerTemp->next;
+	        		}
+
+            
+                    
                     otherTemp = otherTemp->next;
                 }
-            }*/
+            }
             innerTemp=innerTemp->next;
         }
         outterTemp=outterTemp->next;
-        times++;
     }
 }
 
