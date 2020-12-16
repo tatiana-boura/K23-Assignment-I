@@ -22,6 +22,5 @@ void json_to_word_list_value_array_edition(char* str,  node** l, node* stopwords
 void magic(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize);
 void magic_poor(char* file,  node** l, node* stopwords,node** vocabulary,unsigned int* vocabSize);
 char* lc_no_symbols(char* str);
-void createTFIDFarray(float*** array,hashTable* ht,unsigned int bucketSize, unsigned int vocabSize,unsigned int* n);
 
 #endif
