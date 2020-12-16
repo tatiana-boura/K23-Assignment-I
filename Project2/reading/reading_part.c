@@ -15,7 +15,11 @@
 #define BUCKETSIZE 200
 #define STRSIZE 100
 
+#define HTVOCSIZE 200
+#define BUCKETSIZEVOC 100
+
 node* vocabulary = NULL; unsigned int voc_size = 0;
+hashTableVOC* htVOC;
 
 int main(int argc, char* argv[]){
 	DIR* main_dir;       // [no inspo for the name] 
@@ -23,6 +27,9 @@ int main(int argc, char* argv[]){
 	struct dirent* sub_dir_entry;
 	DIR* sub_dir; //sub-directory of main_dir [no inspo for this name either]
 	//FILE* json_file;
+
+	// initialize hash for vocabulary
+	htVOC = createHTVOC(HTVOCSIZE);
 
 	char* buff = calloc(BUFFER_SIZE,sizeof(char)); assert( buff != NULL );
 	memset(buff ,'\0' , BUFFER_SIZE); 
@@ -117,61 +124,11 @@ int main(int argc, char* argv[]){
 					strcat(json_path,"/"); 
 					strcat(json_path,sub_dir_entry->d_name); //ex. current dirpath: "2013_camera_specs/buy.net/4233.json"
 
-					//-----------Open json file and print contents-----------------------------------------------
-					/*json_file = fopen(json_path, "r");
-					if(json_file == NULL){
-						perror("Unable to open file :(");
-						exit(-1);
-					} */
 					//--------------create list for json file's words --------------------------------
 					node* json_word_list = NULL;
-					magic(json_path, &json_word_list, stopwords_list,&vocabulary,&voc_size);
-					//------------Convert properties in json files in tuples ------------------------------------ 
-					/*while( fgets(buff, BUFFER_SIZE, json_file) != NULL ){
+					//convert .json file to list of wordInfo structs
+					json_to_wordInfo_list(json_path, &json_word_list, stopwords_list,&vocabulary,&voc_size,htVOC,BUCKETSIZEVOC);
 					
-						if((buff[strlen(buff)-1] != '{')&&(buff[strlen(buff)-1] != '}')){                                 
-							
-							if((buff[strlen(buff)-2] == '[') && (buff[strlen(buff)-1] == '\n') ){ //(the 2nd condition came up for www.cambuy.com.au/17.json) 
-								//DETECTED PROPERTY WITH ARRAY OF VALUES !
-								//process: 
-								//strcat all the lines of .json file until the end of the array
-								//use json_to_word_list_value_array_edition
-
-								int array_off=0;
-								while(array_off == 0){
-									fgets(arbuff, BUFFER_SIZE, json_file);
-									buff[strlen(buff)-1] = '#'; //overwrite '\n' with special character '#'
-									strcat(buff,arbuff);
-									//array is not for the last property
-									if((arbuff[strlen(arbuff)-3] == ']') && (arbuff[strlen(arbuff)-2] == ',')){
-										array_off = 1;  //reached the end of the array
-									}
-									//we have array as value for the last property
-									if((arbuff[strlen(arbuff)-2] == ']') && (arbuff[strlen(arbuff)-1] == '\n') ){
-										array_off = 1;  //reached the end of the array
-									}		
-								}
-								json_to_word_list_value_array_edition(buff, &json_word_list, stopwords_list,&vocabulary,&voc_size);
-
-								memset(arbuff ,'\0' , BUFFER_SIZE);
-								memset(buff ,'\0' , BUFFER_SIZE);
-								
-							}else{
-
-								// in some files the buffer contains this string "{\n"
-								// -- no info so we are not even consdering using it
-								if( strcmp(buff,"{\n")!=0 ){
-									
-									//break buff into words and add thm to the list
-									json_to_word_list(buff, &json_word_list, stopwords_list,&vocabulary,&voc_size);  
-
-									memset(arbuff ,'\0' , BUFFER_SIZE);
-									memset(buff ,'\0' , BUFFER_SIZE);
-								}
-							}
-						}
-					}
-					*/
 					//printf("\nLIST\n");  printList(json_word_list, (void*)printWordInfo);
 
 					//--------------Convert path to be inserted in data structures-------------------
@@ -184,7 +141,6 @@ int main(int argc, char* argv[]){
 					addtoHT(ht, path, BUCKETSIZE, json_word_list);
 					
 					free(json_path);  
-					//fclose(json_file);
 				}
 			}	
 			closedir(sub_dir);
@@ -203,6 +159,7 @@ int main(int argc, char* argv[]){
 	//printf("vocsize: %d\tjsonnum: %d\n\n",voc_size,json_num);
 	//printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
 
+	printf("\ncreate tfidf vectors\n");
 	// create vector containing tfidf
 	make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num);
 
