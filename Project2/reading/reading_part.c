@@ -235,15 +235,19 @@ int main(int argc, char* argv[]){
     
 	//----TRAINING---------------------------------------------------------------------
 	float** x_array = calloc(1,sizeof(float*));
+	unsigned int* y_array = calloc(1,sizeof(unsigned int));
 	unsigned int n;	 // number of differences (size of x and y array)
-	createTFIDFarray(&x_array,ht,BUCKETSIZE,voc_size,&n);
+	createTFIDFarray(&x_array,& y_array,ht,BUCKETSIZE, voc_size,&n);
 
-
+	for(unsigned int i=0;i<=voc_size;i++){
+		printf("\n\nlast float%f\n",x_array[n-1][i]);
+	}
+	
 	//---free TDIDF array---------
 	for(unsigned int i=0;i<n;i++){
 		free(x_array[i]);
 	}
-	free(x_array);
+	free(x_array); free(y_array);
 
     //----make the output file---------------------------------------------------------
     makeOutputFile(ht, BUCKETSIZE);
