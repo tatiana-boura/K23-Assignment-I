@@ -10,6 +10,7 @@
 #define BUFFER_SIZE 51000
 #define BUCKETSIZE 200
 #define HTSIZE 20
+#define HTSIZEVOC 3
 #define STRSIZE 100
 
 //Compile:  gcc -g -o test ./taniaTest.c ../list/list.c ../word_info/word_info.c ./hash_table.c ../vocabulary/vocabulary.c -lm 
@@ -19,6 +20,8 @@ node* vocabulary = NULL;
 
 
 int main(int argc, char* argv[]){
+
+    hashTableVOC* htVOC = createHTVOC(HTSIZEVOC);
 
      unsigned int size=0; 
 
@@ -36,22 +39,22 @@ int main(int argc, char* argv[]){
     /* WordInfoListA gets w1-w6  */
     node* wordInfoListA=NULL; 
     
-    addToVoc(&vocabulary,w1, wordInfoListA,&size);
+    addToVoc(&vocabulary,w1, wordInfoListA,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListA,w1); 
    
-    addToVoc(&vocabulary,w2,wordInfoListA,&size);
+    addToVoc(&vocabulary,w2,wordInfoListA,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListA,w2); 
    
-    addToVoc(&vocabulary,w3,wordInfoListA,&size);
+    addToVoc(&vocabulary,w3,wordInfoListA,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListA,w3); 
   
-    addToVoc(&vocabulary,w4,wordInfoListA,&size);
+    addToVoc(&vocabulary,w4,wordInfoListA,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListA,w4);
     
-    addToVoc(&vocabulary,w5,wordInfoListA,&size);
+    addToVoc(&vocabulary,w5,wordInfoListA,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListA,w5); 
    
-    addToVoc(&vocabulary,w6,wordInfoListA,&size);
+    addToVoc(&vocabulary,w6,wordInfoListA,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListA,w6); 
 
     /* Second sentence / .json */
@@ -66,28 +69,29 @@ int main(int argc, char* argv[]){
 
 
     
-    addToVoc(&vocabulary,w7,wordInfoListB,&size);
+    addToVoc(&vocabulary,w7,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w7); 
 
     
-    addToVoc(&vocabulary,w8,wordInfoListB,&size);
+    addToVoc(&vocabulary,w8,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w8); 
 
    
-    addToVoc(&vocabulary,w9,wordInfoListB,&size);
+    addToVoc(&vocabulary,w9,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w9); 
 
     
-    addToVoc(&vocabulary,w10,wordInfoListB,&size);
+    addToVoc(&vocabulary,w10,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w10);
 
     
-    addToVoc(&vocabulary,w11,wordInfoListB,&size);
+    addToVoc(&vocabulary,w11,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w11); 
 
     printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
 
     printf("%d\n",size );
+
 
     char* sA = calloc(100,sizeof(char)); strcpy(sA,"book");
     char* sB = calloc(100,sizeof(char)); strcpy(sB,"thanks");
@@ -103,11 +107,14 @@ int main(int argc, char* argv[]){
 
     //make_tfidf_vectors( ht, BUCKETSIZE, 8, vocabulary, 2 );
 
+    printHTVOC(htVOC,BUCKETSIZE);
+
     //__END_INITIALIZING_HASH_TABLE____________________________________________________________________________________
 
-    printHT(ht); 
+    //printHT(ht); 
     destroyListOfWordInfo(vocabulary,(void*)wordInfoDeletion);
 	//________________________________________________________________________________________________________________
 
     destroyHT(ht,BUCKETSIZE);
+    destroyHTVOC(htVOC,BUCKETSIZE);
 }

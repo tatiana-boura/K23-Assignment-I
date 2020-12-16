@@ -19,7 +19,7 @@ void addToWordInfoList(node** word_info_list,char* _word_){
     } 
 }
 
-void addToVoc(node** voc, char* _word_, node* word_info_list, unsigned int* vocabSize){ 
+void addToVoc(node** voc, char* _word_, node* word_info_list, unsigned int* vocabSize, hashTableVOC* htVOC, unsigned int bucketSize){ 
     // If _word_ has been added in word_info_list then it 
     // already represents the .json in vocabulary count
     bool found = false; wordInfo* voc_w = NULL;
@@ -29,14 +29,19 @@ void addToVoc(node** voc, char* _word_, node* word_info_list, unsigned int* voca
 
     /* Make sure there is no duplicate of the word we try to add*/
 
-    found = foundInSortedListStr(*voc, _word_, true);
+    found = foundInHTVOC(htVOC, _word_, bucketSize);
+
+    //found = foundInSortedListStr(*voc, _word_, true);
     if(!found){
         voc_w = calloc(1,sizeof(wordInfo));
         char* new_word = calloc(strlen(_word_)+1,sizeof(char*));
         strcpy(new_word,_word_);
         wordInfoInitialization(voc_w,new_word);
 
-        sortedInsertStr(voc,voc_w);  
+        addtoHTVOC(htVOC, _word_, bucketSize, voc_w);
+
+        //sortedInsertStr(voc,voc_w);
+        *voc = appendList(*voc,voc_w);  
         (*vocabSize)++;    
     } 
 }

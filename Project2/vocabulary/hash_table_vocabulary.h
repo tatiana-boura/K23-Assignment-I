@@ -3,29 +3,40 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../list/list.h"
-#include "../../tuples/tuples.h"
+#include "../list/node.h"
 #include "../word_info/word_info.h"
-#include "bucket.h"
 
+typedef node bucket;
 
-typedef struct hashTable{
-    node** buckets;
+typedef struct hashTableVOC{
+    bucket** table;
     unsigned int size;
-}hashTable;
+}hashTableVOC;
 
-unsigned int hash(char* string, hashTable* ht);
-hashTable* createHT(unsigned int size);
-void addtoHT(hashTable* ht, char* key, unsigned int bucketSize,node* _wordInfoList_ );
-void destroyHT(hashTable* ht,unsigned int bucketSize);
-void deleteBucketTable(bucketEntry** table,unsigned int* bucketSize);
+typedef struct bucketEntryVOC{
+	char* key;
+    wordInfo* w; 
+}bucketEntryVOC;
 
-bool foundInHT(hashTable* ht, char* _path_, unsigned int bucketSize, unsigned int* entryNum, bucket** bucketFound );
+unsigned int hashVOC(char* string, hashTableVOC* ht);
 
-void printHT(hashTable* ht);
-void printBucket(node* b);
+hashTableVOC* createHTVOC(unsigned int size);
 
-bucket* getBucket(hashTable* ht, char* key, unsigned int* index);
-bucketEntry* createEntry(char* key,node* _wordInfoList_);
+bucket* getBucketVOC(hashTableVOC* ht, char* key, unsigned int* index);
+
+bucketEntryVOC* createEntryVOC( char* _key_, wordInfo* _w_);
+
+void addtoHTVOC(hashTableVOC* ht, char* key, unsigned int bucketSize, wordInfo* w);
+
+void destroyHTVOC(hashTableVOC* ht,unsigned int bucketSize);
+void deleteBucketTableVOC(bucketEntryVOC** table, unsigned int* bucketSize);
+
+bool foundInHTVOC(hashTableVOC* ht, char* _path_, unsigned int bucketSize);
+
+void printHTVOC(hashTableVOC* ht, unsigned int bucketSize);
+void printBucketVOC(node* b, unsigned int bucketSize);
+
+
 
 
 #endif
