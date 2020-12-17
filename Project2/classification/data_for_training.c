@@ -66,13 +66,13 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
             //allocate memory in arrays for difference
             (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));//n:= number of absolute differences
             for( unsigned int k = 0; k<vocabSize; k++ ){
-                //calculate difference |outter->tfidf-inner_clique->tfidf| 
-                float abs_dif = fabs(outter_clique->tfidf[k]-inner_clique->tfidf[k]);
+                //calculate difference |outter->vector-inner_clique->vector| 
+                float abs_dif = fabs(outter_clique->vector[k]-inner_clique->vector[k]);
                 //add to x_array
                 (*x_array)[(*n)][k] = abs_dif;
                 //store 1 to y_array
                 (*y_array)[(*n)]=1;
-                //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->tfidf[k],inner_clique->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->vector[k],inner_clique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
             }
             (*n)++;
             //reallocate memory in arrays for next difference
@@ -94,13 +94,13 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                         //allocate memory in arrays for difference
                         (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
                         for( unsigned int k = 0; k<vocabSize; k++ ){
-                            //calculate difference |inner_clique->tfidf-inner_notClique->tfidf| 
-                            float abs_dif = fabs(inner_clique->tfidf[k]-inner_notClique->tfidf[k]);
+                            //calculate difference |inner_clique->vector-inner_notClique->vector| 
+                            float abs_dif = fabs(inner_clique->vector[k]-inner_notClique->vector[k]);
                             //add to x_array
                             (*x_array)[(*n)][k] = abs_dif;
                             //store 0 to y_array
                             (*y_array)[(*n)]=0;
-                            //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",inner_clique->path,k,inner_notClique->path,k,inner_clique->tfidf[k],inner_notClique->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                            //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",inner_clique->path,k,inner_notClique->path,k,inner_clique->vector[k],inner_notClique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
                         }
                         //reallocate memory in arrays for next difference
                         (*n)++;
@@ -130,13 +130,13 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                         //allocate memory in arrays for difference
                         (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
                         for( unsigned int k = 0; k<vocabSize; k++ ){
-                            //calculate difference |outter_clique->tfidf-inner_notClique->tfidf| 
-                            float abs_dif = fabs(outter_clique->tfidf[k]-inner_notClique->tfidf[k]);
+                            //calculate difference |outter_clique->vector-inner_notClique->vector| 
+                            float abs_dif = fabs(outter_clique->vector[k]-inner_notClique->vector[k]);
                             //add to x_array
                             (*x_array)[(*n)][k] = abs_dif;
                             //store 0 to y_array
                             (*y_array)[(*n)]=0;
-                            printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_notClique->path,k,outter_clique->tfidf[k],inner_notClique->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                            printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_notClique->path,k,outter_clique->vector[k],inner_notClique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
                         }
                         //reallocate memory in arrays for next difference
                         (*n)++;

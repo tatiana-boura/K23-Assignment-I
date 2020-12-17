@@ -18,7 +18,7 @@ float sigmoid(float t){
 }
 
 float hypothesis(float* x_i, float* w, float bias, unsigned int r){
-	/* compute sigmod value for current tfidf vector (line)*/
+	/* compute sigmod value for current vector (line)*/
 	return sigmoid(innerProduct( x_i, w, r) + bias);
 }
 

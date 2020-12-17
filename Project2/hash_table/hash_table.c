@@ -118,8 +118,8 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
                     if(entryTable[j]!=NULL){
 
                         // initialize the needed size for the tf
-                        entryTable[j]->tfidf = calloc(vocabSize,sizeof(float)); 
-                        assert(entryTable[j]->tfidf!=NULL);
+                        entryTable[j]->vector = calloc(vocabSize,sizeof(float)); 
+                        assert(entryTable[j]->vector!=NULL);
                        
                         /* count := how many times the current word is spotted in current JSON.
                         position := what is the position of the word in the vocabulary*/
@@ -152,21 +152,21 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
 
                             /* compute the tf vector --:
                             -- num_of_times_word_is_found_in_curr_JSON / total_num_of_words_in_curr_JSON */
-                            entryTable[j]->tfidf[position] = (float)infoJSON->count/totalWordsJSON;
+                            entryTable[j]->vector[position] = (float)infoJSON->count/totalWordsJSON;
                             /* compute the tfidf vector --:
                             -- use the type tf*log(n/nt) */
-                            entryTable[j]->tfidf[position] *= (float)log10((double)(numOfJSON/info_count));
+                            entryTable[j]->vector[position] *= (float)log10((double)(numOfJSON/info_count));
 
-                            tfidf_average[position] += entryTable[j]->tfidf[position];
+                            tfidf_average[position] += entryTable[j]->vector[position];
 
                             //printf("word found -- %s\t", w);
-                            //printf("tf value is %f\t\t", entryTable[j]->tfidf[position] );
-                            //printf("tfidtf value is %f\n", entryTable[j]->tfidf[position]);    
+                            //printf("tf value is %f\t\t", entryTable[j]->vector[position] );
+                            //printf("tfidtf value is %f\n", entryTable[j]->vector[position]);    
 
                             // go to next word of this JSON
                             wordJSON = wordJSON->next;
                         }  
-                        //for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->tfidf)[d] ); printf("\n");
+                        //for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
                     }
                 }
                 temp=temp->next;
@@ -221,14 +221,14 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
 
                         for( unsigned int k = 0; k < vocabSize; k++ ){
                             if( should_be_dropped[k] == false ){
-                                new_tf_idf[_k_++] = entryTable[j]->tfidf[k];
+                                new_tf_idf[_k_++] = entryTable[j]->vector[k];
                             }
                         }
 
-                       free(entryTable[j]->tfidf); entryTable[j]->tfidf=NULL;
-                       entryTable[j]->tfidf = new_tf_idf;
+                       free(entryTable[j]->vector); entryTable[j]->vector=NULL;
+                       entryTable[j]->vector = new_tf_idf;
 
-                       //for(int d=0; d<new_vocabSize; d++) printf("%f\t",(entryTable[j]->tfidf)[d] ); printf("\n");
+                       //for(int d=0; d<new_vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
                     }
                 }
                 temp=temp->next;
@@ -261,8 +261,8 @@ void make_BoW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int voca
                     if(entryTable[j]!=NULL){
 
                         // initialize the needed size for the tf
-                        entryTable[j]->tfidf = calloc(vocabSize,sizeof(float)); 
-                        assert(entryTable[j]->tfidf!=NULL);
+                        entryTable[j]->vector = calloc(vocabSize,sizeof(float)); 
+                        assert(entryTable[j]->vector!=NULL);
                        
                         /* count := how many times the current word is spotted in current JSON.
                         position := what is the position of the word in the vocabulary*/
@@ -284,12 +284,12 @@ void make_BoW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int voca
 
                             /* compute the bow vector --:
                             -- num_of_times_word_is_found_in_curr_JSON */
-                            entryTable[j]->tfidf[position] = (float)infoJSON->count;
+                            entryTable[j]->vector[position] = (float)infoJSON->count;
 
                             // go to next word of this JSON
                             wordJSON = wordJSON->next;
                         }  
-                        for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->tfidf)[d] ); printf("\n");
+                        for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
                     }
                 }
                 temp=temp->next;
@@ -344,7 +344,7 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
 
             destroyListOfWordInfo(table[i]->wordInfoList,(void*)wordInfoDeletion); 
             free(table[i]->path); table[i]->path=NULL;
-            free(table[i]->tfidf); table[i]->tfidf=NULL;
+            free(table[i]->vector); table[i]->vector=NULL;
             free(table[i]); table[i]=NULL;
         }
     }
@@ -370,8 +370,8 @@ bucketEntry* createEntry(char* _path_, node* _wordInfoList_){
     entry->path = _path_;
     // create list of wordInfo <char*,unsigned int>
     entry->wordInfoList = _wordInfoList_;
-    // initialize tfidf
-    entry->tfidf = NULL;
+    // initialize vector
+    entry->vector = NULL;
     // create clique -- list of paths
     entry->clique = NULL; entry->clique = appendList(entry->clique,entry);
     // create not clique -- list of pointers to not cliques
@@ -579,7 +579,7 @@ void printBucket(node* b){
                 
 
                 printf("\npath: %s wordInfoList: ",entryTable[i]->path);
-               // for(int d=0; d<7; d++) printf("%f\t",entryTable[i]->tfidf[d] ); printf("\n");
+               // for(int d=0; d<7; d++) printf("%f\t",entryTable[i]->vector[d] ); printf("\n");
                 printList(entryTable[i]->wordInfoList,(void*)printWordInfo); printf("\n");
 
 
