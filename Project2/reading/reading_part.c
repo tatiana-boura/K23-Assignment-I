@@ -260,7 +260,7 @@ int main(int argc, char* argv[]){
 	//------call gradient_descent() to train model-----
 	float bias=0.0;
 	float* w = calloc(voc_size,sizeof(float));
-	float eta = 0.5; //0.0 < eta < 1.0
+	float eta = 0.05; //0.0 < eta < 1.0
 	float epsilon = 0.01; //small small number (?)
 	
 	printf("\nTrain model using gradient_descent\n");
@@ -273,24 +273,23 @@ int main(int argc, char* argv[]){
 	unsigned int f = 0;
 
 	for(int c=0; c<size_of_valid_set ; c++){
-		if(ans[c] == true){
-			t++;
-			//printf("%d) classified correctly.\n",c);
-		}else{
-			f++;
-			//printf("%d) not classified correctly.\n",c);
-		}
+		if(ans[c] == true) t++;
+		else f++;
 	}
 
 	free(ans); ans=NULL;
 
-	printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
+	printf("\nscore: %f\n", ((float)t/(float)size_of_valid_set) );
+
+	//printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
 	
 	//---free TDIDF array---------
 	for(unsigned int i=0;i<n;i++){
 		free(x_array[i]);
 	}
 	free(x_array); free(y_array);
+
+	free(x_valid); free(y_valid);
 
     //----make the output file---------------------------------------------------------
     makeOutputFile(ht, BUCKETSIZE);

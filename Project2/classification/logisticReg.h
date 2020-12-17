@@ -10,7 +10,7 @@
 float innerProduct(float* x_i, float* w, unsigned int r);
 float sigmoid(float t);
 float hypothesis(float* x_i, float* w, float bias, unsigned int r);
-bool* predict( float** x_test, float* y_test, float* w, float bias, unsigned int m, unsigned int r );
-void gradient_descent(float** x, float* y, float* w, float* bias, unsigned int m, unsigned int r, float eta, float epsilon);
+bool* predict( float** x_valid, unsigned int* y_valid, float* w, float bias, unsigned int n, unsigned int r );
+void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* bias, unsigned int n, unsigned int r, float eta, float epsilon);
 
 #endif
