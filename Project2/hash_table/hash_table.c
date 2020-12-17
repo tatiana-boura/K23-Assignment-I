@@ -94,10 +94,15 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
 }
 
 //___make_tfidf_vectors_________________________________________________________________________________________________________________________________________________________________
-void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
+unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
 
      // go through every entry in the hash and make the bow vector
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
+
+ //__COMPUTE_TFIDF_FOR_THE_FIRST_TIME_BEFORE_DROPPING______________________________   
+    
+    float* tfidf_average = calloc(vocabSize,sizeof(float));
+   
     // for all hash table
     for( unsigned int i=0; i<ht->size; i++ ){
         // go to the bucket of ht
@@ -139,6 +144,8 @@ void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vo
                             wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
                             char* w = infoJSON->word;
 
+                            /* get words relative position in the vocabulary, so that words 
+                            of all vectors are in the same order */ 
                             unsigned int info_count;
                             int position = getPositionInAndCountVOC( htVOC, w, bucketSizeVOC, &info_count );
                             position = vocabSize - position -1;
@@ -150,6 +157,8 @@ void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vo
                             -- use the type tf*log(n/nt) */
                             entryTable[j]->tfidf[position] *= (float)log10((double)(numOfJSON/info_count));
 
+                            tfidf_average[position] += entryTable[j]->tfidf[position];
+
                             //printf("word found -- %s\t", w);
                             //printf("tf value is %f\t\t", entryTable[j]->tfidf[position] );
                             //printf("tfidtf value is %f\n", entryTable[j]->tfidf[position]);    
@@ -157,15 +166,81 @@ void make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vo
                             // go to next word of this JSON
                             wordJSON = wordJSON->next;
                         }  
-                        //printf("\n");
+                        //for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->tfidf)[d] ); printf("\n");
                     }
                 }
                 temp=temp->next;
             }
         }    
     }
-    return;
+
+//__GET_AVERAGE_AND_DROP_TFIDF_WITH_COLUMNS_________________________________________________________________
+
+    float floor_tf_idf = 0.09;
+
+    // store the columns that should be dropped
+    bool should_be_dropped[vocabSize];
+    unsigned int new_vocabSize = 0;
+
+    for( unsigned int k = 0; k<vocabSize; k++ ){
+        // if average is less than a certain limit, the column should be dropped
+        tfidf_average[k] = tfidf_average[k]/((float)numOfJSON);
+        //tfidf_average[k] = tfidf_average[k]/((float)numOfTimes[k]);
+        if( tfidf_average[k] < floor_tf_idf ){
+            should_be_dropped[k] = true;
+        }else{
+            new_vocabSize++;
+            should_be_dropped[k] = false;
+        } 
+    }
+
+    printf("\n"); for(int d=0; d<vocabSize; d++) printf("%f\t",tfidf_average[d] ); printf("\n");
+    
+    printf("new_vocabSize [%d]\n", new_vocabSize);
+    printf("vocabSize [%d]\n",vocabSize );
+
+    // now drop tf-idf columns
+    
+    // for all hash table
+    for( unsigned int i=0; i<ht->size; i++ ){
+        // go to the bucket of ht
+        if(ht->table[i] != NULL){
+
+            node* temp = ht->table[i];
+
+            while(temp!=NULL){
+                bucketEntry** entryTable = temp->data;
+                // and every entry of the bucket
+                for(unsigned int j = 0;j<numOfEntries;j++){
+
+                    if(entryTable[j]!=NULL){
+
+                        // initialize the needed size for the new tf
+                        float* new_tf_idf = calloc(new_vocabSize,sizeof(float));
+                        unsigned int _k_ = 0;
+
+                        for( unsigned int k = 0; k < vocabSize; k++ ){
+                            if( should_be_dropped[k] == false ){
+                                new_tf_idf[_k_++] = entryTable[j]->tfidf[k];
+                            }
+                        }
+
+                       free(entryTable[j]->tfidf); entryTable[j]->tfidf=NULL;
+                       entryTable[j]->tfidf = new_tf_idf;
+
+                       //for(int d=0; d<new_vocabSize; d++) printf("%f\t",(entryTable[j]->tfidf)[d] ); printf("\n");
+                    }
+                }
+                temp=temp->next;
+            }
+        }    
+    }
+    
+    free(tfidf_average); tfidf_average=NULL;
+    return new_vocabSize;
 }    
+
+
 
 //__destroyHashTable______________________________________________________________________________________
 
@@ -444,7 +519,7 @@ void printBucket(node* b){
                 
 
                 printf("\npath: %s wordInfoList: ",entryTable[i]->path);
-                //for(int d=0; d<8; d++) printf("%f\t",entryTable[i]->tfidf[d] ); printf("\n");
+               // for(int d=0; d<7; d++) printf("%f\t",entryTable[i]->tfidf[d] ); printf("\n");
                 printList(entryTable[i]->wordInfoList,(void*)printWordInfo); printf("\n");
 
 
