@@ -176,7 +176,7 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
 
 //__GET_AVERAGE_AND_DROP_TFIDF_WITH_COLUMNS_________________________________________________________________
 
-    float floor_tf_idf = 0.09;
+    float floor_tf_idf = 0.00155;
 
     // store the columns that should be dropped
     bool should_be_dropped[vocabSize];
@@ -194,7 +194,7 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
         } 
     }
 
-    printf("\n"); for(int d=0; d<vocabSize; d++) printf("%f\t",tfidf_average[d] ); printf("\n");
+    //printf("\n"); for(int d=0; d<vocabSize; d++) printf("%f\t",tfidf_average[d] ); printf("\n");
     
     printf("new_vocabSize [%d]\n", new_vocabSize);
     printf("vocabSize [%d]\n",vocabSize );

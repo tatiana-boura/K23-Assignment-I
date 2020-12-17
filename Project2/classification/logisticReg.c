@@ -1,5 +1,7 @@
 #include "logisticReg.h"
 
+#include <time.h>
+
 float innerProduct(float* x_i, float* w, unsigned int r){
 
 	float innerProduct = 0.0;
@@ -49,25 +51,32 @@ void gradient_descent(float** x_train, float* y_train, float* w, float* bias, un
 	float J_bias;
 
 	bool stopTraining=false;
+
+	srand(time(NULL));
   
   	// norm(w_new - w_prev) < epsilon
 	while( stopTraining == false ){
-	//for (unsigned int k = 0; k < 100; k++){
+	//for (unsigned int k = 0; k < 10; k++){
 		// for every w_j
 		sum_bias = 0.0;
 	    for( unsigned int j = 0; j < r+1; j++ ){
 
 	    	sum_weights = 0.0;
 	    	// for every observation
-		    for (unsigned int i = 0; i < n; i++){
-		    	// compute the predicted value
-			    _hypothesis_ = hypothesis(x_train[i], w, (*bias), r);
-			    // update d/dw_j J(w,b) or bias
-			    if( j!= r) // weights
-			    	sum_weights += (_hypothesis_- y_train[i])*x_train[i][j];      
-			    else	   // bias
-			    	sum_bias += (_hypothesis_- y_train[i]);
-		    }
+
+	    	/* instead of:
+			for (unsigned int i = 0; i < n; i++){
+					do
+	    	get random line of x */
+	    	unsigned int i = rand()%n;
+	    	// compute the predicted value
+		    _hypothesis_ = hypothesis(x_train[i], w, (*bias), r);
+		    // update d/dw_j J(w,b) or bias
+		    if( j!= r) // weights
+		    	sum_weights += (_hypothesis_- y_train[i])*x_train[i][j];      
+		    else	   // bias
+		    	sum_bias += (_hypothesis_- y_train[i]);
+		    //}
 
 		    J_weight[j] = sum_weights;
 		    if( j==r ) J_bias = sum_bias;

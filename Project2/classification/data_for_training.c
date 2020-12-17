@@ -70,7 +70,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                 (*x_array)[(*n)][k] = abs_dif;
                 //store 1 to y_array
                 (*y_array)[(*n)]=1;
-                printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter->path,k,inner->path,k,outter->tfidf[k],inner->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter->path,k,inner->path,k,outter->tfidf[k],inner->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
             }
             (*n)++;
             //reallocate memory in arrays for next difference
@@ -98,7 +98,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                             (*x_array)[(*n)][k] = abs_dif;
                             //store 0 to y_array
                             (*y_array)[(*n)]=0;
-                            printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter->path,k,other->path,k,outter->tfidf[k],other->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                            //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter->path,k,other->path,k,outter->tfidf[k],other->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
                         }
                         //reallocate memory in arrays for next difference
                         (*n)++;
