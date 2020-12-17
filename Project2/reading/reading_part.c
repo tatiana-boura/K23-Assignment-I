@@ -10,6 +10,10 @@
 #include "../hash_table/hash_table.h"
 #include "../vocabulary/vocabulary.h"
 #include "../word_info/word_info.h"
+#include "../classification/logisticReg.h"
+#include "../classification/data_for_training.h"
+
+
 
 #define BUFFER_SIZE 51000
 #define BUCKETSIZE 200
@@ -238,6 +242,40 @@ int main(int argc, char* argv[]){
 	unsigned int* y_array = calloc(1,sizeof(unsigned int));
 	unsigned int n;	 // number of differences (size of x and y array)
 	create_x_y_array(&x_array,& y_array,ht,BUCKETSIZE, voc_size,&n);
+	
+	
+	//-------create x,y train & valid set-------------
+	float** x_train = calloc(1,sizeof(float*));
+	unsigned int* y_train = calloc(1,sizeof(unsigned int));
+	unsigned int size_of_train_set;
+	
+	float** x_valid = calloc(1,sizeof(float*));
+	unsigned int* y_valid = calloc(1,sizeof(unsigned int));
+	unsigned int size_of_valid_set;
+
+	printf("\nCreate train sets & valid x,y sets\n");
+	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid );
+	
+	//------call gradient_descent() to train model-----
+	float bias;
+	float* w = calloc(voc_size,sizeof(float));
+	float eta = 0.5; //0.0 < eta < 1.0
+	float epsilon = 0.01; //small small number (?)
+	
+	printf("\nTrain model using gradient_descent\n");
+	gradient_descent(x_train, y_train, w, &bias, size_of_train_set, voc_size, eta, epsilon);
+	
+	//-----------predict-----------------------------
+	printf("\nPredict class of x_valid\n");
+	bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
+
+	for(int c=0; c<size_of_valid_set ; c++){
+		if(ans[c] == true){
+			printf("%d) classified correctly.\n",c);
+		}else{
+			printf("%d) not classified correctly.\n",c);
+		}
+	}
 	
 	//---free TDIDF array---------
 	for(unsigned int i=0;i<n;i++){
