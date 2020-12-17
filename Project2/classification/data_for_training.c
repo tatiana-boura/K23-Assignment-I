@@ -45,32 +45,34 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
     and just pairs with |d-f|, |d-e|
     */
 
-    node* outterTemp=entryTable_j->clique;
-    node* innerTemp; node* otherTemp;
-    bool revisitedNotClique = false;
+    node* outter_clique_list=entryTable_j->clique;
+    node* inner_clique_list; node* outter_notClique_list;
+
+/*    bool revisitedNotClique = false;
     if(addrFoundinList(visitedList,entryTable_j->notClique))
-        {printf("visited before\n"); revisitedNotClique = true;}
+        {printf("visited before\n"); revisitedNotClique = true;}*/
 
     // takes an item
-    while( outterTemp!=NULL ){
+    bool first_iter = true;
+    while( outter_clique_list!=NULL ){
         // and begins printing it with the item that follow
-        innerTemp=outterTemp->next;
-
-        while( innerTemp!= NULL ){ 
+        inner_clique_list=outter_clique_list->next;
+        bucketEntry* outter_clique = outter_clique_list->data;
+        while( inner_clique_list!= NULL ){ 
             // clique is a list of pointers to bucketEntries
-            bucketEntry* inner = innerTemp->data;
-            bucketEntry* outter = outterTemp->data;
+            bucketEntry* inner_clique = inner_clique_list->data;
+            //bucketEntry* outter_clique = outter_clique_list->data;
             // Difference between current (outter) and the rest of the clique
             //allocate memory in arrays for difference
             (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));//n:= number of absolute differences
             for( unsigned int k = 0; k<vocabSize; k++ ){
-                //calculate difference |outter->tfidf-inner->tfidf| 
-                float abs_dif = fabs(outter->tfidf[k]-inner->tfidf[k]);
+                //calculate difference |outter->tfidf-inner_clique->tfidf| 
+                float abs_dif = fabs(outter_clique->tfidf[k]-inner_clique->tfidf[k]);
                 //add to x_array
                 (*x_array)[(*n)][k] = abs_dif;
                 //store 1 to y_array
                 (*y_array)[(*n)]=1;
-                //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter->path,k,inner->path,k,outter->tfidf[k],inner->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->tfidf[k],inner_clique->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
             }
             (*n)++;
             //reallocate memory in arrays for next difference
@@ -78,43 +80,76 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
             (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int)); 
             
            
-            // Difference between current (outter) and all of the notClique
-            if(!revisitedNotClique){
-                otherTemp=entryTable_j->notClique;
-                while(otherTemp!=NULL){
-                    //access the clique that is pointed by current notClique
-                    node* temp = otherTemp->data;
-			    	bucketEntry* entryOut = temp->data;
-			    	node* innerTemp = entryOut->clique;
+            // Difference between current (inner) and all of the notClique
+            outter_notClique_list=entryTable_j->notClique;
+            while(outter_notClique_list!=NULL){
+                //access the clique that is pointed by current notClique
+                node* temp = outter_notClique_list->data;
+                bucketEntry* entryOut = temp->data;
+                node* inner_notClique_list = entryOut->clique;
 
-                    while( innerTemp != NULL ){
-			        	bucketEntry* other = (bucketEntry*)innerTemp->data;
+                if(!addrFoundinList(visitedList,inner_notClique_list)){
+                    while( inner_notClique_list != NULL ){
+                        bucketEntry* inner_notClique = (bucketEntry*)inner_notClique_list->data;
                         //allocate memory in arrays for difference
                         (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
                         for( unsigned int k = 0; k<vocabSize; k++ ){
-                            //calculate difference |outter->tfidf-other->tfidf| 
-                            float abs_dif = fabs(outter->tfidf[k]-other->tfidf[k]);
+                            //calculate difference |inner_clique->tfidf-inner_notClique->tfidf| 
+                            float abs_dif = fabs(inner_clique->tfidf[k]-inner_notClique->tfidf[k]);
                             //add to x_array
                             (*x_array)[(*n)][k] = abs_dif;
                             //store 0 to y_array
                             (*y_array)[(*n)]=0;
-                            //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter->path,k,other->path,k,outter->tfidf[k],other->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                            //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",inner_clique->path,k,inner_notClique->path,k,inner_clique->tfidf[k],inner_notClique->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
                         }
                         //reallocate memory in arrays for next difference
                         (*n)++;
                         (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
                         (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
-                        innerTemp = innerTemp->next;
-	        		}
-
-            
-                    
-                    otherTemp = otherTemp->next;
+                        inner_notClique_list = inner_notClique_list->next;
+                    }
                 }
+                
+                outter_notClique_list = outter_notClique_list->next;
             }
-            innerTemp=innerTemp->next;
+
+            inner_clique_list=inner_clique_list->next;
         }
-        outterTemp=outterTemp->next;
+        // Difference between current (outter) and all of the notClique
+        if(first_iter){
+            outter_notClique_list=entryTable_j->notClique;
+            while(outter_notClique_list!=NULL){
+                //access the clique that is pointed by current notClique
+                node* temp = outter_notClique_list->data;
+                bucketEntry* entryOut = temp->data;
+                node* inner_notClique_list = entryOut->clique;
+
+                if(!addrFoundinList(visitedList,inner_notClique_list)){
+                    while( inner_notClique_list != NULL ){
+                        bucketEntry* inner_notClique = (bucketEntry*)inner_notClique_list->data;
+                        //allocate memory in arrays for difference
+                        (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
+                        for( unsigned int k = 0; k<vocabSize; k++ ){
+                            //calculate difference |outter_clique->tfidf-inner_notClique->tfidf| 
+                            float abs_dif = fabs(outter_clique->tfidf[k]-inner_notClique->tfidf[k]);
+                            //add to x_array
+                            (*x_array)[(*n)][k] = abs_dif;
+                            //store 0 to y_array
+                            (*y_array)[(*n)]=0;
+                            printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_notClique->path,k,outter_clique->tfidf[k],inner_notClique->tfidf[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                        }
+                        //reallocate memory in arrays for next difference
+                        (*n)++;
+                        (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
+                        (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
+                        inner_notClique_list = inner_notClique_list->next;
+                    }
+                }
+                outter_notClique_list = outter_notClique_list->next;
+            }
+        }
+        first_iter = false;
+        outter_clique_list=outter_clique_list->next;
     }
 }
 
