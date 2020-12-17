@@ -236,7 +236,8 @@ int main(int argc, char* argv[]){
     }
 
     //printHT(ht);
-    
+    printf("\n%s\n","Make tfidf array" );
+
 	//----TRAINING---------------------------------------------------------------------
 	float** x_array = calloc(1,sizeof(float*));
 	unsigned int* y_array = calloc(1,sizeof(unsigned int));
@@ -257,7 +258,7 @@ int main(int argc, char* argv[]){
 	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid );
 	
 	//------call gradient_descent() to train model-----
-	float bias;
+	float bias=0.0;
 	float* w = calloc(voc_size,sizeof(float));
 	float eta = 0.5; //0.0 < eta < 1.0
 	float epsilon = 0.01; //small small number (?)
@@ -268,14 +269,22 @@ int main(int argc, char* argv[]){
 	//-----------predict-----------------------------
 	printf("\nPredict class of x_valid\n");
 	bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
+	unsigned int t = 0;
+	unsigned int f = 0;
 
 	for(int c=0; c<size_of_valid_set ; c++){
 		if(ans[c] == true){
-			printf("%d) classified correctly.\n",c);
+			t++;
+			//printf("%d) classified correctly.\n",c);
 		}else{
-			printf("%d) not classified correctly.\n",c);
+			f++;
+			//printf("%d) not classified correctly.\n",c);
 		}
 	}
+
+	free(ans); ans=NULL;
+
+	printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
 	
 	//---free TDIDF array---------
 	for(unsigned int i=0;i<n;i++){
