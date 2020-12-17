@@ -237,7 +237,7 @@ int main(int argc, char* argv[]){
 	float** x_array = calloc(1,sizeof(float*));
 	unsigned int* y_array = calloc(1,sizeof(unsigned int));
 	unsigned int n;	 // number of differences (size of x and y array)
-	createTFIDFarray(&x_array,& y_array,ht,BUCKETSIZE, voc_size,&n);
+	create_x_y_array(&x_array,& y_array,ht,BUCKETSIZE, voc_size,&n);
 	
 	//---free TDIDF array---------
 	for(unsigned int i=0;i<n;i++){
