@@ -163,9 +163,27 @@ int main(int argc, char* argv[]){
 	//printf("vocsize: %d\tjsonnum: %d\n\n",voc_size,json_num);
 	//printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
 
-	printf("\ncreate tfidf vectors\n");
+	printf("\nType 'b' for BoW implementation or 't' for tf-idf implementation\n");
+	bool flag=true;
+	char c;
+	scanf("%c",&c);
+	while(flag){
+		if(c == 'b'){ 
+			printf("\nCreate BoW vectors\n");
+			make_BoW_vectors( ht, BUCKETSIZE, voc_size, vocabulary, json_num, htVOC, BUCKETSIZEVOC );
+			flag=false;
+		}else if(c == 't'){
+			printf("\nCreate tf-idf vectors\n\n");
+			// create vector containing tfidf
+			voc_size = make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
+			flag=false;
+		}else{ if(c !='\n'){printf("Please type 'b' or 't'\n");}}
+		scanf("%c",&c);
+	}
+
+	//printf("\ncreate vectors\n");
 	// create vector containing tfidf
-	voc_size = make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
+	//voc_size = make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
 
 	//___the hash table has now been created -> start making the cliques__________________________________________________
 
@@ -236,7 +254,7 @@ int main(int argc, char* argv[]){
     }
 
     //printHT(ht);
-    printf("\n%s\n","Make tfidf array" );
+    printf("\n%s\n","Make array" );  //Make tfidf array
 
 	//----TRAINING---------------------------------------------------------------------
 	float** x_array = calloc(1,sizeof(float*));
