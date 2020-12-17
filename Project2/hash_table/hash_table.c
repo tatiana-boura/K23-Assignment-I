@@ -93,7 +93,7 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
     return;
 }
 
-//___make_tfidf_vectors_________________________________________________________________________________________________________________________________________________________________
+//___make_tfidf_vectors________________________________________________________________________________________________________________________________________________________________________________
 unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
 
      // go through every entry in the hash and make the bow vector
@@ -176,7 +176,7 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
 
 //__GET_AVERAGE_AND_DROP_TFIDF_WITH_COLUMNS_________________________________________________________________
 
-    float floor_tf_idf = 0.00155;
+    float floor_tf_idf = 0.0022;
 
     // store the columns that should be dropped
     bool should_be_dropped[vocabSize];
@@ -240,6 +240,66 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
     return new_vocabSize;
 }    
 
+//___make_BoW_vectors________________________________________________________________________________________________________________________________________________________________________________
+void make_BoW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
+
+     // go through every entry in the hash and make the bow vector
+    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
+
+    // for all hash table
+    for( unsigned int i=0; i<ht->size; i++ ){
+        // go to the bucket of ht
+        if(ht->table[i] != NULL){
+
+            node* temp = ht->table[i];
+
+            while(temp!=NULL){
+                bucketEntry** entryTable = temp->data;
+                // and every entry of the bucket
+                for(unsigned int j = 0;j<numOfEntries;j++){
+
+                    if(entryTable[j]!=NULL){
+
+                        // initialize the needed size for the tf
+                        entryTable[j]->tfidf = calloc(vocabSize,sizeof(float)); 
+                        assert(entryTable[j]->tfidf!=NULL);
+                       
+                        /* count := how many times the current word is spotted in current JSON.
+                        position := what is the position of the word in the vocabulary*/
+
+                        // counts total number of words in current JSON
+                        unsigned int totalWordsJSON = 0;
+
+                         node* wordJSON = entryTable[j]->wordInfoList;
+                        while( wordJSON != NULL ){
+
+                            wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
+                            char* w = infoJSON->word;
+
+                            /* get words relative position in the vocabulary, so that words 
+                            of all vectors are in the same order */ 
+                            unsigned int info_count;
+                            int position = getPositionInAndCountVOC( htVOC, w, bucketSizeVOC, &info_count );
+                            position = vocabSize - position -1;
+
+                            /* compute the bow vector --:
+                            -- num_of_times_word_is_found_in_curr_JSON */
+                            entryTable[j]->tfidf[position] = (float)infoJSON->count;
+
+                            // go to next word of this JSON
+                            wordJSON = wordJSON->next;
+                        }  
+                        for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->tfidf)[d] ); printf("\n");
+                    }
+                }
+                temp=temp->next;
+            }
+        }    
+    }
+
+
+    return;
+}    
 
 
 //__destroyHashTable______________________________________________________________________________________

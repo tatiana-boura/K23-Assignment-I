@@ -107,7 +107,7 @@ int main(int argc, char* argv[]){
     addtoHT(ht, sB, BUCKETSIZE, wordInfoListB);
 
     //make_tfidf_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZE  );
-    make_tfidf_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZEVOC );
+    make_BoW_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZEVOC );
 
     printf("\n");
 
