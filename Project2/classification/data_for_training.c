@@ -93,7 +93,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                         (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
                         for( unsigned int k = 0; k<vocabSize; k++ ){
                             //calculate difference |outter->tfidf-other->tfidf| 
-                            float abs_dif = fabs(outter->tfidf[k]-other->tfidf[k]);
+                            float abs_dif = fabs(inner->tfidf[k]-other->tfidf[k]);
                             //add to x_array
                             (*x_array)[(*n)][k] = abs_dif;
                             //store 0 to y_array

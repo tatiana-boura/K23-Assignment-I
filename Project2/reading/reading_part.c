@@ -281,7 +281,7 @@ int main(int argc, char* argv[]){
 
 	printf("\nscore: %f\n", ((float)t/(float)size_of_valid_set) );
 
-	//printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
+	printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
 	
 	//---free TDIDF array---------
 	for(unsigned int i=0;i<n;i++){
