@@ -1,10 +1,17 @@
 #include "./data_for_training.h"
 
+#define BUCKETSIZEPAIR 100
+#define HTSIZEPAIR 9000
+
+hashTablePair* htPair=NULL;
+
 node* visitedList=NULL;
 
 void create_x_y_array(float*** x_array,unsigned int** y_array,hashTable* ht,unsigned int bucketSize, unsigned int vocabSize,unsigned int* n){
 	*n=0;	//n:= number of absolute differences
-	unsigned int m = 0;
+	
+    htPair = createHTPair(HTSIZEPAIR);
+
 	// go through every entry in the hash and make the bow vector
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
     // for all hash table
@@ -17,22 +24,24 @@ void create_x_y_array(float*** x_array,unsigned int** y_array,hashTable* ht,unsi
                 bucketEntry** entryTable = temp->data;
                 // and every entry of the bucket
                 for(unsigned int j = 0;j<numOfEntries && entryTable[j]!=NULL;j++){
-                    if( !addrFoundinList(visitedList,entryTable[j]->clique)){
-                        visitedList=appendList(visitedList,entryTable[j]->clique);
-                        storeAbsDifference(entryTable[j], x_array, y_array, vocabSize, n, &m);
-                    }else entryTable[j]->clique=NULL;
+                    if( !addrFoundinList(visitedList,entryTable[j]->clique )){
+                        visitedList = appendList(visitedList,entryTable[j]->clique);
+                        storeAbsDifference(entryTable[j], x_array, y_array, vocabSize, n);
+                    }
                 }
                 temp=temp->next;
             }
         } 
 	}
-    printf("\n[%d]\n",m );
+    
     // we don't need anymore to keep list of visited cliques
+    destroyHTPair(htPair,BUCKETSIZEPAIR);
     destroyListOfStrings(visitedList,false); visitedList=NULL;
+    return;
 }
 
 
-void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int** y_array,unsigned int vocabSize, unsigned int* n,unsigned int* m){
+void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int** y_array,unsigned int vocabSize, unsigned int* n){
     /* This function works as follows: let's say we have the example,
     clique is a b c d and its notClique is f e. The function stores the differences in x_array 
     and their labels in y_array:
@@ -60,22 +69,26 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
             //bucketEntry* outter_clique = outter_clique_list->data;
             // Difference between current (outter) and the rest of the clique
             //allocate memory in arrays for difference
-            (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));//n:= number of absolute differences
-            //printf("1 cliques : [%s] - [%s]\n",outter_clique->path,inner_clique->path );
-            for( unsigned int k = 0; k<vocabSize; k++ ){
-                //calculate difference |outter->vector-inner_clique->vector| 
-                float abs_dif = fabs(outter_clique->vector[k]-inner_clique->vector[k]);
-                //add to x_array
-                (*x_array)[(*n)][k] = abs_dif;
-                //store 1 to y_array
-                (*y_array)[(*n)]=1;
-                //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->vector[k],inner_clique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+            if( !foundInHTPair( htPair, outter_clique->path, inner_clique->path, BUCKETSIZEPAIR ) ){
+
+                addtoHTPair(htPair, outter_clique->path, inner_clique->path, BUCKETSIZEPAIR );
+                (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));//n:= number of absolute differences
+                //printf("1 cliques : [%s] - [%s]\n",outter_clique->path,inner_clique->path );
+            
+                for( unsigned int k = 0; k<vocabSize; k++ ){
+                    //calculate difference |outter->vector-inner_clique->vector| 
+                    float abs_dif = fabs(outter_clique->vector[k]-inner_clique->vector[k]);
+                    //add to x_array
+                    (*x_array)[(*n)][k] = abs_dif;
+                    //store 1 to y_array
+                    (*y_array)[(*n)]=1;
+                    //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->vector[k],inner_clique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                }
+                (*n)++;
+                //reallocate memory in arrays for next difference
+                (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
+                (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int)); 
             }
-            (*n)++;
-            (*m)++;
-            //reallocate memory in arrays for next difference
-            (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
-            (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int)); 
 
             inner_clique_list=inner_clique_list->next;
         }
@@ -94,13 +107,18 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
             bucketEntry* entryOut = temp->data;
             node* inner_notClique_list = entryOut->clique;
 
-            if(!addrFoundinList(visitedList,inner_notClique_list)){
-                while( inner_notClique_list != NULL ){
+            //if(!addrFoundinList(visitedList,inner_notClique_list)){
+            while( inner_notClique_list != NULL ){
 
-                    bucketEntry* inner_notClique = (bucketEntry*)inner_notClique_list->data;
-                    //allocate memory in arrays for difference
+                bucketEntry* inner_notClique = (bucketEntry*)inner_notClique_list->data;
+                //allocate memory in arrays for difference
+
+                if( !foundInHTPair( htPair, outter_clique->path, inner_notClique->path, BUCKETSIZEPAIR ) ){
+
+                    addtoHTPair(htPair, outter_clique->path, inner_notClique->path, BUCKETSIZEPAIR );
+
                     (*x_array)[(*n)] = calloc(vocabSize,sizeof(float)); //n:= number of absolute differences
-                    //printf("2 not cliques : [%s] - [%s]\n",outter_clique->path,inner_notClique->path );
+                    //printf("2 not cliques : [%s] - [%s]\n",outter_clique->path, inner_notClique->path );
                     for( unsigned int k = 0; k<vocabSize; k++ ){
                         //calculate difference |outter_clique->vector-inner_notClique->vector| 
                         float abs_dif = fabs(outter_clique->vector[k]-inner_notClique->vector[k]);
@@ -112,16 +130,21 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                     }
                     //reallocate memory in arrays for next difference
                     (*n)++;
+
                     (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
-                    (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
-  
-                    inner_notClique_list = inner_notClique_list->next;
+                    (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int)); 
+
                 }
+
+                inner_notClique_list = inner_notClique_list->next;
             }
+            
             outter_notClique_list = outter_notClique_list->next;
         }
+        
         outter_clique_list=outter_clique_list->next; 
-    }       
+    } 
+
     return;
 }
 

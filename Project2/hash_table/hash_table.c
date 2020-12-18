@@ -176,7 +176,7 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
 
 //__GET_AVERAGE_AND_DROP_TFIDF_WITH_COLUMNS_________________________________________________________________
 
-    float floor_tf_idf = 0.0022*(float)numOfJSON;
+    float floor_tf_idf = 0.00155*(float)numOfJSON;
 
     // store the columns that should be dropped
     bool should_be_dropped[vocabSize];
@@ -573,9 +573,9 @@ void printBucket(node* b){
             	node* n;
                 
 
-                printf("\npath: %s wordInfoList: ",entryTable[i]->path);
+               // printf("\npath: %s wordInfoList: ",entryTable[i]->path);
                // for(int d=0; d<7; d++) printf("%f\t",entryTable[i]->vector[d] ); printf("\n");
-                printList(entryTable[i]->wordInfoList,(void*)printWordInfo); printf("\n");
+                //printList(entryTable[i]->wordInfoList,(void*)printWordInfo); printf("\n");
 
 
                 bucketEntry* entryIn;
