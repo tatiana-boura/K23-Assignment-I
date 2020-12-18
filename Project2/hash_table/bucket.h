@@ -8,7 +8,7 @@ typedef struct bucketEntry{
     node* wordInfoList;
     node* clique;
     node* notClique;
-    float* tfidf; 
+    float* vector; 
 }bucketEntry;
 
 #endif
