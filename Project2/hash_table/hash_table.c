@@ -176,7 +176,7 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
 
 //__GET_AVERAGE_AND_DROP_TFIDF_WITH_COLUMNS_________________________________________________________________
 
-    float floor_tf_idf = 0.0022;
+    float floor_tf_idf = 0.0022*(float)numOfJSON;
 
     // store the columns that should be dropped
     bool should_be_dropped[vocabSize];
@@ -184,8 +184,6 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
 
     for( unsigned int k = 0; k<vocabSize; k++ ){
         // if average is less than a certain limit, the column should be dropped
-        tfidf_average[k] = tfidf_average[k]/((float)numOfJSON);
-        //tfidf_average[k] = tfidf_average[k]/((float)numOfTimes[k]);
         if( tfidf_average[k] < floor_tf_idf ){
             should_be_dropped[k] = true;
         }else{
@@ -267,9 +265,6 @@ void make_BoW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int voca
                         /* count := how many times the current word is spotted in current JSON.
                         position := what is the position of the word in the vocabulary*/
 
-                        // counts total number of words in current JSON
-                        unsigned int totalWordsJSON = 0;
-
                          node* wordJSON = entryTable[j]->wordInfoList;
                         while( wordJSON != NULL ){
 
@@ -289,7 +284,7 @@ void make_BoW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int voca
                             // go to next word of this JSON
                             wordJSON = wordJSON->next;
                         }  
-                        for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
+                        //for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
                     }
                 }
                 temp=temp->next;
