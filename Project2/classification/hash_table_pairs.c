@@ -3,18 +3,21 @@
 //__hash_function________________________________________________________________________________________
 unsigned int hashPair(char* string1, char* string2, hashTablePair* ht){
     
-    unsigned long int value = 0;
-    
-    while(*string1 != '\0'){ //parse the whole string
-        value += *string1; //multiplying with a prime number to evenly spread data into buckets
-        string1++; //move the pointer over 1 char
-    }
+    /* We want this function to return the same hash value regardless of the order the strings 
+    (keys) are given -- hashPair(string1,string2,ht) == hashPair(string2,string1,ht). In order
+    to accomplish that the hash function is: sum(ascii_of_both_strings) % size_of_ht */
 
-    while(*string2 != '\0'){ //parse the whole string
-        value += *string2; //multiplying with a prime number to evenly spread data into buckets
-        string2++; //move the pointer over 1 char
+    unsigned long int value = 0;
+    //parse the whole first string
+    while(*string1 != '\0'){ 
+        value += *string1; 
+        string1++; 
     }
-    //printf("%d\t",value % ht->size );
+    //parse the whole second string
+    while(*string2 != '\0'){ 
+        value += *string2; 
+        string2++; 
+    }
     return value % ht->size;
 }
 
@@ -96,7 +99,7 @@ bucket* getBucketPair(hashTablePair* ht, char* key1, char* key2, unsigned int* i
 }
 
 bucketEntryPair* createEntryPair( char* _key1_, char* _key2_){
-    
+    // create entry with two keys
     bucketEntryPair* entry = calloc(1,sizeof(bucketEntryPair)); assert(entry!=NULL);
 
     entry->key1 = _key1_;
@@ -131,8 +134,10 @@ void deleteBucketTablePair(bucketEntryPair** table, unsigned int* bucketSize){
 //_______________________________________________________________________________________________________
 
 bool foundInHTPair( hashTablePair* ht, char* _key1_, char* _key2_, unsigned int bucketSize ){
-    // if function returns true(item is found), 
-    // adjust counter
+    // true: item is found 
+
+    /* because the hash function hashPair(string1,string2,ht) == hashPair(string2,string1,ht),
+    this function checks if pair (key1,key2) or pair (key2,key1) is found */
 
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntryPair*);
 
@@ -146,17 +151,18 @@ bool foundInHTPair( hashTablePair* ht, char* _key1_, char* _key2_, unsigned int 
  
     // iterate while temp != NULL and item hasn't been found
     while(temp!=NULL){
-        
+        // get intry table
         entryTable = temp->data;
-        
+        // for each entry in the table
         for(unsigned int i=0;i<numOfEntries;i++){
-
+            // if entry isn't NULL
             if(entryTable[i]!=NULL){
-                // if key path has been found, adjust counter
+                // (key1,key2) is found  
                 if( strcmp(entryTable[i]->key1,_key1_)==0 && strcmp(entryTable[i]->key2,_key2_)==0 ){
                     return true;
                 }
-
+                // or
+                // (key2,key1) is found
                 if( strcmp(entryTable[i]->key1,_key2_)==0 && strcmp(entryTable[i]->key2,_key1_)==0 ){
                     return true;
                 }
@@ -173,7 +179,8 @@ void printBucketPair(node* b, unsigned int bucketSize){
 
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntryPair*);
     
-    if(b == NULL){ /*printf("Empty Bucket\n");*/ return; }
+    if(b == NULL) return; 
+    
     node* temp = b;
 
     while(temp!=NULL){
