@@ -94,7 +94,10 @@ void addtoHT(hashTable* ht, char* key, unsigned int bucketSize, node* _wordInfoL
 }
 
 //___make_tfidf_vectors________________________________________________________________________________________________________________________________________________________________________________
-unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
+
+// this function just drops the low average tfidf columns
+
+unsigned int make_tfidf_vectorsDROP( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
 
      // go through every entry in the hash and make the bow vector
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
@@ -194,10 +197,10 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
 
     //printf("\n"); for(int d=0; d<vocabSize; d++) printf("%f\t",tfidf_average[d] ); printf("\n");
     
-    printf("new_vocabSize [%d]\n", new_vocabSize);
-    printf("vocabSize [%d]\n",vocabSize );
+    printf("Old vocabulary size [%d]\n",vocabSize );
+    printf("New vocabulary size [%d]\n", new_vocabSize);
 
-    // now drop tf-idf columns
+    //__________now_drop_tf-idf_columns_______
     
     // for all hash table
     for( unsigned int i=0; i<ht->size; i++ ){
@@ -234,6 +237,205 @@ unsigned int make_tfidf_vectors( hashTable* ht, unsigned int bucketSize, unsigne
         }    
     }
     
+    free(tfidf_average); tfidf_average=NULL;
+    return new_vocabSize;
+}    
+
+//___make_tfidf_vectors________________________________________________________________________________________________________________________________________________________________________________
+
+// this function drops the low average tfidf columns and the recomputes them all
+
+unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
+
+     // go through every entry in the hash and make the bow vector
+    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
+
+ //__COMPUTE_TFIDF_FOR_THE_FIRST_TIME_BEFORE_DROPPING______________________________   
+    
+    float* tfidf_average = calloc(vocabSize,sizeof(float));
+   
+    // for all hash table
+    for( unsigned int i=0; i<ht->size; i++ ){
+        // go to the bucket of ht
+        if(ht->table[i] != NULL){
+
+            node* temp = ht->table[i];
+
+            while(temp!=NULL){
+                bucketEntry** entryTable = temp->data;
+                // and every entry of the bucket
+                for(unsigned int j = 0;j<numOfEntries;j++){
+
+                    if(entryTable[j]!=NULL){
+
+                        // initialize the needed size for the tf
+                        entryTable[j]->vector = calloc(vocabSize,sizeof(float)); 
+                        assert(entryTable[j]->vector!=NULL);
+                       
+                        /* count := how many times the current word is spotted in current JSON.
+                        position := what is the position of the word in the vocabulary*/
+
+                        // counts total number of words in current JSON
+                        unsigned int totalWordsJSON = 0;
+
+                        // get vocabulary of the current JSON
+
+                        node* wordJSON = entryTable[j]->wordInfoList;
+                        while( wordJSON != NULL ){
+                            // update total words of this JSON
+                            wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
+                            totalWordsJSON+=infoJSON->count;
+                            // go to next word of this JSON
+                            wordJSON = wordJSON->next;
+                        }
+
+                        wordJSON = entryTable[j]->wordInfoList;
+                        while( wordJSON != NULL ){
+
+                            wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
+                            char* w = infoJSON->word;
+
+                            /* get words relative position in the vocabulary, so that words 
+                            of all vectors are in the same order */ 
+                            unsigned int info_count;
+                            int position = getPositionInAndCountVOC( htVOC, w, bucketSizeVOC, &info_count );
+                            position = vocabSize - position -1;
+
+                            /* compute the tf vector --:
+                            -- num_of_times_word_is_found_in_curr_JSON / total_num_of_words_in_curr_JSON */
+                            entryTable[j]->vector[position] = (float)infoJSON->count/totalWordsJSON;
+                            /* compute the tfidf vector --:
+                            -- use the type tf*log(n/nt) */
+                            entryTable[j]->vector[position] *= (float)log10((double)(numOfJSON/info_count));
+
+                            tfidf_average[position] += entryTable[j]->vector[position];
+
+                            //printf("word found -- %s\t", w);
+                            //printf("tf value is %f\t\t", entryTable[j]->vector[position] );
+                            //printf("tfidtf value is %f\n", entryTable[j]->vector[position]);    
+
+                            // go to next word of this JSON
+                            wordJSON = wordJSON->next;
+                        }  
+                        //for(int d=0; d<vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
+                    }
+                }
+                temp=temp->next;
+            }
+        }    
+    }
+
+//__GET_AVERAGE_AND_RECOMPUTE_TFIDF_WITH_________________________________________________________________________
+
+    float floor_tf_idf = 0.0001*(float)numOfJSON;
+
+    // store the columns that should be dropped
+    bool should_be_dropped[vocabSize];
+    unsigned int new_vocabSize = 0;
+
+    for( unsigned int k = 0; k<vocabSize; k++ ){
+        // if average is less than a certain limit, the column should be dropped
+        if( tfidf_average[k] < floor_tf_idf ){
+            should_be_dropped[k] = true;
+        }else{
+            new_vocabSize++;
+            should_be_dropped[k] = false;
+        } 
+    }
+
+    printf("Old vocabulary size [%d]\n",vocabSize );
+    printf("New vocabulary size [%d]\n", new_vocabSize);
+
+    //__________now_drop_tf-idf_columns_______
+    // for all hash table
+    for( unsigned int i=0; i<ht->size; i++ ){
+        // go to the bucket of ht
+        if(ht->table[i] != NULL){
+
+            node* temp = ht->table[i];
+
+            while(temp!=NULL){
+                bucketEntry** entryTable = temp->data;
+                // and every entry of the bucket
+                for(unsigned int j = 0;j<numOfEntries;j++){
+
+                    if(entryTable[j]!=NULL){
+
+                        /* count := how many times the current word is spotted in current JSON.
+                        position := what is the position of the word in the vocabulary*/
+
+                        // counts total number of words in current JSON
+                        unsigned int new_totalWordsJSON = 0;
+
+                        // get vocabulary of the current JSON
+
+                        node* wordJSON = entryTable[j]->wordInfoList;
+                        while( wordJSON != NULL ){
+
+                            wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
+                            char* w = infoJSON->word;
+
+                            /* get words relative position in the vocabulary, so that words 
+                            of all vectors are in the same order */ 
+                            unsigned int info_count;
+                            int position = getPositionInAndCountVOC( htVOC, w, bucketSizeVOC, &info_count );
+                            position = vocabSize - position -1;
+
+                            if( should_be_dropped[position] == false ){
+                                new_totalWordsJSON+=infoJSON->count;
+                            }
+                            // go to next word of this JSON
+                            wordJSON = wordJSON->next;
+                        }
+
+                        wordJSON = entryTable[j]->wordInfoList;
+                        while( wordJSON != NULL ){
+
+                            wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
+                            char* w = infoJSON->word;
+
+                            /* get words relative position in the vocabulary, so that words 
+                            of all vectors are in the same order */ 
+                            unsigned int info_count;
+                            int position = getPositionInAndCountVOC( htVOC, w, bucketSizeVOC, &info_count );
+                            position = vocabSize - position -1;
+
+                            if( should_be_dropped[position] == false ){
+
+                                /* compute the tf vector -- #word_is_found_in_curr_JSON / total_#words_in_curr_JSON */
+                                entryTable[j]->vector[position] = (float)infoJSON->count/new_totalWordsJSON;
+                                /* compute the tfidf vector -- use the type tf*log(n/nt) */
+                                entryTable[j]->vector[position] *= (float)log10((double)(numOfJSON/info_count));
+
+                                tfidf_average[position] += entryTable[j]->vector[position];
+                            }    
+
+                            // go to next word of this JSON
+                            wordJSON = wordJSON->next;
+                        } 
+                        // initialize the needed size for the new tf
+                        float* new_tf_idf = calloc(new_vocabSize,sizeof(float));
+                        unsigned int _k_ = 0;
+
+                        for( unsigned int k = 0; k < vocabSize; k++ ){
+                            if( should_be_dropped[k] == false ){
+                                new_tf_idf[_k_++] = entryTable[j]->vector[k];
+                            }
+                        }
+
+                       free(entryTable[j]->vector); entryTable[j]->vector=NULL;
+                       entryTable[j]->vector = new_tf_idf; 
+                      //for(int d=0; d<new_vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
+                    }
+                }
+                temp=temp->next;
+            }
+        }    
+    }
+
+    // delete needed columns from vocabulary
+    //deleteWords( &vocabulary, should_be_dropped, vocabSize );
+
     free(tfidf_average); tfidf_average=NULL;
     return new_vocabSize;
 }    

@@ -43,6 +43,10 @@ bool* predict( float** x_valid, unsigned int* y_valid, float* w, float bias, uns
 }
 
 void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* bias, unsigned int n, unsigned int r, float eta, float epsilon){
+	
+	/* Note: At this point we use Stochastic Gradient Descent if you want to use non-stochastic 
+	and non-batch Gradient Descent uncomment the commented lines under the :___ GRADIENT DESCENT __*/ 
+
 	// train the model
 	float _hypothesis_, sum_weights;
 	float sum_bias;
@@ -62,12 +66,9 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 	    for( unsigned int j = 0; j < r+1; j++ ){
 
 	    	sum_weights = 0.0;
-	    	// for every observation
 
-	    	/* instead of:
-			for (unsigned int i = 0; i < n; i++){
-					do
-	    	get random line of x */
+	    	/*____ STOCHASTIC GRADIENT ______
+	    	  ____(get random line of x)_____ */
 	    	unsigned int i = rand()%n;
 	    	// compute the predicted value
 		    _hypothesis_ = hypothesis(x_train[i], w, (*bias), r);
@@ -76,11 +77,22 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 		    	sum_weights += (_hypothesis_- (float)y_train[i])*x_train[i][j];      
 		    else	   // bias
 		    	sum_bias += (_hypothesis_- (float)y_train[i]);
-		    //}
+
+		    //____ GRADIENT DESCENT __________
+			/*for (unsigned int i = 0; i < n; i++){
+			
+		    	// compute the predicted value
+			    _hypothesis_ = hypothesis(x_train[i], w, (*bias), r);
+			    // update d/dw_j J(w,b) or bias
+			    if( j!= r) // weights
+			    	sum_weights += (_hypothesis_- (float)y_train[i])*x_train[i][j];      
+			    else	   // bias
+			    	sum_bias += (_hypothesis_- (float)y_train[i]);
+		    }*/
 
 		    if( j==r ) J_bias = sum_bias;
 		    else J_weight[j] = sum_weights;
-
+			
 		}  
 
 		// simultaneous update -- because it is more efficient

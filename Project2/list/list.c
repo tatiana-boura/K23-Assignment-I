@@ -203,30 +203,78 @@ void sortedInsertStr(node** n, wordInfo* w){
         *n = newNode;
     }else{ 
         // find the node and insert
-        node* current = *n; 
-        while (current->next != NULL && strcmp(((wordInfo*)current->next->data)->word,((wordInfo*)newNode->data)->word) < 0) { 
-            current = current->next; 
+        node* tempNode = *n; 
+        while (tempNode->next != NULL && strcmp(((wordInfo*)tempNode->next->data)->word,((wordInfo*)newNode->data)->word) < 0) { 
+            tempNode = tempNode->next; 
         } 
-        newNode->next = current->next; 
-        current->next = newNode; 
+        newNode->next = tempNode->next; 
+        tempNode->next = newNode; 
     }
     return; 
 } 
 
 bool foundInSortedListStr(node* n, char* w, bool increaseCounter){
 
-    node* current=n;
+    node* tempNode=n;
 
-    while( current != NULL && strcmp(((wordInfo*)current->data)->word,w) < 0 )
-        current = current->next;
+    while( tempNode != NULL && strcmp(((wordInfo*)tempNode->data)->word,w) < 0 )
+        tempNode = tempNode->next;
 
-    if( current == NULL ) return false;
+    if( tempNode == NULL ) return false;
 
-    if( strcmp(((wordInfo*)current->data)->word,w) == 0){
-        if( increaseCounter ) (((wordInfo*)current->data)->count)++;
+    if( strcmp(((wordInfo*)tempNode->data)->word,w) == 0){
+        if( increaseCounter ) (((wordInfo*)tempNode->data)->count)++;
         return true;
     } 
-    
-
     return false;
+}
+
+void deleteWords( node** n, bool should_be_dropped[], unsigned int vocabSize ){
+
+    node* tempNode = *n;
+    node* prev = NULL;
+    // for all vocabulary
+    for( unsigned int i=0; i<vocabSize; i++ ){
+        /* if there is a deletion of a column 
+        tempNode and prev will be updated internally */
+        bool update = true;
+        // if word should be removed from the vocabulary
+        if( should_be_dropped[i] == true ){
+            // if the first removed is the first in general
+            if( i==0 ){
+                // make the second node the head
+                *n = tempNode->next; 
+                wordInfoDeletion((wordInfo*)tempNode->data);
+                //free((wordInfo*)tempNode->data);
+                free(tempNode);
+                tempNode = *n; prev = NULL;
+                // do not update tempNode and prev
+                update = false;
+            }else{
+                if(prev==NULL){ // if the previous deleted is the first one
+                    *n = tempNode->next;
+                    //free((wordInfo*)tempNode->data);
+                    wordInfoDeletion((wordInfo*)tempNode->data); 
+                    free(tempNode);
+                    tempNode = *n; prev = NULL;
+                }else{ // else do the normal deletion
+                    prev->next = tempNode->next; 
+                    wordInfoDeletion((wordInfo*)tempNode->data);
+                    //free((wordInfo*)tempNode->data);
+                    free(tempNode);
+                    tempNode = prev->next; 
+                }
+                // do not update tempNode and prev
+                update = false;
+            }
+            // a column deletion -- ++variate
+        }
+        // if the previous column has not been deleted -- update
+        if( update ){
+            prev = tempNode;
+            tempNode = tempNode->next;
+        }
+    }
+
+    return;
 }

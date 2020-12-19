@@ -8,7 +8,7 @@
 #include <assert.h>
 #include "../hash_table/bucket.h"
 #include "node.h"
-#include "../word_info/word_info_header.h" 
+#include "../word_info/word_info.h" 
 
 node* appendList(node* n, void* data);
 void destroyList(node* n, unsigned int* size, bool del, void(*deleteData)(void*,void*));
@@ -31,5 +31,7 @@ bool notInlist(node* n, char* w);
 void sortedInsertStr(node** n, wordInfo* w);
 
 bool foundInSortedListStr(node* n, char* w, bool increaseCounter);
+
+void deleteWords( node** n, bool should_be_dropped[], unsigned int vocabSize );
 
 #endif

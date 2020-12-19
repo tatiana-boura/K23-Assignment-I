@@ -14,18 +14,16 @@
 #define HTSIZEVOC 3
 #define STRSIZE 100
 
-//Compile:  gcc -g -o test ./taniaTest.c ../list/list.c ../word_info/word_info.c ./hash_table.c ../vocabulary/vocabulary.c -lm 
+//Compile:  gcc -g -o test ./taniaTest.c ../list/list.c ../word_info/word_info.c ./hash_table.c ../vocabulary/vocabulary.c ../vocabulary/hash_table_vocabulary.c -lm
 //Run:   valgrind -s -q --leak-check=full --show-leak-kinds=all ./test
 
 node* vocabulary = NULL;
-
 
 int main(int argc, char* argv[]){
 
     hashTableVOC* htVOC = createHTVOC(HTSIZEVOC);
 
-     unsigned int size=0; 
-
+    unsigned int size=0; 
 
     wordInfo* temp_word_info;
 
@@ -36,6 +34,7 @@ int main(int argc, char* argv[]){
     char* w4 = calloc(100,sizeof(char)); strcpy(w4,"very");
     char* w5 = calloc(100,sizeof(char)); strcpy(w5,"good");
     char* w6 = calloc(100,sizeof(char)); strcpy(w6,"read");
+    char* w12 = calloc(100,sizeof(char)); strcpy(w12,"you");
 
     /* WordInfoListA gets w1-w6  */
     node* wordInfoListA=NULL; 
@@ -58,6 +57,9 @@ int main(int argc, char* argv[]){
     addToVoc(&vocabulary,w6,wordInfoListA,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListA,w6); 
 
+    addToVoc(&vocabulary,w12,wordInfoListA,&size,htVOC, BUCKETSIZE);
+    addToWordInfoList(&wordInfoListA,w12); 
+
     /* Second sentence / .json */
     char* w7 = calloc(100,sizeof(char)); strcpy(w7,"thank");
     char* w8 = calloc(100,sizeof(char)); strcpy(w8,"you");
@@ -68,36 +70,36 @@ int main(int argc, char* argv[]){
     // WordInfoListB gets w7-w11 
     node* wordInfoListB=NULL; 
 
-
-    
     addToVoc(&vocabulary,w7,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w7); 
-
     
     addToVoc(&vocabulary,w8,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w8); 
-
    
     addToVoc(&vocabulary,w9,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w9); 
-
     
     addToVoc(&vocabulary,w10,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w10);
-
-    
+ 
     addToVoc(&vocabulary,w11,wordInfoListB,&size,htVOC, BUCKETSIZE);
     addToWordInfoList(&wordInfoListB,w11); 
 
-    printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
+    node* t=vocabulary;
+    while(t!=NULL){
+        wordInfo* w = (wordInfo*)t->data;
+        printf("%s\t", w->word);
+        t=t->next;
+    }
+    printf("\n");
+
+    //printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
 
     printf("%d\n",size );
 
 
     char* sA = calloc(100,sizeof(char)); strcpy(sA,"book");
     char* sB = calloc(100,sizeof(char)); strcpy(sB,"thanks");
-
-   
 
     //___INITIALIZING_HASH_TABLE_________________________________________________________________________________________
 
@@ -106,12 +108,24 @@ int main(int argc, char* argv[]){
 	addtoHT(ht, sA, BUCKETSIZE, wordInfoListA);
     addtoHT(ht, sB, BUCKETSIZE, wordInfoListB);
 
-    //make_tfidf_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZE  );
-    make_BoW_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZEVOC );
+    size = make_tfidf_vectorsDROPnRECOMPUTE( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZE  );
+    //make_BoW_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZEVOC );
 
+    //printHTVOC(htVOC,BUCKETSIZE);
+
+    //printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
+    t=vocabulary;
+    printf("\n");
+    while(t!=NULL){
+        wordInfo* w = (wordInfo*)t->data;
+        printf("%s\t", w->word);
+        t=t->next;
+    }
     printf("\n");
 
-    printHTVOC(htVOC,BUCKETSIZE);
+    printf("%d\n",size );
+
+    //printHTVOC(htVOC,BUCKETSIZE);
 
     //__END_INITIALIZING_HASH_TABLE____________________________________________________________________________________
 

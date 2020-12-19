@@ -113,7 +113,6 @@ int main(int argc, char* argv[]){
 				exit(-1); 
 			}
 
-			//printf("Sub-directory opend successfully!\n");
 			while( (sub_dir_entry = readdir(sub_dir)) ){
 				//ignore current & parent dir
 				if((strcmp(sub_dir_entry->d_name,".")!=0) && (strcmp(sub_dir_entry->d_name,"..")!=0)){ 
@@ -133,8 +132,6 @@ int main(int argc, char* argv[]){
 					//convert .json file to list of wordInfo structs
 					json_to_wordInfo_list(json_path, &json_word_list, stopwords_list,&vocabulary,&voc_size,htVOC,BUCKETSIZEVOC);
 					
-					//printf("\nLIST\n");  printList(json_word_list, (void*)printWordInfo);
-
 					//--------------Convert path to be inserted in data structures-------------------
 					//"2013_camera_specs/buy.net/4233.json" --> "buy.net//4233"
 				    // cut "2013_camera_specs/"
@@ -160,8 +157,7 @@ int main(int argc, char* argv[]){
 	free(arbuff); arbuff=NULL;
 	free(dirpath); dirpath=NULL;
 
-	//printf("vocsize: %d\tjsonnum: %d\n\n",voc_size,json_num);
-	//printList(vocabulary,(void*)printWordInfo);printf("\n");printf("\n");
+    // start making tfidf and bow representations
 
 	printf("\nType 'b' for BoW implementation or 't' for tf-idf implementation\n");
 	bool flag=true;
@@ -175,15 +171,12 @@ int main(int argc, char* argv[]){
 		}else if(c == 't'){
 			printf("\nCreate tf-idf vectors\n\n");
 			// create vector containing tfidf
-			voc_size = make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
+			//voc_size = make_tfidf_vectorsDROP(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
+			voc_size = make_tfidf_vectorsDROPnRECOMPUTE(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
 			flag=false;
 		}else{ if(c !='\n'){printf("Please type 'b' or 't'\n");}}
 		scanf("%c",&c);
 	}
-
-	//printf("\ncreate vectors\n");
-	// create vector containing tfidf
-	//voc_size = make_tfidf_vectors(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
 
 	//___the hash table has now been created -> start making the cliques__________________________________________________
 
@@ -256,14 +249,14 @@ int main(int argc, char* argv[]){
     //printHT(ht);
     printf("\n%s\n","Make array" );  //Make tfidf array
 
-	//----TRAINING---------------------------------------------------------------------
+	//----TRAINING----------------------------------------------------------------------------------------------------
 	float** x_array = calloc(1,sizeof(float*));
 	unsigned int* y_array = calloc(1,sizeof(unsigned int));
 	unsigned int n;	 // number of differences (size of x and y array)
 	create_x_y_array(&x_array,& y_array,ht,BUCKETSIZE, voc_size,&n);
 	
 	
-	//-------create x,y train & valid set-------------
+	//-------create x,y train & valid set-------------------------------------------------------------------------------
 	float** x_train;
 	unsigned int* y_train;
 	unsigned int size_of_train_set;
@@ -275,7 +268,7 @@ int main(int argc, char* argv[]){
 	printf("\nCreate train sets & valid x,y sets\n");
 	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid );
 	
-	//------call gradient_descent() to train model-----
+	//------call gradient_descent() to train model-----------------------------------------------------------------------
 	float bias=0.0;
 	float* w = calloc(voc_size,sizeof(float));
 	float eta = 0.05; //0.0 < eta < 1.0
@@ -284,7 +277,7 @@ int main(int argc, char* argv[]){
 	printf("\nTrain model using gradient_descent\n");
 	gradient_descent(x_train, y_train, w, &bias, size_of_train_set, voc_size, eta, epsilon);
 	
-	//-----------predict-----------------------------
+	//-----------predict-------------------------------------------------------------------------------------------------
 	printf("\nPredict class of x_valid\n");
 	bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
 	unsigned int t = 0;
@@ -312,11 +305,11 @@ int main(int argc, char* argv[]){
 	free(x_train); x_train=NULL; free(y_train); y_train=NULL;
 	free(w); w=NULL;
 
-    //----make the output file---------------------------------------------------------
+    //----make the output file-----------------------------------------------------------------------------------------------
     makeOutputFile(ht, BUCKETSIZE);
     printf("\nOutput file with name [output.txt] has now been created.\n");
 
-    //--destroy tree and all not needed memo--------------------------------------------
+    //--destroy tree and all not needed memo---------------------------------------------------------------------------------
     printf("\nNow, the memory used in this program is being freed.\n");
 	destroyListOfWordInfo(vocabulary,(void*)wordInfoDeletion);
     destroyHT(ht,BUCKETSIZE);
