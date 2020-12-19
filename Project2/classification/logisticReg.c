@@ -78,8 +78,9 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 		    	sum_bias += (_hypothesis_- (float)y_train[i]);
 		    //}
 
-		    J_weight[j] = sum_weights;
 		    if( j==r ) J_bias = sum_bias;
+		    else J_weight[j] = sum_weights;
+
 		}  
 
 		// simultaneous update -- because it is more efficient
@@ -105,9 +106,7 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 	}
 
 	// free not needed memo
-	for( unsigned int j=0; j<r; j++ ){
-		free(J_weight); J_weight=NULL;
-	}
+	free(J_weight); J_weight=NULL;
 
 	return;
 }

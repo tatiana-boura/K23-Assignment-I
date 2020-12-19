@@ -264,12 +264,12 @@ int main(int argc, char* argv[]){
 	
 	
 	//-------create x,y train & valid set-------------
-	float** x_train = calloc(1,sizeof(float*));
-	unsigned int* y_train = calloc(1,sizeof(unsigned int));
+	float** x_train;
+	unsigned int* y_train;
 	unsigned int size_of_train_set;
 	
-	float** x_valid = calloc(1,sizeof(float*));
-	unsigned int* y_valid = calloc(1,sizeof(unsigned int));
+	float** x_valid;
+	unsigned int* y_valid;
 	unsigned int size_of_valid_set;
 
 	printf("\nCreate train sets & valid x,y sets\n");
@@ -299,6 +299,7 @@ int main(int argc, char* argv[]){
 
 	printf("\nscore: %f\n", ((float)t/(float)size_of_valid_set) );
 
+	printf("n: [%d]\n", n);
 	printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
 	
 	//---free TDIDF array---------
@@ -307,7 +308,9 @@ int main(int argc, char* argv[]){
 	}
 	free(x_array); free(y_array);
 
-	free(x_valid); free(y_valid);
+	free(x_valid); x_valid=NULL; free(y_valid); y_valid=NULL;
+	free(x_train); x_train=NULL; free(y_train); y_train=NULL;
+	free(w); w=NULL;
 
     //----make the output file---------------------------------------------------------
     makeOutputFile(ht, BUCKETSIZE);
