@@ -226,16 +226,13 @@ void makeResultFile(float* w_array,hashTableVOC* htVOC,unsigned int bucketSize,u
             bucketEntryVOC** entryTable = temp->data;
 
             for(int i = 0;i<numOfEntries;i++)
-                if((entryTable[i]!=NULL))   fprintf(resultFile,"%s ",entryTable[i]->key);
-            
+                if((entryTable[i]!=NULL)){
+                    fprintf(resultFile,"%s\t",entryTable[i]->key);
+                    fprintf(resultFile,"%f\n",w_array[i]);
+                }
             temp=temp->next;   
         } 
 	}
-    fprintf(resultFile,"\n\n");
-
-	for(int j=0; j<vocabSize; j++)
-		fprintf(resultFile,"%f ",w_array[j]);
-	fprintf(resultFile,"\n");
 
 	fclose(resultFile);
 }
