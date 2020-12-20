@@ -202,3 +202,40 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
 }
 
 
+void makeResultFile(float* w_array,hashTableVOC* htVOC,unsigned int bucketSize,unsigned int vocabSize){
+	 // if output file exists delete it and then remake it( it is append only so it needs to be destroyed)
+	if( access( "result.txt", F_OK ) != -1 )
+		// file exists
+		if (remove("result.txt") != 0){
+			//delete it 
+			perror("File was not deleted successfully"); return;
+		} 
+
+	// make the result file (append only)
+	FILE *resultFile;
+
+	resultFile = fopen("result.txt", "a"); 
+	if( resultFile==NULL ){ perror("unable to open file\n"); return; } 
+
+    // go through every entry in the hash 
+    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntryVOC*);
+    for( unsigned int i=0; i<htVOC->size; i++ ){
+		// go to the bucket of ht
+        node* temp = htVOC->table[i];
+        while(temp!=NULL){
+            bucketEntryVOC** entryTable = temp->data;
+
+            for(int i = 0;i<numOfEntries;i++)
+                if((entryTable[i]!=NULL))   fprintf(resultFile,"%s ",entryTable[i]->key);
+            
+            temp=temp->next;   
+        } 
+	}
+    fprintf(resultFile,"\n\n");
+
+	for(int j=0; j<vocabSize; j++)
+		fprintf(resultFile,"%f ",w_array[j]);
+	fprintf(resultFile,"\n");
+
+	fclose(resultFile);
+}

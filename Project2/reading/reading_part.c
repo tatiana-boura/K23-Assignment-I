@@ -171,8 +171,8 @@ int main(int argc, char* argv[]){
 		}else if(c == 't'){
 			printf("\nCreate tf-idf vectors\n\n");
 			// create vector containing tfidf
-			//voc_size = make_tfidf_vectorsDROP(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
-			voc_size = make_tfidf_vectorsDROPnRECOMPUTE(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
+			voc_size = make_tfidf_vectorsDROP(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
+		//	voc_size = make_tfidf_vectorsDROPnRECOMPUTE(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
 			flag=false;
 		}else{ if(c !='\n'){printf("Please type 'b' or 't'\n");}}
 		scanf("%c",&c);
@@ -277,6 +277,8 @@ int main(int argc, char* argv[]){
 	printf("\nTrain model using gradient_descent\n");
 	gradient_descent(x_train, y_train, w, &bias, size_of_train_set, voc_size, eta, epsilon);
 	
+	makeResultFile(w,htVOC,BUCKETSIZEVOC,voc_size);
+
 	//-----------predict-------------------------------------------------------------------------------------------------
 	printf("\nPredict class of x_valid\n");
 	bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
