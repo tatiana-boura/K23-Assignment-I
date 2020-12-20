@@ -166,12 +166,12 @@ int main(int argc, char* argv[]){
 	while(flag){
 		if(c == 'b'){ 
 			printf("\nCreate BoW vectors\n");
-			make_BoW_vectors( ht, BUCKETSIZE, voc_size, vocabulary, json_num, htVOC, BUCKETSIZEVOC );
+			voc_size = make_BoW_vectorsDROP( ht, BUCKETSIZE, voc_size, &vocabulary, json_num, htVOC, BUCKETSIZEVOC );
 			flag=false;
 		}else if(c == 't'){
 			printf("\nCreate tf-idf vectors\n\n");
 			// create vector containing tfidf
-		//	voc_size = make_tfidf_vectorsDROP(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
+		//	voc_size = make_tfidf_vectorsDROP(ht,BUCKETSIZE,voc_size,&vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
 			voc_size = make_tfidf_vectorsDROPnRECOMPUTE(ht,BUCKETSIZE,voc_size,&vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
 			flag=false;
 		}else{ if(c !='\n'){printf("Please type 'b' or 't'\n");}}
