@@ -171,8 +171,8 @@ int main(int argc, char* argv[]){
 		}else if(c == 't'){
 			printf("\nCreate tf-idf vectors\n\n");
 			// create vector containing tfidf
-			voc_size = make_tfidf_vectorsDROP(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
-		//	voc_size = make_tfidf_vectorsDROPnRECOMPUTE(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
+		//	voc_size = make_tfidf_vectorsDROP(ht,BUCKETSIZE,voc_size,vocabulary,json_num,htVOC,BUCKETSIZEVOC  );
+			voc_size = make_tfidf_vectorsDROPnRECOMPUTE(ht,BUCKETSIZE,voc_size,&vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
 			flag=false;
 		}else{ if(c !='\n'){printf("Please type 'b' or 't'\n");}}
 		scanf("%c",&c);
@@ -274,7 +274,7 @@ int main(int argc, char* argv[]){
 	float eta = 0.05; //0.0 < eta < 1.0
 	float epsilon = 0.01; //small small number (?)
 	
-	printf("\nTrain model using gradient_descent\n");
+	printf("\nTrain model using (stochastic) gradient_descent\n");
 	gradient_descent(x_train, y_train, w, &bias, size_of_train_set, voc_size, eta, epsilon);
 	
 	makeResultFile(w,vocabulary);

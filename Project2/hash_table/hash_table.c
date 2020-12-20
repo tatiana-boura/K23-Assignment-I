@@ -245,7 +245,7 @@ unsigned int make_tfidf_vectorsDROP( hashTable* ht, unsigned int bucketSize, uns
 
 // this function drops the low average tfidf columns and the recomputes them all
 
-unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
+unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node** vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
 
      // go through every entry in the hash and make the bow vector
     unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
@@ -327,7 +327,8 @@ unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucke
 
 //__GET_AVERAGE_AND_RECOMPUTE_TFIDF_WITH_________________________________________________________________________
 
-    float floor_tf_idf = 0.0001*(float)numOfJSON;
+    //float floor_tf_idf = 0.0001*(float)numOfJSON;
+    float floor_tf_idf = 0.00155*(float)numOfJSON;
 
     // store the columns that should be dropped
     bool should_be_dropped[vocabSize];
@@ -434,8 +435,8 @@ unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucke
     }
 
     // delete needed columns from vocabulary
-    deleteWords( &vocabulary, should_be_dropped, vocabSize );
-
+    deleteWords( vocabulary, should_be_dropped, vocabSize );
+    
     free(tfidf_average); tfidf_average=NULL;
     return new_vocabSize;
 }    

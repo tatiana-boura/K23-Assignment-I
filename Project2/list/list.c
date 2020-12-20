@@ -227,7 +227,7 @@ void deleteWords( node** n, bool should_be_dropped[], unsigned int vocabSize ){
                 // make the second node the head
                 *n = tempNode->next; 
                 wordInfoDeletion((wordInfo*)tempNode->data);
-                free(tempNode);
+                free(tempNode); tempNode=NULL;
                 tempNode = *n; prev = NULL;
                 // do not update tempNode and prev
                 update = false;
@@ -236,12 +236,12 @@ void deleteWords( node** n, bool should_be_dropped[], unsigned int vocabSize ){
                     *n = tempNode->next;
                     //free((wordInfo*)tempNode->data);
                     wordInfoDeletion((wordInfo*)tempNode->data);
-                    free(tempNode);
+                    free(tempNode); tempNode=NULL;
                     tempNode = *n; prev = NULL;
                 }else{ // else do the normal deletion
                     prev->next = tempNode->next; 
                     wordInfoDeletion((wordInfo*)tempNode->data);
-                    free(tempNode);
+                    free(tempNode); tempNode=NULL;
                     tempNode = prev->next; 
                 }
                 // do not update tempNode and prev

@@ -34,11 +34,11 @@ void addToVoc(node** voc, char* _word_, node* word_info_list, unsigned int* voca
     //found = foundInSortedListStr(*voc, _word_, true);
     if(!found){
         voc_w = calloc(1,sizeof(wordInfo));
-        char* new_word = calloc(strlen(_word_)+1,sizeof(char*));
+        char* new_word = calloc(strlen(_word_)+1,sizeof(char));
         strcpy(new_word,_word_);
         wordInfoInitialization(voc_w,new_word);
 
-        addtoHTVOC(htVOC, _word_, bucketSize, voc_w, *vocabSize);
+        addtoHTVOC(htVOC, new_word, bucketSize, voc_w, *vocabSize);
 
         //sortedInsertStr(voc,voc_w);
         *voc = appendList(*voc,voc_w);  

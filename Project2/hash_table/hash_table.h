@@ -36,7 +36,7 @@ bucketEntry* createEntry(char* key,node* _wordInfoList_);
 
 unsigned int  make_tfidf_vectorsDROP( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC );
 void make_BoW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC );
-unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC );
+unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node** vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC );
 
 
 
