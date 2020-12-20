@@ -255,7 +255,7 @@ int main(int argc, char* argv[]){
 	unsigned int n;	 // number of differences (size of x and y array)
 	create_x_y_array(&x_array,& y_array,ht,BUCKETSIZE, voc_size,&n);
 	
-	
+
 	//-------create x,y train & valid set-------------------------------------------------------------------------------
 	float** x_train;
 	unsigned int* y_train;
@@ -277,7 +277,7 @@ int main(int argc, char* argv[]){
 	printf("\nTrain model using gradient_descent\n");
 	gradient_descent(x_train, y_train, w, &bias, size_of_train_set, voc_size, eta, epsilon);
 	
-	makeResultFile(w,htVOC,BUCKETSIZEVOC,voc_size);
+	makeResultFile(w,vocabulary);
 
 	//-----------predict-------------------------------------------------------------------------------------------------
 	printf("\nPredict class of x_valid\n");
