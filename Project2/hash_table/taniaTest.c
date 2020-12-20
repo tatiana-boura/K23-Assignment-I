@@ -108,8 +108,8 @@ int main(int argc, char* argv[]){
 	addtoHT(ht, sA, BUCKETSIZE, wordInfoListA);
     addtoHT(ht, sB, BUCKETSIZE, wordInfoListB);
 
-    size = make_tfidf_vectorsDROPnRECOMPUTE( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZE  );
-    //make_BoW_vectors( ht, BUCKETSIZE, 8, vocabulary, 2, htVOC, BUCKETSIZEVOC );
+    //size = make_tfidf_vectorsDROPnRECOMPUTE( ht, BUCKETSIZE, 8, &vocabulary, 2, htVOC, BUCKETSIZE  );
+    size = make_BoW_vectorsDROP( ht, BUCKETSIZE, 8, &vocabulary, 2, htVOC, BUCKETSIZEVOC );
 
     //printHTVOC(htVOC,BUCKETSIZE);
 
