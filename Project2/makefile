@@ -55,7 +55,7 @@ tests:
 
 clean:
 	rm -f $(OBJS) $(OUT)
-	rm -f output.txt
+	rm -f output.txt result.txt
 
 clean_tests:
 	rm -f $(OUTS)
