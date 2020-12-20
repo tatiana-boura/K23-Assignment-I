@@ -434,7 +434,7 @@ unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucke
     }
 
     // delete needed columns from vocabulary
-    //deleteWords( &vocabulary, should_be_dropped, vocabSize );
+    deleteWords( &vocabulary, should_be_dropped, vocabSize );
 
     free(tfidf_average); tfidf_average=NULL;
     return new_vocabSize;
@@ -539,7 +539,7 @@ void deleteBucketTable(bucketEntry** table, unsigned int* bucketSize){
             
             //destroyListOfStrings(table[i]->notClique,false);
 
-            destroyListOfWordInfo(table[i]->wordInfoList,(void*)wordInfoDeletion); 
+            destroyListOfWordInfo(table[i]->wordInfoList,(void*)wordInfoDeletion);  
             free(table[i]->path); table[i]->path=NULL;
             free(table[i]->vector); table[i]->vector=NULL;
             free(table[i]); table[i]=NULL;

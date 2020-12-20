@@ -65,24 +65,6 @@ void destroyList(node* n, unsigned int* size, bool del, void(*deleteData)(void*,
     return;
 }
 
-void destroyListOfTuples(node* n, void(*deleteData)(void*)){
-    
-    node* oldhead = NULL;
-    node* newhead = n;
-    
-    if(newhead==NULL) return;   //empty list
-    //else remove current head and move on to the next one
-    oldhead = newhead; 
-    newhead = oldhead->next;
-    
-    (*deleteData)(oldhead->data);
-    //free the actual node
-    free(oldhead); oldhead = NULL;
-    
-    destroyListOfTuples(newhead,deleteData);
-
-    return;
-}
 
 void destroyListOfWordInfo(node* n, void(*deleteData)(void*)){
     
@@ -97,7 +79,7 @@ void destroyListOfWordInfo(node* n, void(*deleteData)(void*)){
     (*deleteData)(oldhead->data);
     //free the actual node
     free(oldhead); oldhead = NULL;
-    
+
     destroyListOfWordInfo(newhead,deleteData);
 
     return;
@@ -245,7 +227,6 @@ void deleteWords( node** n, bool should_be_dropped[], unsigned int vocabSize ){
                 // make the second node the head
                 *n = tempNode->next; 
                 wordInfoDeletion((wordInfo*)tempNode->data);
-                //free((wordInfo*)tempNode->data);
                 free(tempNode);
                 tempNode = *n; prev = NULL;
                 // do not update tempNode and prev
@@ -254,20 +235,18 @@ void deleteWords( node** n, bool should_be_dropped[], unsigned int vocabSize ){
                 if(prev==NULL){ // if the previous deleted is the first one
                     *n = tempNode->next;
                     //free((wordInfo*)tempNode->data);
-                    wordInfoDeletion((wordInfo*)tempNode->data); 
+                    wordInfoDeletion((wordInfo*)tempNode->data);
                     free(tempNode);
                     tempNode = *n; prev = NULL;
                 }else{ // else do the normal deletion
                     prev->next = tempNode->next; 
                     wordInfoDeletion((wordInfo*)tempNode->data);
-                    //free((wordInfo*)tempNode->data);
                     free(tempNode);
                     tempNode = prev->next; 
                 }
                 // do not update tempNode and prev
                 update = false;
             }
-            // a column deletion -- ++variate
         }
         // if the previous column has not been deleted -- update
         if( update ){
