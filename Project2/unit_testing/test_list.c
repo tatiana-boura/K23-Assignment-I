@@ -264,7 +264,7 @@ void test_removeNode(void){
 
 //___test_notInList___________________________________________________________________
 void test_notInList(void){
-	char** array = calloc(5,sizeof(char*));
+	char** array = calloc(4,sizeof(char*));
 
 	array[0]=calloc(STRSIZE,sizeof(char)); strcpy(array[0],"zero");
     array[1]=calloc(STRSIZE,sizeof(char)); strcpy(array[1],"one");
@@ -296,6 +296,7 @@ void test_sortedInsertStr(void){
 	for( unsigned int j=0; j<N; j++ ){
 		
 		arrayOfWords[j]=calloc(STRSIZE,sizeof(char));
+		//Create a wordInfo struct with a char A-Z as word
 		char rand_char = (rand() % (90 - 65 + 1)) + 65;
 		sprintf(arrayOfWords[j],"%c",rand_char);
 		wordInfo* w=calloc(1,sizeof(wordInfo));
@@ -375,6 +376,45 @@ void test_foundInSortedListStr(void){
 	return;
 }
 
+//___test_deleteWords_________________________________________________________________
+void test_deleteWords(void){
+
+	char** array = calloc(4,sizeof(char*));
+	array[0]=calloc(STRSIZE,sizeof(char)); strcpy(array[0],"zero");
+    array[1]=calloc(STRSIZE,sizeof(char)); strcpy(array[1],"one");
+	array[2]=calloc(STRSIZE,sizeof(char)); strcpy(array[2],"two");
+	array[3]=calloc(STRSIZE,sizeof(char)); strcpy(array[3],"three");
+
+    node* wordInfoList=NULL; 
+
+	for( unsigned int j=0; j<4; j++ ){
+		wordInfo* w=calloc(1,sizeof(wordInfo));
+		wordInfoInitialization(w,array[j]);
+		wordInfoList = appendList(wordInfoList,w);
+	}
+
+	// each bool in the array represents the position that will either
+	// be deleted or not - careful the list appends through the front
+	// so if del[0] is true, the last wordInfo of the list must be deleted
+	bool del[4] = { true, false, false, true };
+
+	deleteWords( &wordInfoList, del, 4 );
+
+	node* temp=wordInfoList;
+	// The first node now should contain wordInfo with word "two" because 
+	// del[2] was false
+	TEST_ASSERT(!strcmp(((wordInfo *)(temp->data))->word,"two"));
+	temp = temp->next;
+	// The second node should be "one" because del[1] was false
+	TEST_ASSERT(!strcmp(((wordInfo *)(temp->data))->word,"one"));
+	// The list should end here
+	TEST_ASSERT(temp->next==NULL);
+
+	destroyListOfWordInfo(wordInfoList, (void*)wordInfoDeletion );
+	free(array); array=NULL;
+	return;
+}
+
 TEST_LIST = {
 	{ "appendList_string", test_appendList_string },
 	{ "appendList_wordInfo", test_appendList_wordInfo },
@@ -384,5 +424,6 @@ TEST_LIST = {
 	{ "notInList", test_notInList },
 	{ "sortedInsertStr", test_sortedInsertStr },
 	{ "foundInSortedListStr", test_foundInSortedListStr },
+	{ "deleteWords", test_deleteWords },
 	{ NULL, NULL } // end of tests
 };
