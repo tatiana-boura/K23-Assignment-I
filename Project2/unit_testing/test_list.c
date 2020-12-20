@@ -262,6 +262,28 @@ void test_removeNode(void){
 	return;
 }
 
+//___test_notInList___________________________________________________________________
+void test_notInList(void){
+	char** array = calloc(5,sizeof(char*));
+
+	array[0]=calloc(STRSIZE,sizeof(char)); strcpy(array[0],"zero");
+    array[1]=calloc(STRSIZE,sizeof(char)); strcpy(array[1],"one");
+	array[2]=calloc(STRSIZE,sizeof(char)); strcpy(array[2],"two");
+	array[3]=calloc(STRSIZE,sizeof(char)); strcpy(array[3],"three");
+    node* list=NULL; 
+
+	for( unsigned int j=0; j<4; j++ )
+		list = appendList(list,array[j]);
+
+	for( unsigned int j=0; j<4; j++ )
+		TEST_ASSERT(!notInlist(list,array[j]));
+	
+	TEST_ASSERT(notInlist(list,"four"));
+
+	destroyListOfStrings(list, true );
+	free(array); array=NULL;
+}
+
 //___test_sortedInsertStr_____________________________________________________________
 void test_sortedInsertStr(void){
 
@@ -359,6 +381,7 @@ TEST_LIST = {
 	{ "merge", test_mergeTwoLists },
 	{ "addrFoundinList", test_addrFoundinList },
 	{ "removeNode", test_removeNode },
+	{ "notInList", test_notInList },
 	{ "sortedInsertStr", test_sortedInsertStr },
 	{ "foundInSortedListStr", test_foundInSortedListStr },
 	{ NULL, NULL } // end of tests
