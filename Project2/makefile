@@ -44,15 +44,16 @@ hash_table_pairs.o: ./classification/hash_table_pairs.c
 	$(CC) $(FLAGS) ./classification/hash_table_pairs.c
 
 # UNIT TESTING #
-DEF_SRC = ./list/list.c ./word_info/word_info.c  ../tuples/tuples.c ./vocabulary/vocabulary.c ./vocabulary/hash_table_vocabulary.c ./classification/hash_table_pairs.c
-OUTS    = test_hash_table test_list test_word_info test_vocabulary test_hash_table_pairs
+DEF_SRC = ./list/list.c ./word_info/word_info.c  ../tuples/tuples.c ./vocabulary/vocabulary.c ./vocabulary/hash_table_vocabulary.c ./classification/hash_table_pairs.c ./hash_table/hash_table.c
+OUTS    = test_hash_table test_list test_word_info test_vocabulary test_hash_table_pairs test_tfidf_bow 
 
 tests:	
-	cc -g ./unit_testing/test_hash_table.c ./hash_table/hash_table.c $(DEF_SRC) -o test_hash_table -lm
-	cc -g ./unit_testing/test_list.c $(DEF_SRC) -o test_list
-	cc -g ./unit_testing/test_word_info.c $(DEF_SRC) -o test_word_info
-	cc -g ./unit_testing/test_vocabulary.c $(DEF_SRC) -o test_vocabulary
-	cc -g ./unit_testing/test_hash_table_pairs.c $(DEF_SRC) -o test_hash_table_pairs
+	cc -g ./unit_testing/test_hash_table.c $(DEF_SRC) -o test_hash_table -lm
+	cc -g ./unit_testing/test_list.c $(DEF_SRC) -o test_list -lm
+	cc -g ./unit_testing/test_word_info.c $(DEF_SRC) -o test_word_info -lm
+	cc -g ./unit_testing/test_vocabulary.c $(DEF_SRC) -o test_vocabulary -lm
+	cc -g ./unit_testing/test_hash_table_pairs.c $(DEF_SRC) -o test_hash_table_pairs -lm
+	cc -g ./unit_testing/test_tfidf_bow.c $(DEF_SRC) -o test_tfidf_bow -lm
 
 clean:
 	rm -f $(OBJS) $(OUT)

@@ -229,6 +229,8 @@ unsigned int make_tfidf_vectorsDROP( hashTable* ht, unsigned int bucketSize, uns
 
                        free(entryTable[j]->vector); entryTable[j]->vector=NULL;
                        entryTable[j]->vector = new_tf_idf;
+
+                       //for(int d=0; d<new_vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
                     }
                 }
                 temp=temp->next;
@@ -323,7 +325,7 @@ unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucke
         }    
     }
 
-//__GET_AVERAGE_AND_RECOMPUTE_TFIDF_WITH_________________________________________________________________________
+//__GET_AVERAGE_AND_RECOMPUTE_TFIDF______________________________________________________________________________
 
     float floor_tf_idf = 0.0001*(float)numOfJSON; // 1824 words
     //float floor_tf_idf = 0.00155*(float)numOfJSON; // 119 words
@@ -423,6 +425,8 @@ unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucke
 
                        free(entryTable[j]->vector); entryTable[j]->vector=NULL;
                        entryTable[j]->vector = new_tf_idf; 
+
+                       //for(int d=0; d<new_vocabSize; d++) printf("%f\t",(entryTable[j]->vector)[d] ); printf("\n");
                     }
                 }
                 temp=temp->next;
@@ -435,63 +439,6 @@ unsigned int make_tfidf_vectorsDROPnRECOMPUTE( hashTable* ht, unsigned int bucke
     
     free(tfidf_average); tfidf_average=NULL;
     return new_vocabSize;
-}    
-
-//___make_BoW_vectors________________________________________________________________________________________________________________________________________________________________________________
-void make_BoW_vectors( hashTable* ht, unsigned int bucketSize, unsigned int vocabSize, node* vocabulary, unsigned int numOfJSON, hashTableVOC* htVOC, unsigned int bucketSizeVOC ){
-
-     // go through every entry in the hash and make the bow vector
-    unsigned int numOfEntries =(bucketSize-sizeof(bucket*))/sizeof(bucketEntry*);
-
-    // for all hash table
-    for( unsigned int i=0; i<ht->size; i++ ){
-        // go to the bucket of ht
-        if(ht->table[i] != NULL){
-
-            node* temp = ht->table[i];
-
-            while(temp!=NULL){
-                bucketEntry** entryTable = temp->data;
-                // and every entry of the bucket
-                for(unsigned int j = 0;j<numOfEntries;j++){
-
-                    if(entryTable[j]!=NULL){
-
-                        // initialize the needed size for the tf
-                        entryTable[j]->vector = calloc(vocabSize,sizeof(float)); 
-                        assert(entryTable[j]->vector!=NULL);
-                       
-                        /* count := how many times the current word is spotted in current JSON.
-                        position := what is the position of the word in the vocabulary*/
-
-                         node* wordJSON = entryTable[j]->wordInfoList;
-                        while( wordJSON != NULL ){
-
-                            wordInfo* infoJSON = (wordInfo*)(wordJSON->data);
-                            char* w = infoJSON->word;
-
-                            /* get words relative position in the vocabulary, so that words 
-                            of all vectors are in the same order */ 
-                            unsigned int info_count;
-                            int position = getPositionInAndCountVOC( htVOC, w, bucketSizeVOC, &info_count );
-                            position = vocabSize - position -1;
-
-                            /* compute the bow vector --:
-                            -- num_of_times_word_is_found_in_curr_JSON */
-                            entryTable[j]->vector[position] = (float)infoJSON->count;
-
-                            // go to next word of this JSON
-                            wordJSON = wordJSON->next;
-                        }  
-                    }
-                }
-                temp=temp->next;
-            }
-        }    
-    }
-
-
-    return;
 }    
 
 //___make_BoW_vectors________________________________________________________________________________________________________________________________________________________________________________
