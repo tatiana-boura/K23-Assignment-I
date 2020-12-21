@@ -23,7 +23,7 @@ void test_createHTPair(void){
 //___test_addtoHT_________________________________________________________
 void test_addtoHTPair(void){
     unsigned int size = 0;
-    hashTablePair* htPair = createHTPair(BUCKETSIZEPAIR);
+    hashTablePair* htPair = createHTPair(HTSIZEPAIR);
 
     //create path keys
     char* key1 = calloc(STRSIZE,sizeof(char)); strcpy(key1,"buy.net//12");
@@ -59,13 +59,21 @@ void test_addtoHTPair(void){
     }
     //free not needed memory
     destroyHTPair(htPair,BUCKETSIZEPAIR);
+
+    //keys are not freed by destroyHTPair() 
+    //they would have been freed by the array deletion tin the program 
+    free(key1);  
+    free(key2);
+    free(key3);
+    free(key4);
+
     return;
 }
 
 //___test_foundInHT______________________________________________________________
 void test_foundInHTPair(void){
 
-    hashTablePair* htPair = createHTPair(BUCKETSIZEPAIR);
+    hashTablePair* htPair = createHTPair(HTSIZEPAIR);
 
     //create path keys
     char* key1 = calloc(STRSIZE,sizeof(char)); strcpy(key1,"buy.net//12");
@@ -91,6 +99,13 @@ void test_foundInHTPair(void){
 
     // free not needed memo
     destroyHTPair(htPair,BUCKETSIZEPAIR);
+
+    //keys are not freed by destroyHTPair() 
+    //they would have been freed by the array deletion tin the program 
+    free(key1);  
+    free(key2);
+    free(key3);
+    free(key4);
 
     return;
 }
