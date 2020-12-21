@@ -162,10 +162,6 @@ unsigned int make_tfidf_vectorsDROP( hashTable* ht, unsigned int bucketSize, uns
 
                             tfidf_average[position] += entryTable[j]->vector[position];
 
-                            //printf("word found -- %s\t", w);
-                            //printf("tf value is %f\t\t", entryTable[j]->vector[position] );
-                            //printf("tfidtf value is %f\n", entryTable[j]->vector[position]);    
-
                             // go to next word of this JSON
                             wordJSON = wordJSON->next;
                         }  

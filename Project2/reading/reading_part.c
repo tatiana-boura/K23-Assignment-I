@@ -247,7 +247,7 @@ int main(int argc, char* argv[]){
     }
 
     //printHT(ht);
-    printf("\n%s\n","Make array" );  //Make tfidf array
+    printf("\n%s\n","Make array of vectors" );  //Make tfidf or BoW array
 
 	//----TRAINING----------------------------------------------------------------------------------------------------
 	float** x_array = calloc(1,sizeof(float*));
@@ -292,9 +292,7 @@ int main(int argc, char* argv[]){
 
 	free(ans); ans=NULL;
 
-	printf("\nscore: %f\n", ((float)t/(float)size_of_valid_set) );
-
-	printf("n: [%d]\n", n);
+	printf("\nScore: %f\n", ((float)t/(float)size_of_valid_set) );
 	printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
 	
 	//---free TDIDF array---------
