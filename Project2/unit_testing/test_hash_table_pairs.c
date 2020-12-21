@@ -57,15 +57,13 @@ void test_addtoHTPair(void){
             }
         }
     }
-    //free not needed memory
-    destroyHTPair(htPair,BUCKETSIZEPAIR);
 
     //keys are not freed by destroyHTPair() 
     //they would have been freed by the array deletion tin the program 
-    free(key1);  
-    free(key2);
-    free(key3);
-    free(key4);
+    free(key1); free(key2); free(key3); free(key4);
+   
+    //free not needed memory
+    destroyHTPair(htPair,BUCKETSIZEPAIR);
 
     return;
 }
@@ -97,15 +95,13 @@ void test_foundInHTPair(void){
     // test if (key1,key3) is found in hash table [should not be found]
     TEST_ASSERT(foundInHTPair(htPair,key1, key3, BUCKETSIZEPAIR) != true);
 
+   
+    //they would have been freed by the array deletion tin the program 
+    free(key1); free(key2); free(key3); free(key4);
+    
     // free not needed memo
     destroyHTPair(htPair,BUCKETSIZEPAIR);
 
-    //keys are not freed by destroyHTPair() 
-    //they would have been freed by the array deletion tin the program 
-    free(key1);  
-    free(key2);
-    free(key3);
-    free(key4);
 
     return;
 }
