@@ -6,7 +6,7 @@
 
 #define STRSIZE 100
 
-//___test_appendList_string_________________________________________________________
+//___test_appendList_string___________________________________________________________
 void test_appendList_string(void){
 	/* this is a test function for lists that contain strings.
 	In our code these are: cliques and wordInfoList */
@@ -86,7 +86,7 @@ void test_appendList_wordInfo(void){
 	return;
 }
 
-//___test_mergeTwoLists___________________________________________________________
+//___test_mergeTwoLists_______________________________________________________________
 void test_mergeTwoLists(void){
 	/* this is a test function for merging lists */ 
 
@@ -141,7 +141,7 @@ void test_mergeTwoLists(void){
 	return;
 }
 
-//___test_addrFoundinList___________________________________________________________
+//___test_addrFoundinList_____________________________________________________________
 void test_addrFoundinList(void){
 	/* function to check if addrFoundinList finds the address correctly in a list
 	of addresses */
@@ -190,7 +190,7 @@ void test_addrFoundinList(void){
 	return;
 }
 
-//___test_removeNodet___________________________________________________________
+//___test_removeNode__________________________________________________________________
 void test_removeNode(void){
 	/* function to check if node with certain address(we have a list of addresses) 
 	is correctly removed from a list */
@@ -262,11 +262,168 @@ void test_removeNode(void){
 	return;
 }
 
+//___test_notInList___________________________________________________________________
+void test_notInList(void){
+	char** array = calloc(4,sizeof(char*));
+
+	array[0]=calloc(STRSIZE,sizeof(char)); strcpy(array[0],"zero");
+    array[1]=calloc(STRSIZE,sizeof(char)); strcpy(array[1],"one");
+	array[2]=calloc(STRSIZE,sizeof(char)); strcpy(array[2],"two");
+	array[3]=calloc(STRSIZE,sizeof(char)); strcpy(array[3],"three");
+    node* list=NULL; 
+
+	for( unsigned int j=0; j<4; j++ )
+		list = appendList(list,array[j]);
+
+	for( unsigned int j=0; j<4; j++ )
+		TEST_ASSERT(!notInlist(list,array[j]));
+	
+	TEST_ASSERT(notInlist(list,"four"));
+
+	destroyListOfStrings(list, true );
+	free(array); array=NULL;
+}
+
+//___test_sortedInsertStr_____________________________________________________________
+void test_sortedInsertStr(void){
+
+	unsigned int N=5;
+	char** arrayOfWords = calloc(N,sizeof(char*));
+	node* wordInfoList=NULL;
+
+	srand(time(NULL));
+	// for example if j=5 then the wordInfo must be [5,0]
+	for( unsigned int j=0; j<N; j++ ){
+		
+		arrayOfWords[j]=calloc(STRSIZE,sizeof(char));
+		//Create a wordInfo struct with a char A-Z as word
+		char rand_char = (rand() % (90 - 65 + 1)) + 65;
+		sprintf(arrayOfWords[j],"%c",rand_char);
+		wordInfo* w=calloc(1,sizeof(wordInfo));
+
+		wordInfoInitialization(w,arrayOfWords[j]);
+
+		sortedInsertStr(&wordInfoList,w);
+	}
+
+	// update wordInfoList with counts: i.e. wordInfo that was inserted 5th has count 4 
+	node* tempWords=wordInfoList;
+	for( int j=N-1; j>=0; j-- ){
+		((wordInfo *)(tempWords->data))->count=j;
+		tempWords=tempWords->next;
+	}
+
+	// time to check if values have been inserted as expected
+	tempWords=wordInfoList;
+	node* previous=NULL; 
+	for( int j=N-1; j>=0; j-- ){
+		if(previous!=NULL)
+			TEST_ASSERT((strcmp(((wordInfo *)(tempWords->data))->word,((wordInfo *)(previous->data))->word)>=0));
+				
+		// checking if count at word is the same
+		TEST_ASSERT(((wordInfo *)(tempWords->data))->count==j);
+		previous=tempWords;
+		tempWords=tempWords->next;
+	}
+
+	// free not needed memo
+	destroyListOfWordInfo(wordInfoList, (void*)wordInfoDeletion );
+	free(arrayOfWords); arrayOfWords=NULL;
+
+	return;
+}
+
+//___test_foundInSortedListStr________________________________________________________
+void test_foundInSortedListStr(void){
+
+	char** arrayOfWords = calloc(5,sizeof(char*));
+
+	arrayOfWords[0]=calloc(STRSIZE,sizeof(char)); strcpy(arrayOfWords[0],"red");
+    arrayOfWords[1]=calloc(STRSIZE,sizeof(char)); strcpy(arrayOfWords[1],"yellow");
+	arrayOfWords[2]=calloc(STRSIZE,sizeof(char)); strcpy(arrayOfWords[2],"pink");
+	arrayOfWords[3]=calloc(STRSIZE,sizeof(char)); strcpy(arrayOfWords[3],"blue");
+	arrayOfWords[4]=calloc(STRSIZE,sizeof(char)); strcpy(arrayOfWords[4],"gray");
+
+    node* wordInfoList=NULL; 
+
+	for( unsigned int j=0; j<5; j++ ){
+		wordInfo* w=calloc(1,sizeof(wordInfo));
+		wordInfoInitialization(w,arrayOfWords[j]);
+		sortedInsertStr(&wordInfoList,w);
+	}
+
+	//Check if pink is found and increase its counter (initialized to 1)
+	TEST_ASSERT(foundInSortedListStr(wordInfoList,"pink",true));
+
+	//Check if pink's counter is indeed 2
+	node* tempWords=wordInfoList;
+	while(tempWords!=NULL){
+		if(!strcmp(((wordInfo *)(tempWords->data))->word,"pink"))
+			TEST_ASSERT(((wordInfo *)(tempWords->data))->count==2);
+		tempWords=tempWords->next;
+	}
+
+	//Check without increasing their counters
+	for( unsigned int j=0; j<5; j++ )
+		TEST_ASSERT(foundInSortedListStr(wordInfoList,arrayOfWords[j],false));
+	
+	//Check if "orange" is found - it shouldnt
+	TEST_ASSERT(!foundInSortedListStr(wordInfoList,"orange",false));
+
+	destroyListOfWordInfo(wordInfoList, (void*)wordInfoDeletion );
+	free(arrayOfWords); arrayOfWords=NULL;
+
+	return;
+}
+
+//___test_deleteWords_________________________________________________________________
+void test_deleteWords(void){
+
+	char** array = calloc(4,sizeof(char*));
+	array[0]=calloc(STRSIZE,sizeof(char)); strcpy(array[0],"zero");
+    array[1]=calloc(STRSIZE,sizeof(char)); strcpy(array[1],"one");
+	array[2]=calloc(STRSIZE,sizeof(char)); strcpy(array[2],"two");
+	array[3]=calloc(STRSIZE,sizeof(char)); strcpy(array[3],"three");
+
+    node* wordInfoList=NULL; 
+
+	for( unsigned int j=0; j<4; j++ ){
+		wordInfo* w=calloc(1,sizeof(wordInfo));
+		wordInfoInitialization(w,array[j]);
+		wordInfoList = appendList(wordInfoList,w);
+	}
+
+	// each bool in the array represents the position that will either
+	// be deleted or not - careful the list appends through the front
+	// so if del[0] is true, the last wordInfo of the list must be deleted
+	bool del[4] = { true, false, false, true };
+
+	deleteWords( &wordInfoList, del, 4 );
+
+	node* temp=wordInfoList;
+	// The first node now should contain wordInfo with word "two" because 
+	// del[2] was false
+	TEST_ASSERT(!strcmp(((wordInfo *)(temp->data))->word,"two"));
+	temp = temp->next;
+	// The second node should be "one" because del[1] was false
+	TEST_ASSERT(!strcmp(((wordInfo *)(temp->data))->word,"one"));
+	// The list should end here
+	TEST_ASSERT(temp->next==NULL);
+
+	destroyListOfWordInfo(wordInfoList, (void*)wordInfoDeletion );
+	free(array); array=NULL;
+	return;
+}
+
 TEST_LIST = {
 	{ "appendList_string", test_appendList_string },
 	{ "appendList_wordInfo", test_appendList_wordInfo },
 	{ "merge", test_mergeTwoLists },
 	{ "addrFoundinList", test_addrFoundinList },
 	{ "removeNode", test_removeNode },
+	{ "notInList", test_notInList },
+	{ "sortedInsertStr", test_sortedInsertStr },
+	{ "foundInSortedListStr", test_foundInSortedListStr },
+	{ "deleteWords", test_deleteWords },
 	{ NULL, NULL } // end of tests
 };

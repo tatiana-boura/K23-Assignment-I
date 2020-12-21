@@ -158,7 +158,7 @@ void makeOutputFileList(node* n, FILE* outputFile){
     return;
 }
 
-//if word w is part of list l reurn 0
+//if word w is part of list l return false, else true
 bool notInlist(node* n, char* w){
     node* tempNode=n;
 
