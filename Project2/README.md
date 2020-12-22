@@ -16,6 +16,7 @@
 > ./Project2/prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_large_labelled_dataset.csv ./Project2/common-english-words.txt
 					ή
   ./Project2/prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_medium_labelled_dataset.csv ./Project2/common-english-words.txt
+  
 *2*
 > cd Project2
 > make  
