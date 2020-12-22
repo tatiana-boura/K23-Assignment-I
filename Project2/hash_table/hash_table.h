@@ -6,7 +6,6 @@
 #include <math.h>
 
 #include "../list/list.h"
-#include "../../tuples/tuples.h"
 #include "../word_info/word_info.h"
 #include "../vocabulary/hash_table_vocabulary.h"
 #include "bucket.h"

@@ -1,8 +1,8 @@
 
 # MAIN PROGRAM #
-OBJS 	  = main.o list.o hash_table.o parsing_functions.o tuples.o word_info.o vocabulary.o hash_table_vocabulary.o data_for_training.o logisticReg.o hash_table_pairs.o
-SOURCE	  = ./main.c ./list/list.c ./hash_table/hash_table.c ../tuples/tuples.c ./reading/parsing_functions.c ./word_info/word_info.c ./vocabulary/vocabulary.c ./vocabulary/hash_table_vocabulary.c ./classification/data_for_training.c ./classification/logisticReg.c ./classification/hash_table_pairs.c
-HEADER    = ./list/list.h ./list/node.h ./list/node.h ./hash_table/hash_table.h ../tuples/tuples.h ./reading/parsing_functions.h ./hash_table/bucket.h ./word_info/word_info.h ./vocabulary/vocabulary.h ./vocabulary/hash_table_vocabulary.h ./classification/data_for_training.h ./classification/logisticReg.h ./classification/hash_table_pairs.h
+OBJS 	  = main.o list.o hash_table.o parsing_functions.o word_info.o vocabulary.o hash_table_vocabulary.o data_for_training.o logisticReg.o hash_table_pairs.o
+SOURCE	  = ./main.c ./list/list.c ./hash_table/hash_table.c ./reading/parsing_functions.c ./word_info/word_info.c ./vocabulary/vocabulary.c ./vocabulary/hash_table_vocabulary.c ./classification/data_for_training.c ./classification/logisticReg.c ./classification/hash_table_pairs.c
+HEADER    = ./list/list.h ./list/node.h ./list/node.h ./hash_table/hash_table.h ./reading/parsing_functions.h ./hash_table/bucket.h ./word_info/word_info.h ./vocabulary/vocabulary.h ./vocabulary/hash_table_vocabulary.h ./classification/data_for_training.h ./classification/logisticReg.h ./classification/hash_table_pairs.h
 OUT  	  = prog
 CC	  = gcc
 FLAGS     = -g -c -Wall
@@ -21,9 +21,6 @@ hash_table.o: ./hash_table/hash_table.c
 
 parsing_functions.o: ./reading/parsing_functions.c
 	$(CC) $(FLAGS) ./reading/parsing_functions.c
-
-tuples.o: ../tuples/tuples.c
-	$(CC) $(FLAGS) ../tuples/tuples.c
 
 word_info.o: ./word_info/word_info.c
 	$(CC) $(FLAGS) ./word_info/word_info.c
