@@ -115,7 +115,7 @@
 Έπειτα, με shuffling του παραπάνω array (δηλαδή τυχαία) δημιουργούμε τα training και validation sets με αναλογία (80-20). Να σημειωθεί ότι δε δεσμεύεται νέος χώρος για τις στήλες, συνεπώς η συνάρτηση αυτή (createSets) είναι πολύ memory efficient και γρήγορη αφού χρησιμοποιεί boolean array για την τυχαία διαλογή.
 
 
-** Training και prediction του validation **
+**Training και prediction του validation**
 Με τον παραπάνω διαχωρισμό προχωράμε στο training , το οποίο γίνεται με stochastic gradient descent. Στο αντίστοιχο αρχείο logisticReg.c και στη συνάρτηση gradient_descent() υπάρχει και σχολιασμένος ο κώδικας για την non-stochastic gradient descent σε περίπτωση που ο εξεταστής επιθυμεί να την τρέξει.
 
 Τέλος, γίνεται η πρόβλεψη για το validation set και δίνεται ένα ποσοστό επιτυχούς πρόβλεψης.
