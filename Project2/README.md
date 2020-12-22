@@ -11,6 +11,7 @@
 
 ## Compile and run
 Για να τρέξει κατευθείαν από το repository στο Project2, χρησιμοποιώντας τα αρχεία στο φάκελο dataset υπάρχουν 2(δύο) τρόποι,
+
 *1*
 > make -C Project2
 > ./Project2/prog ./datasets/camera_specs/2013_camera_specs ./datasets/sigmod_large_labelled_dataset.csv ./Project2/common-english-words.txt
