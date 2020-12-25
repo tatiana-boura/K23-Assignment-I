@@ -1,7 +1,7 @@
 
 # MAIN PROGRAM #
 OBJS 	  = main.o list.o hash_table.o parsing_functions.o word_info.o vocabulary.o hash_table_vocabulary.o data_for_training.o logisticReg.o hash_table_pairs.o
-SOURCE	  = ./main.c ./list/list.c ./hash_table/hash_table.c ./reading/parsing_functions.c ./word_info/word_info.c ./vocabulary/vocabulary.c ./vocabulary/hash_table_vocabulary.c ./classification/data_for_training.c ./classification/logisticReg.c ./classification/hash_table_pairs.c
+SOURCE	  = ./main.c ./testing.c ./list/list.c ./hash_table/hash_table.c ./reading/parsing_functions.c ./word_info/word_info.c ./vocabulary/vocabulary.c ./vocabulary/hash_table_vocabulary.c ./classification/data_for_training.c ./classification/logisticReg.c ./classification/hash_table_pairs.c
 HEADER    = ./list/list.h ./list/node.h ./list/node.h ./hash_table/hash_table.h ./reading/parsing_functions.h ./hash_table/bucket.h ./word_info/word_info.h ./vocabulary/vocabulary.h ./vocabulary/hash_table_vocabulary.h ./classification/data_for_training.h ./classification/logisticReg.h ./classification/hash_table_pairs.h
 OUT  	  = prog
 CC	  = gcc
@@ -12,6 +12,9 @@ $(OUT): $(OBJS)
 
 main.o: ./main.c
 	$(CC) $(FLAGS) ./main.c
+
+testing.o: ./testing.c
+	$(CC) $(FLAGS) ./testing.c
 
 list.o: ./list/list.c
 	$(CC) $(FLAGS) ./list/list.c
@@ -40,6 +43,14 @@ logisticReg.o: ./classification/logisticReg.c
 hash_table_pairs.o: ./classification/hash_table_pairs.c
 	$(CC) $(FLAGS) ./classification/hash_table_pairs.c
 
+# 2ND EXECUTABLE #
+T_OBJS 	  = testing.o list.o hash_table.o parsing_functions.o word_info.o vocabulary.o hash_table_vocabulary.o data_for_training.o logisticReg.o hash_table_pairs.o
+T_OUT    = test_prog 
+
+$(T_OUT): $(T_OBJS)
+	$(CC) -g $(T_OBJS) -o $@ -lm
+
+
 # UNIT TESTING #
 DEF_SRC = ./list/list.c ./word_info/word_info.c  ../tuples/tuples.c ./vocabulary/vocabulary.c ./vocabulary/hash_table_vocabulary.c ./classification/hash_table_pairs.c ./hash_table/hash_table.c
 OUTS    = test_hash_table test_list test_word_info test_vocabulary test_hash_table_pairs test_tfidf_bow 
@@ -53,7 +64,7 @@ tests:
 	cc -g ./unit_testing/test_tfidf_bow.c $(DEF_SRC) -o test_tfidf_bow -lm
 
 clean:
-	rm -f $(OBJS) $(OUT)
+	rm -f $(OBJS) $(OUT) $(T_OBJS) $(T_OUT)
 	rm -f output.txt result.txt
 
 clean_tests:
