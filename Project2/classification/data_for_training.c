@@ -80,19 +80,21 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                 // mark it as visited
                 addtoHTPair(htPair, outter_clique->path, inner_clique->path, BUCKETSIZEPAIR );
                 //allocate memory in arrays for difference
-                (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));
-                //printf("1 cliques : [%s] - [%s]\n",outter_clique->path,inner_clique->path );
-                for( unsigned int k = 0; k<vocabSize; k++ ){
-                    //calculate difference |outter->vector-inner_clique->vector| 
-                    float abs_dif = fabs(outter_clique->vector[k]-inner_clique->vector[k]);
-                    (*x_array)[(*n)][k] = abs_dif; //add to x_array 
-                    (*y_array)[(*n)]=1; //store 1 to y_array -- same clique
-                    //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->vector[k],inner_clique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
-                }
-                (*n)++;
-                //reallocate memory in arrays for next difference
-                (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
-                (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int)); 
+                for( unsigned int k = 0; k < 7; k++ ){
+                    (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));
+                    //printf("1 cliques : [%s] - [%s]\n",outter_clique->path,inner_clique->path );
+                    for( unsigned int k = 0; k<vocabSize; k++ ){
+                        //calculate difference |outter->vector-inner_clique->vector| 
+                        float abs_dif = fabs(outter_clique->vector[k]-inner_clique->vector[k]);
+                        (*x_array)[(*n)][k] = abs_dif; //add to x_array 
+                        (*y_array)[(*n)]=1; //store 1 to y_array -- same clique
+                        //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->vector[k],inner_clique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                    }
+                    (*n)++;
+                    //reallocate memory in arrays for next difference
+                    (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
+                    (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
+                } 
             }
             inner_clique_list=inner_clique_list->next;
         }
