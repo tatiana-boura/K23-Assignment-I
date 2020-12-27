@@ -280,12 +280,78 @@ int main(int argc, char* argv[]){
 		exit(-1);
 	} 
 
+	/*!!!! ONLY ONE OF THE SECTIONS [A]-[B]/[B]-[C] SHOULD BE UNCOMMENTED  !!!!*/
+    //--------------------[ A ]-----------------------------------------
+	/*using the same datasetX used to train the model (default)*/
+	
 	char* voc_w = calloc(50,sizeof(char));
 	float* w = calloc(voc_size,sizeof(float));
 	for(int i=0; i<voc_size ; i++){
 		fscanf(weights, "%s\t%f\n",voc_w,&w[i]);
 	}
+	fclose(weights);
 	free(voc_w);
+
+    //--------------------[ B ]-----------------------------------------
+    /*using dataset X diffirent than the one used to train the model*/ 
+	/*
+	//count lines of result.txt
+	unsigned int pvoc_size = 0;
+	int ch ;
+	while(!feof(weights)){
+  		ch = fgetc(weights);
+ 		if(ch == '\n'){
+    		pvoc_size++;
+  		}
+	}
+	rewind(weights);
+	
+	//create array of vocabulary 					
+	char** pvoc= calloc(pvoc_size,sizeof(char*));  
+	float* pw = calloc(pvoc_size,sizeof(float));
+	char* voc_w = calloc(50,sizeof(char));	
+	for(int i=0; i<pvoc_size ; i++){
+		fscanf(weights, "%s\t%f\n",voc_w,&pw[i]); 
+		pvoc[i] = calloc(strlen(voc_w)+1,sizeof(char)); 
+		assert( pvoc[i] != NULL );
+		memset(pvoc[i], '\0', (strlen(voc_w)+1)*sizeof(char));
+		strcpy(pvoc[i],voc_w);							
+	}									
+	fclose(weights);
+
+	//create weight array for new vocabulary
+	float* w = calloc(voc_size,sizeof(float));
+	//initialise new vocabulary's weights to 0.0
+	for(int i=0; i<voc_size ; i++){
+		w[i] = 0.0;
+	}
+	//update weights according to trained models values
+	node* mytemp = vocabulary;
+	int wher=0;
+    while(mytemp!=NULL){  
+        //printf("%s\n",((wordInfo*)mytemp->data)->word);
+        for(unsigned int f=0; f<pvoc_size ; f++){
+        	//printf("compare: %s - %s\n", pvoc[f],((wordInfo*)mytemp->data)->word );
+        	if( !strcmp( pvoc[f],((wordInfo*)mytemp->data)->word ) ){
+        		w[wher] = pw[f];
+        		break;
+        	}
+        }
+        mytemp = mytemp->next;
+        wher++;
+    }
+
+    //free mem
+    free(voc_w); voc_w=NULL;
+    free(pw); pw=NULL;
+    for(int i=0; i<pvoc_size; i++){
+    	free(pvoc[i]);
+    }
+    free(pvoc); pvoc=NULL;
+	*/
+    //--------------------[ C ]-----------------------------------------
+	
+	
 
 	printf("\nPredict class of x_test_array\n");
 	bool* ans = predict( x_test_array, y_test_array, w, bias, n, voc_size);   
