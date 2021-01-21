@@ -63,6 +63,9 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 	//for (unsigned int k = 0; k < 10; k++){
 		// for every w_j
 		sum_bias = 0.0;
+
+		
+		
 	    for( unsigned int j = 0; j < r+1; j++ ){
 
 	    	sum_weights = 0.0;

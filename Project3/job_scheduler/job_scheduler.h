@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 #include <unistd.h>
 
@@ -17,14 +18,16 @@ typedef struct JobScheduler{
 	pthread_t* tids;
 
 	pthread_mutex_t mtx;
+	pthread_mutex_t wrt;
+	pthread_mutex_t rd;
 	pthread_cond_t cond;
 
 }JobScheduler;
 
 JobScheduler* initialize_scheduler(int execution_threads);
-int submit_job(JobScheduler* sch, Batch* j);
-/*int execute_all_jobs(JobScheduler* sch);
-int wait_all_tasks_finish(JobScheduler* sch);*/
+int submit_job(JobScheduler* sch, Batch* data);
+int execute_all_jobs(JobScheduler* sch);
+int wait_all_tasks_finish(JobScheduler* sch);
 void destroy_scheduler(JobScheduler* sch);
 
 #endif
