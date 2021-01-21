@@ -8,7 +8,7 @@ CC	  = gcc
 FLAGS     = -g -c -Wall
 
 $(OUT): $(OBJS)
-	$(CC) -g $(OBJS) -o $@ -lm
+	$(CC) -g $(OBJS) -o $@ -lm -pthread
 
 main.o: ./main.c
 	$(CC) $(FLAGS) ./main.c

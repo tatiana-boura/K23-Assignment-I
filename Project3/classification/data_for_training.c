@@ -178,13 +178,10 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
 
     srand(time(NULL));
 
-    printf("!!!training: [%d]\n", *n);
-    printf("validation: [%d]\n", *m);
-    printf("test: [%d]!!!\n", *z);
-
     /* we will use a boolean array of size as total lines 
-       -- true: will be in train_set or test_set
-       -- false: will be in test set */
+       -- 0: will be in train_set
+       -- 1: will be in test set
+       -- 2: will be in test set */
     short unsigned int visitedNumbers[total_size];
     for( unsigned int i=0; i <total_size; i++)
         visitedNumbers[i] = 0;
