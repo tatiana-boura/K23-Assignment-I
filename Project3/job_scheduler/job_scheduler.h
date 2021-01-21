@@ -15,13 +15,14 @@ typedef struct JobScheduler{
 	circBuffer* cb;
 	pthread_t* tids;
 
-	// mutexes needed
+	pthread_mutex_t mtx;
+	pthread_cond_t cond;
 
 }JobScheduler;
 
 JobScheduler* initialize_scheduler(int execution_threads);
-/*int submit_job(JobScheduler* sch, Job* j);
-int execute_all_jobs(JobScheduler* sch);
+int submit_job(JobScheduler* sch, Batch* j);
+/*int execute_all_jobs(JobScheduler* sch);
 int wait_all_tasks_finish(JobScheduler* sch);*/
 void destroy_scheduler(JobScheduler* sch);
 
