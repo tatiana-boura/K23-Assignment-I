@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <unistd.h>
 
 #include "circ_buffer.h"
 
