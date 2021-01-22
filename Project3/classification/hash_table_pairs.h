@@ -2,8 +2,8 @@
 #define _HASH_H_PAIR_
 #include <stdlib.h>
 #include <string.h>
-#include "../../Project2/list/list.h"
-#include "../../Project2/list/node.h"
+#include "../list/list.h"
+#include "../list/node.h"
 
 typedef node bucket;
 

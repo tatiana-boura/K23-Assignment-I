@@ -1,8 +1,8 @@
 
 # MAIN PROGRAM #
 OBJS 	  = main.o list.o hash_table.o parsing_functions.o word_info.o vocabulary.o hash_table_vocabulary.o data_for_training.o logisticReg.o hash_table_pairs.o
-SOURCE	  = .main.c ../Project2/testing.c ../Project2/list/list.c ./hash_table/hash_table.c ./reading/parsing_functions.c ../Project2/word_info/word_info.c ../Project2/vocabulary/vocabulary.c ../Project2/vocabulary/hash_table_vocabulary.c ./classification/data_for_training.c ./classification/logisticReg.c ./classification/hash_table_pairs.c
-HEADER    = ../Project2/list/list.h ../Project2/list/node.h ../Project2/list/node.h ./hash_table/hash_table.h ./reading/parsing_functions.h ./hash_table/bucket.h ../Project2/word_info/word_info.h ../Project2/vocabulary/vocabulary.h ../Project2/vocabulary/hash_table_vocabulary.h ./classification/data_for_training.h ./classification/logisticReg.h ./classification/hash_table_pairs.h
+SOURCE	  = .main.c ../Project2/testing.c ./list/list.c ./hash_table/hash_table.c ./reading/parsing_functions.c ../Project2/word_info/word_info.c ../Project2/vocabulary/vocabulary.c ../Project2/vocabulary/hash_table_vocabulary.c ./classification/data_for_training.c ./classification/logisticReg.c ./classification/hash_table_pairs.c
+HEADER    = ./list/list.h ./list/node.h ./hash_table/hash_table.h ./reading/parsing_functions.h ./hash_table/bucket.h ../Project2/word_info/word_info.h ../Project2/vocabulary/vocabulary.h ../Project2/vocabulary/hash_table_vocabulary.h ./classification/data_for_training.h ./classification/logisticReg.h ./classification/hash_table_pairs.h
 OUT  	  = prog
 CC	  = gcc
 FLAGS     = -g -c -Wall
@@ -16,8 +16,8 @@ main.o: ./main.c
 testing.o: ../Project2/testing.c
 	$(CC) $(FLAGS) ../Project2/testing.c
 
-list.o: ../Project2/list/list.c
-	$(CC) $(FLAGS) ../Project2/list/list.c
+list.o: ./list/list.c
+	$(CC) $(FLAGS) ./list/list.c
 
 hash_table.o: ./hash_table/hash_table.c
 	$(CC) $(FLAGS) ./hash_table/hash_table.c

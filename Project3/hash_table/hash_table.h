@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <math.h>
 
-#include "../../Project2/list/list.h"
+#include "../list/list.h"
 #include "../../Project2/word_info/word_info.h"
 #include "../../Project2/vocabulary/hash_table_vocabulary.h"
 #include "bucket.h"

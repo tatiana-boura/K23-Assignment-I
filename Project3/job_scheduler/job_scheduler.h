@@ -9,12 +9,15 @@
 #include <unistd.h>
 
 #include "circ_buffer.h"
+#include "../list/list.h"
+
+typedef node* Queue;
 
 typedef struct JobScheduler{
 
 	int execution_threads;
-	//Queue* q;
-	circBuffer* cb;
+	Queue q;
+	//circBuffer* cb;
 	pthread_t* tids;
 
 	pthread_mutex_t mtx;
