@@ -7,47 +7,72 @@ bool ncreated = false ;
 
 void *threadFunction(void* args){
 
-	JobScheduler* job_sch = (JobScheduler*)args;
+	JobScheduler** job_sch = &((JobScheduler*)args);
 
-	pthread_mutex_lock(&(job_sch->mtx));
+	//pthread_mutex_lock(&(job_sch->mtx));
+	pthread_mutex_lock(&((*job_sch)->mtx));
+
 
 	while(!ncreated){
-		pthread_cond_wait(&(job_sch->cond),&(job_sch->mtx));
+		//pthread_cond_wait(&(job_sch->cond),&(job_sch->mtx));
+		pthread_cond_wait(&((*job_sch)->cond),&((*job_sch)->mtx));
+
 	}
-	pthread_mutex_unlock(&(job_sch->mtx));
-	pthread_cond_signal(&(job_sch->cond));
+	//pthread_mutex_unlock(&(job_sch->mtx));
+	pthread_mutex_unlock(&((*job_sch)->mtx));
+	//pthread_cond_signal(&(job_sch->cond));
+	pthread_cond_signal(&((*job_sch)->cond));
+
 
 	//read job from buffer
 	while(1){
-		pthread_mutex_lock(&(job_sch->mtx)); 
+		//pthread_mutex_lock(&(job_sch->mtx)); 
+		pthread_mutex_lock(&((*job_sch)->mtx)); 
 		
 		// if buffer is not empty -- read if it is your turn
-		if(job_sch->q){
+		//if(job_sch->q){
+		if((*job_sch)->q){
 		//if(!circBufferEmpty(job_sch->cb)){
 
 			//bool popped=false;
 			node* _data_=NULL;
 		
-			pthread_mutex_lock(&(job_sch->rd));
+			//pthread_mutex_lock(&(job_sch->rd));
+			pthread_mutex_lock(&((*job_sch)->rd));
 			
-			printf("Reading [%ld]\n",pthread_self());
+			//printf("Reading [%ld]\n",pthread_self());
 			active_readers++;
 			
 			if(active_readers==1){ // only one reads from buff	
-				pthread_mutex_lock(&(job_sch->wrt));
+				//pthread_mutex_lock(&(job_sch->wrt));
+				pthread_mutex_lock(&((*job_sch)->wrt));
+
 				//popped = circBufferPop(job_sch->cb, _data_);
 				//popped=true;
-				_data_ = pop(&(job_sch->q));
+				printf("Reading [%ld]\n",pthread_self());
+				//_data_ = pop(&(job_sch->q));
+				_data_ = pop(&((*job_sch)->q));
+
 			}
-			pthread_mutex_unlock(&(job_sch->rd));
-			pthread_mutex_lock(&(job_sch->rd));
+			//pthread_mutex_unlock(&(job_sch->rd));
+			pthread_mutex_unlock(&((*job_sch)->rd));
+
+			//pthread_mutex_lock(&(job_sch->rd));
+			pthread_mutex_lock(&((*job_sch)->rd));
+
 			active_readers--;
 			
 			if(active_readers==0){ // now start the writer
-				pthread_mutex_unlock(&(job_sch->wrt));
+				//pthread_mutex_unlock(&(job_sch->wrt));
+				pthread_mutex_unlock(&((*job_sch)->wrt));
+
 			} 
-			pthread_mutex_unlock(&(job_sch->rd));
-			pthread_mutex_unlock(&(job_sch->mtx)); 
+			//pthread_mutex_unlock(&(job_sch->rd));
+			pthread_mutex_unlock(&((*job_sch)->rd));
+
+			//pthread_mutex_unlock(&(job_sch->mtx));
+			pthread_mutex_unlock(&((*job_sch)->mtx)); 
+
 
 			//if(popped){
 				printf("Thread [%ld] got data: [%d-%d]\n",pthread_self(),((Batch*)_data_->data)->start, ((Batch*)_data_->data)->end );
@@ -55,7 +80,9 @@ void *threadFunction(void* args){
 			//}
 		
 		}else{ // if buffer empty -- job done
-			pthread_mutex_unlock(&(job_sch->mtx));
+			//pthread_mutex_unlock(&(job_sch->mtx));
+			pthread_mutex_unlock(&((*job_sch)->mtx));
+
 			printf("Leaving [%ld]\n",pthread_self());
 			break;
 		}
@@ -105,7 +132,7 @@ JobScheduler* initialize_scheduler(int execution_threads){
 	for( unsigned int i=0; i <execution_threads; ++i){
 		pthread_create(&(job_sch->tids[i]), NULL, threadFunction, (JobScheduler*)job_sch );
 	}
-	ncreated=true; // should be here
+	//ncreated=true; // should be here
 	
 	pthread_mutex_unlock(&(((JobScheduler*)job_sch)->mtx)); //release the threads
 	
@@ -117,6 +144,7 @@ int submit_job(JobScheduler* sch, Batch* data){
 
     pthread_mutex_lock(&(sch->wrt));
     sch->q = appendListEnd(sch->q,data);
+	ncreated=true; // should be here
     //circBufferInsert(sch->cb,*data);
     pthread_mutex_unlock(&(sch->wrt));
 
@@ -124,7 +152,7 @@ int submit_job(JobScheduler* sch, Batch* data){
 }
 
 int execute_all_jobs(JobScheduler* sch){
-
+	//ncreated=true; // should be here
 	pthread_cond_signal(&(((JobScheduler*)sch)->cond));
 
 	return 1;
