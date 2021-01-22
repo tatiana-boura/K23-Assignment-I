@@ -64,22 +64,11 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 		// for every w_j
 		sum_bias = 0.0;
 
-		
-		
+		// submit_jobs
+
 	    for( unsigned int j = 0; j < r+1; j++ ){
 
 	    	sum_weights = 0.0;
-
-	    	/*____ STOCHASTIC GRADIENT ______
-	    	  ____(get random line of x)_____ */
-	    	/*unsigned int i = rand()%n;
-	    	// compute the predicted value
-		    _hypothesis_ = hypothesis(x_train[i], w, (*bias), r);
-		    // update d/dw_j J(w,b) or bias
-		    if( j!= r) // weights
-		    	sum_weights += (_hypothesis_- (float)y_train[i])*x_train[i][j];      
-		    else	   // bias
-		    	sum_bias += (_hypothesis_- (float)y_train[i]);*/
 
 		    //____ GRADIENT DESCENT __________
 			for (unsigned int i = 0; i < n; i++){

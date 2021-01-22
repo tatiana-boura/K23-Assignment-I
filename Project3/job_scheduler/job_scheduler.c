@@ -3,47 +3,35 @@
 #include "job_scheduler.h"
 
 unsigned int active_readers = 0;
-bool ncreated = false ;
-
-pthread_mutex_t lck;
+bool empty_queue = true ;
 
 void *threadFunction(void* args){
 
-	//JobScheduler** job_sch = &((JobScheduler*)args);
 	JobScheduler* job_sch = (JobScheduler*)args;
-
-	printf("{%p}\n",&(job_sch->mtx) );
 
 	pthread_mutex_lock(&(job_sch->mtx));
 
-	//while(!ncreated){
+	while(empty_queue){
 		pthread_cond_wait(&(job_sch->cond),&(job_sch->mtx));
-	//}
+	}
 	pthread_mutex_unlock(&(job_sch->mtx));
 	pthread_cond_signal(&(job_sch->cond));
 
-
-	//read job from buffer
+	//read job from queue
 	while(1){
-		pthread_mutex_lock(&lck); 
-		//pthread_mutex_lock(&(job_sch->mtx)); 
-		
-		// if buffer is not empty -- read if it is your turn
-		if(job_sch->q){
-		//if(!circBufferEmpty(job_sch->cb)){
 
-			//bool popped=false;
-			node* _data_=NULL;
-		
+		pthread_mutex_lock(&(job_sch->mtx));
+		node* _data_=NULL;
+
+		// if queue is not empty -- read if it is your turn
+		if(job_sch->q){
+
 			pthread_mutex_lock(&(job_sch->rd));
 			
-			//printf("Reading [%ld]\n",pthread_self());
 			active_readers++;
 			
 			if(active_readers==1){ // only one reads from buff	
 				pthread_mutex_lock(&(job_sch->wrt));
-				//popped = circBufferPop(job_sch->cb, _data_);
-				//popped=true;
 				printf("Reading [%ld]\n",pthread_self());
 				_data_ = pop(&(job_sch->q));
 
@@ -57,40 +45,21 @@ void *threadFunction(void* args){
 				pthread_mutex_unlock(&(job_sch->wrt));
 			} 
 			pthread_mutex_unlock(&(job_sch->rd));
-			//pthread_mutex_unlock(&(job_sch->mtx));
-
-			pthread_mutex_unlock(&lck); 
-
-			//if(popped){
-				printf("Thread [%ld] got data: [%d-%d]\n",pthread_self(),((Batch*)_data_->data)->start, ((Batch*)_data_->data)->end );
-				//free(_data_);_data_=NULL;
-			//}
+		}
 		
-		}else{ // if buffer empty -- job done
-			//pthread_mutex_unlock(&(job_sch->mtx));
+		pthread_mutex_unlock(&(job_sch->mtx));
 
-			pthread_mutex_unlock(&lck); 
+		if(_data_)
+			printf("Thread [%ld] got data: [%d-%d]\n",pthread_self(),((Batch*)_data_->data)->start, ((Batch*)_data_->data)->end );
 
-			printf("Leaving [%ld]\n",pthread_self());
+		if(job_sch->last_job && !(job_sch->q)){ // if queue empty -- job done
+ 
 			break;
 		}
 	}
 
-
-	/*while( popped==false){
-		// read one by one from the buffer
-		pthread_mutex_lock(&readFromBuffer);
-		popped = circBufferPop(cbuf, &_data_);
-		pthread_mutex_unlock(&readFromBuffer);
-
-		if( popped==false ){
-			// no entries in the array
-			pthread_mutex_lock(&bufferIsFull);
-		    pthread_cond_wait(&cond, &bufferIsFull);
-		    pthread_mutex_unlock(&bufferIsFull);
-		}
-	}*/
-
+	printf("Leaving [%ld]\n",pthread_self());
+	
 	pthread_exit(NULL);
 	return NULL;
 
@@ -110,55 +79,34 @@ JobScheduler* initialize_scheduler(int execution_threads){
 	pthread_mutex_init(&(job_sch->mtx), NULL); pthread_cond_init(&(job_sch->cond), NULL);
 	pthread_mutex_init(&(job_sch->wrt), NULL); pthread_mutex_init(&(job_sch->rd), NULL);
 
-	pthread_mutex_init(&lck, NULL);
-
-	printf("in initialize {%p}\n",&(job_sch->mtx) );
-
-
-	// initialize circ-buffer
+	job_sch->last_job = false;
+	// initialize queue
 	job_sch->q = NULL;
-	//job_sch->cb = circBufferInit(BUFFSIZE);
 
 	// create threads
 	pthread_mutex_lock(&(((JobScheduler*)job_sch)->mtx)); //release the threads
-
 	for( unsigned int i=0; i <execution_threads; ++i){
 		pthread_create(&(job_sch->tids[i]), NULL, threadFunction, (JobScheduler*)job_sch );
 	}
-	//ncreated=true; // should be here
-	
 	pthread_mutex_unlock(&(((JobScheduler*)job_sch)->mtx)); //release the threads
 	
 	return job_sch;
 }
 
-// insert job into circ-buffer
-int submit_job(JobScheduler* sch, Batch* data, bool sendSig){
-
+// insert job into queue
+int submit_job(JobScheduler* sch, Batch* data){
 
     pthread_mutex_lock(&(sch->wrt));
     sch->q = appendListEnd(sch->q,data);
-    if(sendSig){
-    	pthread_cond_signal(&(sch->cond));
-    }
-
-    //pthread_cond_signal(&(sch->cond));
-	
-	ncreated=true; // should be here
-    
-    //circBufferInsert(sch->cb,*data);
+	empty_queue=false; // should be here 
     pthread_mutex_unlock(&(sch->wrt));
 
 	return 1;
 }
 
-int execute_all_jobs(JobScheduler* sch){
-	//ncreated=true; // should be here
-	//pthread_cond_signal(&(((JobScheduler*)sch)->cond));
-
+/*int execute_all_jobs(JobScheduler* sch){
 	return 1;
-
-}
+}*/
 
 int wait_all_tasks_finish(JobScheduler* sch){
 	//wait for all the thread to terminate
@@ -175,11 +123,8 @@ void destroy_scheduler(JobScheduler* sch){
 	pthread_mutex_destroy(&(sch->mtx)); pthread_cond_destroy(&(sch->cond));
 	pthread_mutex_destroy(&(sch->wrt)); pthread_mutex_destroy(&(sch->rd));
 
-	pthread_mutex_destroy(&lck);
-
-
 	free(sch->tids); sch->tids = NULL;
-	//circBufferDealloc(sch->cb);
+	//circqueueDealloc(sch->cb);
 	destroyListOfStrings(sch->q, true );
 	free(sch); sch=NULL;
 

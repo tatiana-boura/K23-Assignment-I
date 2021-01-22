@@ -25,11 +25,13 @@ typedef struct JobScheduler{
 	pthread_mutex_t rd;
 	pthread_cond_t cond;
 
+	bool last_job;
+
 }JobScheduler;
 
 JobScheduler* initialize_scheduler(int execution_threads);
-int submit_job(JobScheduler* sch, Batch* data, bool sendSig);
-int execute_all_jobs(JobScheduler* sch);
+int submit_job(JobScheduler* sch, Batch* data);
+//int execute_all_jobs(JobScheduler* sch);
 int wait_all_tasks_finish(JobScheduler* sch);
 void destroy_scheduler(JobScheduler* sch);
 

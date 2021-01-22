@@ -36,14 +36,16 @@ int main(void){
 	batch6->start = 4001;
 	batch6->end = 5000;
 
-	submit_job(js,batch1,true);
-	submit_job(js,batch2,false);
-	submit_job(js,batch3,false);
-	submit_job(js,batch4,false);
-	submit_job(js,batch5,false);
-	submit_job(js,batch6,false);
+	submit_job(js,batch1);
+	submit_job(js,batch2);
+	submit_job(js,batch3);
+	submit_job(js,batch4);
+	submit_job(js,batch5);
+	submit_job(js,batch6);
 
-	execute_all_jobs(js);
+	js->last_job = true;
+
+	//execute_all_jobs(js);
 
 	wait_all_tasks_finish(js);
 
