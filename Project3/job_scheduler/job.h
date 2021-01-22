@@ -3,17 +3,16 @@
 
 #include "../list/list.h"
 
+typedef struct Batch{
+	unsigned int start;
+	unsigned int end;
+}Batch;
 
 typedef struct J_thread_results{
     Batch* batch;
 	float* J_weight;
 	float J_bias;
 }J_thread_results;
-
-typedef struct Batch{
-	unsigned int start;
-	unsigned int end;
-}Batch;
 
 typedef struct Job{
 	node* all_thread_results; 

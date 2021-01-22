@@ -6,7 +6,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <assert.h>
-#include "job.h"
+#include "../job_scheduler/job_scheduler.h"
 
 float innerProduct(float* x_i, float* w, unsigned int r);
 float sigmoid(float t);

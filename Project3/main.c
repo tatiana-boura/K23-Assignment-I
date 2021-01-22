@@ -276,7 +276,7 @@ int main(int argc, char* argv[]){
 	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid, &x_test, &size_of_test_set, &y_test );
 	
 	//------call gradient_descent() to train model-----------------------------------------------------------------------
-	/*float bias=0.0;
+	float bias=0.0;
 	float* w = calloc(voc_size,sizeof(float));
 	float eta = 0.05; //0.0 < eta < 1.0
 	float epsilon = 0.01; //small small number (?)
@@ -287,7 +287,7 @@ int main(int argc, char* argv[]){
 	makeResultFile(w,vocabulary);
 
 	//-----------predict-------------------------------------------------------------------------------------------------
-	printf("\nPredict class of x_valid\n");
+	/*printf("\nPredict class of x_valid\n");
 	bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
 	unsigned int t = 0;
 	unsigned int f = 0;
