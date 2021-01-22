@@ -24,13 +24,13 @@ void *threadFunction(void* args){
 
 	//read job from buffer
 	while(1){
-		pthread_mutex_lock(((for_thread*)args)->mtx);
-		
+		pthread_mutex_lock(((for_thread*)args)->mtx); 
+			// if buffer is not empty -- read if it is your turn
 		if(!circBufferEmpty(*(((for_thread*)args)->cb))){
 			pthread_mutex_lock(((for_thread*)args)->rd);
 			printf("Reading [%ld]\n",pthread_self());
 			active_readers++;
-			if(active_readers==1){
+			if(active_readers==1){ // only one reads from buff
 				pthread_mutex_lock(((for_thread*)args)->wrt);
 				Batch _data_;
 				bool popped = circBufferPop(*(((for_thread*)args)->cb), &_data_);
@@ -38,14 +38,12 @@ void *threadFunction(void* args){
 			pthread_mutex_unlock(((for_thread*)args)->rd);
 			pthread_mutex_lock(((for_thread*)args)->rd);
 			active_readers--;
-			if(active_readers==0)
+			if(active_readers==0) // now start the writer
 				pthread_mutex_unlock(((for_thread*)args)->wrt);
 			pthread_mutex_unlock(((for_thread*)args)->rd);
-			pthread_mutex_unlock(((for_thread*)args)->mtx);
-			//pthread_cond_signal(((for_thread*)args)->cond);
-		}
-		else{
-			//pthread_mutex_unlock(&extra);
+			pthread_mutex_unlock(((for_thread*)args)->mtx); 
+		
+		}else{ // if buffer empty -- job done
 			pthread_mutex_unlock(((for_thread*)args)->mtx);
 			printf("Leaving [%ld]\n",pthread_self());
 			break;
