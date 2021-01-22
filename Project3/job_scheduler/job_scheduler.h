@@ -28,7 +28,7 @@ typedef struct JobScheduler{
 }JobScheduler;
 
 JobScheduler* initialize_scheduler(int execution_threads);
-int submit_job(JobScheduler* sch, Batch* data);
+int submit_job(JobScheduler* sch, Batch* data, bool sendSig);
 int execute_all_jobs(JobScheduler* sch);
 int wait_all_tasks_finish(JobScheduler* sch);
 void destroy_scheduler(JobScheduler* sch);
