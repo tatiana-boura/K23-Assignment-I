@@ -8,8 +8,7 @@
 #include <assert.h>
 #include <unistd.h>
 
-#include "circ_buffer.h"
-#include "../list/list.h"
+#include "job.h"
 
 typedef node* Queue;
 
@@ -17,7 +16,6 @@ typedef struct JobScheduler{
 
 	int execution_threads;
 	Queue q;
-	//circBuffer* cb;
 	pthread_t* tids;
 
 	pthread_mutex_t mtx;
@@ -30,7 +28,7 @@ typedef struct JobScheduler{
 }JobScheduler;
 
 JobScheduler* initialize_scheduler(int execution_threads);
-int submit_job(JobScheduler* sch, Batch* data);
+int submit_job(JobScheduler* sch, void* data);
 //int execute_all_jobs(JobScheduler* sch);
 int wait_all_tasks_finish(JobScheduler* sch);
 void destroy_scheduler(JobScheduler* sch);

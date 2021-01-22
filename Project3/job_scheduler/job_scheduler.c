@@ -49,8 +49,15 @@ void *threadFunction(void* args){
 		
 		pthread_mutex_unlock(&(job_sch->mtx));
 
-		if(_data_)
-			printf("Thread [%ld] got data: [%d-%d]\n",pthread_self(),((Batch*)_data_->data)->start, ((Batch*)_data_->data)->end );
+		if(_data_){
+			//printf("Thread [%ld] got data: [%d-%d]\n",pthread_self(),((Batch*)_data_->data)->start, ((Batch*)_data_->data)->end );
+			// batch | j_weights[] |  J_bias
+			((Job*)_data_->data)->batch_training = job_batch_training;
+			//J_thread_results* job_batch_training(float** x_train, unsigned int* y_train, float* w, float bias, unsigned int r, Batch* batch);
+			J_thread_results* result= ((Job*)_data_->data)->batch_training(((Job*)_data_->data)->x_train,((Job*)_data_->data)->y_train,((Job*)_data_->data)->w,((Job*)_data_->data)->bias,((Job*)_data_->data)->r,((Job*)_data_->data)->batch);
+			((Job*)_data_->data)->all_thread_results = appendList(((Job*)_data_->data)->all_thread_results,(J_thread_results*)result);
+		}
+			
 
 		if(job_sch->last_job && !(job_sch->q)){ // if queue empty -- job done
  
@@ -62,6 +69,7 @@ void *threadFunction(void* args){
 	
 	pthread_exit(NULL);
 	return NULL;
+
 
 }
 
@@ -94,7 +102,7 @@ JobScheduler* initialize_scheduler(int execution_threads){
 }
 
 // insert job into queue
-int submit_job(JobScheduler* sch, Batch* data){
+int submit_job(JobScheduler* sch, void* data){
 
     pthread_mutex_lock(&(sch->wrt));
     sch->q = appendListEnd(sch->q,data);
