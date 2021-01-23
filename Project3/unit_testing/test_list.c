@@ -38,6 +38,37 @@ void test_appendList_string(void){
 	return;
 }
 
+//___test_appendListEnd_string___________________________________________________________
+void test_appendListEnd_string(void){
+	/* this is a test function for lists that work as queues and contain strings.
+	We use this method for multithreading so that our job_scheduler can pass jobs */
+
+	unsigned int N=200000;
+	char** array = calloc(N,sizeof(char*));
+
+	node* n=NULL;
+
+	for( unsigned int i = 0; i<N; i++ ){
+		
+		array[i] = calloc(STRSIZE,sizeof(char));
+		sprintf(array[i],"%d",i);
+		n = appendListEnd(n,array[i]);
+	}
+	
+	node* temp=n;
+	for( int i = 0; i<N; i++ ){
+		// checking if values are inserted as expected
+		TEST_ASSERT(!strcmp(temp->data,array[i]));
+		temp=temp->next;
+	}
+
+	// free not needed memo
+	destroyListOfStrings(n, true );
+	free(array); array=NULL;
+
+	return;
+}
+
 
 //___test_appendList_wordInfo_________________________________________________________
 void test_appendList_wordInfo(void){
@@ -72,54 +103,6 @@ void test_appendList_wordInfo(void){
 	tempWords=wordInfoList;
 
 	for( int j=N-1; j>=0; j-- ){
-		// checking if values at word are the same
-		TEST_ASSERT(!strcmp(((wordInfo *)(tempWords->data))->word,arrayOfWords[j]));
-
-		TEST_ASSERT(((wordInfo *)(tempWords->data))->count==j);
-		tempWords=tempWords->next;
-	}
-
-	// free not needed memo
-	destroyListOfWordInfo(wordInfoList, (void*)wordInfoDeletion );
-	free(arrayOfWords); arrayOfWords=NULL;
-
-	return;
-}
-
-
-//___test_appendListEnd_wordInfo_________________________________________________________
-void test_appendListEnd_wordInfo(void){
-	//this is a test function for lists of wordInfo (<string,count>)
-
-	unsigned int N=1000;
-	char** arrayOfWords = calloc(N,sizeof(char*));
-	node* wordInfoList=NULL;
-
-	char* str;
-	
-	// for example if j=5 then the wordInfo must be [5,0]
-	for( unsigned int j=0; j<N; j++ ){
-		
-		arrayOfWords[j]=calloc(STRSIZE,sizeof(char));
-		sprintf(arrayOfWords[j],"%d",j);
-		wordInfo* w=calloc(1,sizeof(wordInfo));
-
-		wordInfoInitialization(w,arrayOfWords[j]);
-		//add new wordinfo in the end of the list
-		wordInfoList = appendListEnd(wordInfoList,w);  
-	}
-
-	// update wordInfoList with counts: i.e. wordInfo that was inserted 5th has count 4 
-	node* tempWords=wordInfoList;
-	for( int j=0; j<N; j++ ){
-		((wordInfo *)(tempWords->data))->count=j;
-		tempWords=tempWords->next;
-	}
-
-	// time to check if values have been inserted as expected
-	tempWords=wordInfoList;
-
-	for( int j=0; j<N; j++ ){
 		// checking if values at word are the same
 		TEST_ASSERT(!strcmp(((wordInfo *)(tempWords->data))->word,arrayOfWords[j]));
 
@@ -311,87 +294,41 @@ void test_removeNode(void){
 	return;
 }
 
-//___test_appendListEnd_wordInfo_________________________________________________________
-void test_pop_wordInfo(void){
-	//this is a test function for lists of wordInfo (<string,count>)
+
+
+
+//___test_pop_string__________________________________________________________________
+void test_pop_string(void){
+	/* this is a test function for lists that work as queues and contain strings.
+	We use this method for multithreading so that our job_scheduler can pass jobs */
 
 	unsigned int N=1000;
-	char** arrayOfWords = calloc(N,sizeof(char*));
-	node* wordInfoList=NULL;
+	char** array = calloc(N,sizeof(char*));
 
-	char* str;
+	node* n=NULL;
+
+	for( unsigned int i = 0; i<N; i++ ){
+		
+		array[i] = calloc(STRSIZE,sizeof(char));
+		sprintf(array[i],"%d",i);
+		n = appendListEnd(n,array[i]);
+	}
 	
-	//-------Insert elements to the end of the list----------------------------------
-
-	// for example if j=5 then the wordInfo must be [5,0]
-	for( unsigned int j=0; j<N; j++ ){
-		
-		arrayOfWords[j]=calloc(STRSIZE,sizeof(char));
-		sprintf(arrayOfWords[j],"%d",j);
-		wordInfo* w=calloc(1,sizeof(wordInfo));
-
-		wordInfoInitialization(w,arrayOfWords[j]);
-		//add new wordinfo in the end of the list
-		wordInfoList = appendListEnd(wordInfoList,w);  
+	for( int i = 0; i<N; i++ ){
+		// checking if values are popped as expected
+		node* t = pop(&n);
+		TEST_ASSERT(!strcmp(t->data,array[i]));
+		free(t->data); free(t);
 	}
 
-	// update wordInfoList with counts: i.e. wordInfo that was inserted 5th has count 4 
-	node* tempWords=wordInfoList;
-	for( int j=0; j<N; j++ ){
-		((wordInfo *)(tempWords->data))->count=j;
-		tempWords=tempWords->next;
-	}
-
-	// time to check if values are poped as expected
-	tempWords=wordInfoList;
-	node* tempNode = NULL;
-	for( int j=0; j<N; j++ ){
-		tempNode = pop(&tempWords);
-		// checking if values at word are the same
-		TEST_ASSERT(!strcmp(((wordInfo *)(tempWords->data))->word,arrayOfWords[j]));
-
-		TEST_ASSERT(((wordInfo *)(tempWords->data))->count==j);
-		tempWords=tempWords->next;
-	}
-
-	//-------Insert elements to the front of the list----------------------------------  
-
-	// for example if j=5 then the wordInfo must be [5,0]
-	for( unsigned int j=0; j<N; j++ ){
-		
-		arrayOfWords[j]=calloc(STRSIZE,sizeof(char));
-		sprintf(arrayOfWords[j],"%d",j);
-		wordInfo* w=calloc(1,sizeof(wordInfo));
-
-		wordInfoInitialization(w,arrayOfWords[j]);
-		//add new wordinfo in the end of the list
-		wordInfoList = appendList(wordInfoList,w);  
-	}
-
-	// update wordInfoList with counts: i.e. wordInfo that was inserted 5th has count 4 
-	tempWords=wordInfoList;
-	for( int j=0; j<N; j++ ){
-		((wordInfo *)(tempWords->data))->count=j;
-		tempWords=tempWords->next;
-	}
-
-	// time to check if values are poped as expected
-	tempWords=wordInfoList;
-	for( int j=0; j<N; j++ ){
-		tempNode = pop(&tempWords);
-		// checking if values at word are the same
-		TEST_ASSERT(!strcmp(((wordInfo *)(tempWords->data))->word,arrayOfWords[N-j]));
-
-		TEST_ASSERT(((wordInfo *)(tempWords->data))->count==(N-j));
-		tempWords=tempWords->next;
-	}
+	TEST_ASSERT(n==NULL);
 
 	// free not needed memo
-	destroyListOfWordInfo(wordInfoList, (void*)wordInfoDeletion );
-	free(arrayOfWords); arrayOfWords=NULL;
+	free(array); array=NULL;
 
 	return;
 }
+
 
 
 //___test_notInList___________________________________________________________________
@@ -549,12 +486,12 @@ void test_deleteWords(void){
 
 TEST_LIST = {
 	{ "appendList_string", test_appendList_string },
+	{ "appendListEnd_string", test_appendListEnd_string },
 	{ "appendList_wordInfo", test_appendList_wordInfo },
-	{ "appendListEnd_wordInfo", test_appendListEnd_wordInfo },
 	{ "merge", test_mergeTwoLists },
 	{ "addrFoundinList", test_addrFoundinList },
 	{ "removeNode", test_removeNode },
-	{ "test_pop_wordInfo", test_pop_wordInfo },
+	{ "pop_string", test_pop_string },
 	{ "notInList", test_notInList },
 	{ "sortedInsertStr", test_sortedInsertStr },
 	{ "foundInSortedListStr", test_foundInSortedListStr },
