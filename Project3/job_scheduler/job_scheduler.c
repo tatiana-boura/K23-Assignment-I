@@ -50,27 +50,24 @@ void *threadFunction(void* args){
 		pthread_mutex_unlock(&(job_sch->mtx));
 
 		if(_data_){
-			Batch* t = ((Job*)_data_->data)->batch;
-			printf("Thread [%ld] got data: [%d-%d]\n",pthread_self(),t->start, t->end );
-			// batch | j_weights[] |  J_bias
+			
 			((Job*)_data_->data)->batch_training = job_batch_training;
-			//J_thread_results* job_batch_training(float** x_train, unsigned int* y_train, float* w, float bias, unsigned int r, Batch* batch);
 			J_thread_results* result= ((Job*)_data_->data)->batch_training(((Job*)_data_->data)->x_train,((Job*)_data_->data)->y_train,((Job*)_data_->data)->w,((Job*)_data_->data)->bias,((Job*)_data_->data)->r,((Job*)_data_->data)->batch);
 			//printf("job scheduler after batch training\n");
 			pthread_mutex_lock(&(job_sch->res_ins));
 			*(((Job*)_data_->data)->all_thread_results) = appendList(*(((Job*)_data_->data)->all_thread_results),(J_thread_results*)result);
 			pthread_mutex_unlock(&(job_sch->res_ins));
+
+			free(_data_->data); _data_->data=NULL;
+			free(_data_); _data_=NULL;
 		}
 			
 
 		if(job_sch->last_job && !(job_sch->q)){ // if queue empty -- job done
- 
 			break;
 		}
 	}
 
-	//printf("Leaving [%ld]\n",pthread_self());
-	
 	pthread_exit(NULL);
 	return NULL;
 

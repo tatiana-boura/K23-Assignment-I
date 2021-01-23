@@ -17,6 +17,9 @@ void create_job(Job* new_job, node** all_thread_results,float** x_train, unsigne
 void destroy_res(J_thread_results* res){
 
 	free(res->batch); res->batch=NULL;
+	free(res->J_weight); res->J_weight=NULL;
+
+	free(res); res=NULL;
 
 	return;
 }
@@ -24,7 +27,7 @@ void destroy_res(J_thread_results* res){
 J_thread_results* job_batch_training(float** x_train, unsigned int* y_train, float* w, float bias, unsigned int r, Batch* batch){
 	//Create struct to store result of batch training (batch,J_weights[],J_bias)
 	J_thread_results* res = calloc(1,sizeof(J_thread_results));
-	res->batch= batch;
+	res->batch = batch;
 	res->J_bias = 0.0;
 	res->J_weight = calloc(r,sizeof(float)); assert(res->J_weight!=NULL);
 	
@@ -33,7 +36,7 @@ J_thread_results* job_batch_training(float** x_train, unsigned int* y_train, flo
 
 		float sum_weights = 0.0;
 
-		//____ GRADIENT DESCENT __________
+		//____ BATCH GRADIENT DESCENT __________
 		for (unsigned int i = batch->start; i < batch->end; i++){
 		
 			// compute the predicted value

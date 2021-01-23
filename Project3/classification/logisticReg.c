@@ -46,7 +46,7 @@ bool* predict( float** x_valid, unsigned int* y_valid, float* w, float bias, uns
 	return correctClass;
 }
 
-void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* bias, unsigned int n, unsigned int r, float eta, float epsilon){
+void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* bias, unsigned int n, unsigned int r, float eta, float epsilon){
 	
 	/* Note: At this point we use Stochastic Gradient Descent if you want to use non-stochastic 
 	and non-batch Gradient Descent uncomment the commented lines under the :___ GRADIENT DESCENT __*/ 
@@ -60,12 +60,13 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
   	// do EPOCH_NUM of epochs
 	//for( unsigned int epoch = 0; epoch < EPOCH_NUM; epoch++ ){
 	for( unsigned int epoch = 0; epoch < 2; epoch++ ){
-		printf("\n");
 	//while( stopTraining == false ){
 		//initialize scheduler --> create threads
 		//JobScheduler* js = initialize_scheduler(5);
 		JobScheduler* js = initialize_scheduler(NUM_OF_THREADS);
 		node* all_thread_results = NULL;
+
+		J_bias = 0.0;
 
 		//create and submit jobs for threads
 		unsigned int num_of_batches = 0;
@@ -79,7 +80,7 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 			if( b+BATCH_SIZE < n ) batch->end = b+BATCH_SIZE; 
 			else batch->end = n;
 
-			create_job(job, &all_thread_results,x_train, y_train, w, *bias, r, batch);
+			create_job(job, &all_thread_results,x_train, y_train, *w, *bias, r, batch);
 			submit_job(js,(void*)job); //1st submit wakes thread
 
 			num_of_batches++;
@@ -105,21 +106,18 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 		// update bias:
 		*bias = *bias - eta*J_bias;
 		
-		/*// update other weights
-		float weightOld;
+		// update other weights
+		//float weightOld;
 		// if norm(w_new - w_prev) < epsilon the training will stop
-		stopTraining = true;*/
+		//stopTraining = true;
 
 		for( unsigned int j = 0; j < r; j++ ){
 			// keep old weight j
-			/*weightOld = w[j];*/
-			// update new weight j
-		    w[j] = w[j] - eta*J_weight[j];
-
-		    /*if( abs(w[j] - weightOld) > epsilon ){
-		    	// some weights need more training
-		    	stopTraining = false;  
-		    }*/
+			//weightOld = w[j];
+		    (*w)[j] = (*w)[j] - eta*J_weight[j];
+		    //if( abs(w[j] - weightOld) > epsilon ){// some weights need more training
+		    //	stopTraining = false;  
+		    //}
 		}
 		
 		destroyListOfWordInfo(all_thread_results, (void*)destroy_res);

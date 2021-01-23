@@ -283,7 +283,7 @@ int main(int argc, char* argv[]){
 	float epsilon = 0.01; //small small number
 	
 	printf("\nTrain model using batch gradient_descent\n");
-	gradient_descent(x_train, y_train, w, &bias, size_of_train_set, voc_size, eta, epsilon);
+	gradient_descent(x_train, y_train, &w, &bias, size_of_train_set, voc_size, eta, epsilon);
 	printf("************ BIAS: %f ****************\n",bias);
 	makeResultFile(w,vocabulary);
 
