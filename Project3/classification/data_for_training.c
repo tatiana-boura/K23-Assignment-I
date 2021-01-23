@@ -66,6 +66,9 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
     node* outter_clique_list=entryTable_j->clique;
     node* inner_clique_list; node* outter_notClique_list;
 
+    unsigned int choose = 0;
+
+
     // takes an item of the clique
     while( outter_clique_list!=NULL ){
         /* and begins pairing it with the items in clique that follow 
@@ -81,7 +84,11 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                 addtoHTPair(htPair, outter_clique->path, inner_clique->path, BUCKETSIZEPAIR );
                 //allocate memory in arrays for difference
                 
-                for( unsigned int k = 0; k < 7; k++ ){
+                choose++;
+
+                if( choose%10 == 0 ){
+
+                //for( unsigned int k = 0; k < 7; k++ ){
                     (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));
                     //printf("1 cliques : [%s] - [%s]\n",outter_clique->path,inner_clique->path );
                     for( unsigned int k = 0; k<vocabSize; k++ ){
@@ -101,12 +108,12 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
         }
         outter_clique_list=outter_clique_list->next;
     }  
-
+    /*
     // for each item of the clique
     outter_clique_list=entryTable_j->clique;
     while( outter_clique_list!=NULL ){
-        /* and begins pairing it with the items in the anti-clique 
-        (difference between current (outter) and inner_notClique) */
+        // and begins pairing it with the items in the anti-clique 
+        // (difference between current (outter) and inner_notClique)
         outter_notClique_list=entryTable_j->notClique;
         bucketEntry* outter_clique = outter_clique_list->data;
         // start getting not cliques
@@ -144,7 +151,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
         }        
         outter_clique_list=outter_clique_list->next; 
     } 
-
+*/
     return;
 }
 

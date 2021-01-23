@@ -32,7 +32,7 @@ void *threadFunction(void* args){
 			
 			if(active_readers==1){ // only one reads from buff	
 				pthread_mutex_lock(&(job_sch->wrt));
-				printf("Reading [%ld]\n",pthread_self());
+				//printf("Reading [%ld]\n",pthread_self());
 				_data_ = pop(&(job_sch->q));
 
 			}
@@ -50,12 +50,16 @@ void *threadFunction(void* args){
 		pthread_mutex_unlock(&(job_sch->mtx));
 
 		if(_data_){
-			//printf("Thread [%ld] got data: [%d-%d]\n",pthread_self(),((Batch*)_data_->data)->start, ((Batch*)_data_->data)->end );
+			Batch* t = ((Job*)_data_->data)->batch;
+			printf("Thread [%ld] got data: [%d-%d]\n",pthread_self(),t->start, t->end );
 			// batch | j_weights[] |  J_bias
 			((Job*)_data_->data)->batch_training = job_batch_training;
 			//J_thread_results* job_batch_training(float** x_train, unsigned int* y_train, float* w, float bias, unsigned int r, Batch* batch);
 			J_thread_results* result= ((Job*)_data_->data)->batch_training(((Job*)_data_->data)->x_train,((Job*)_data_->data)->y_train,((Job*)_data_->data)->w,((Job*)_data_->data)->bias,((Job*)_data_->data)->r,((Job*)_data_->data)->batch);
-			((Job*)_data_->data)->all_thread_results = appendList(((Job*)_data_->data)->all_thread_results,(J_thread_results*)result);
+			//printf("job scheduler after batch training\n");
+			pthread_mutex_lock(&(job_sch->res_ins));
+			*(((Job*)_data_->data)->all_thread_results) = appendList(*(((Job*)_data_->data)->all_thread_results),(J_thread_results*)result);
+			pthread_mutex_unlock(&(job_sch->res_ins));
 		}
 			
 
@@ -65,7 +69,7 @@ void *threadFunction(void* args){
 		}
 	}
 
-	printf("Leaving [%ld]\n",pthread_self());
+	//printf("Leaving [%ld]\n",pthread_self());
 	
 	pthread_exit(NULL);
 	return NULL;
@@ -86,6 +90,7 @@ JobScheduler* initialize_scheduler(int execution_threads){
 	// initialize mutexes and conditions
 	pthread_mutex_init(&(job_sch->mtx), NULL); pthread_cond_init(&(job_sch->cond), NULL);
 	pthread_mutex_init(&(job_sch->wrt), NULL); pthread_mutex_init(&(job_sch->rd), NULL);
+	pthread_mutex_init(&(job_sch->res_ins), NULL);
 
 	job_sch->last_job = false;
 	// initialize queue
@@ -130,10 +135,11 @@ void destroy_scheduler(JobScheduler* sch){
 	//destroy mutex & cond
 	pthread_mutex_destroy(&(sch->mtx)); pthread_cond_destroy(&(sch->cond));
 	pthread_mutex_destroy(&(sch->wrt)); pthread_mutex_destroy(&(sch->rd));
+	pthread_mutex_destroy(&(sch->res_ins));
 
 	free(sch->tids); sch->tids = NULL;
 	//circqueueDealloc(sch->cb);
-	destroyListOfStrings(sch->q, true );
+	destroyListOfStrings(sch->q, false );
 	free(sch); sch=NULL;
 
 	return;

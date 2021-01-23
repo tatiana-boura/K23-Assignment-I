@@ -21,6 +21,7 @@ typedef struct JobScheduler{
 	pthread_mutex_t mtx;
 	pthread_mutex_t wrt;
 	pthread_mutex_t rd;
+	pthread_mutex_t res_ins;
 	pthread_cond_t cond;
 
 	bool last_job;
