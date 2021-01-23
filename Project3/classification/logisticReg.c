@@ -58,8 +58,8 @@ void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* 
 	//bool stopTraining=false;
 
   	// do EPOCH_NUM of epochs
-	//for( unsigned int epoch = 0; epoch < EPOCH_NUM; epoch++ ){
-	for( unsigned int epoch = 0; epoch < 2; epoch++ ){
+	for( unsigned int epoch = 0; epoch < EPOCH_NUM; epoch++ ){
+	//for( unsigned int epoch = 0; epoch < 2; epoch++ ){
 	//while( stopTraining == false ){
 		//initialize scheduler --> create threads
 		//JobScheduler* js = initialize_scheduler(5);
@@ -68,10 +68,12 @@ void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* 
 
 		J_bias = 0.0;
 
+		printf("%d' epoch\n",epoch+1 );
+
+
 		//create and submit jobs for threads
 		unsigned int num_of_batches = 0;
 		for(unsigned int b=0; b<n ; b+=BATCH_SIZE ){
-		//for(unsigned int b=0; b+BATCH_SIZE<n ; b+=BATCH_SIZE ){
 
 			Job* job = calloc(1,sizeof(Job));
 			Batch* batch=calloc(1,sizeof(batch));
@@ -89,22 +91,21 @@ void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* 
 		js->last_job = true;
 		wait_all_tasks_finish(js);
 
-		for(unsigned int j=0 ; j<r ; j++){
-			node* temp = all_thread_results;
+		node* temp = all_thread_results;
 			while(temp){
-				J_thread_results* res = (J_thread_results*)temp->data;	
-				J_weight[j] += res->J_weight[j];
-				if(j==0) J_bias += res->J_bias;	
-				temp = temp->next;
+				J_thread_results* res = (J_thread_results*)temp->data;
+				for(unsigned int j=0 ; j<r ; j++){
+					J_weight[j] += res->J_weight[j];
+					temp = temp->next;
+				}	
+				J_bias += res->J_bias;
 			}
-			J_weight[j] = J_weight[j]/(float)num_of_batches;				
-		}
 
 		J_bias = J_bias/(float)num_of_batches;
 		
 		// simultaneous update -- because it is more efficient
 		// update bias:
-		*bias = *bias - eta*J_bias;
+		*bias = *bias - eta*(J_bias/(float)num_of_batches);
 		
 		// update other weights
 		//float weightOld;
@@ -114,7 +115,7 @@ void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* 
 		for( unsigned int j = 0; j < r; j++ ){
 			// keep old weight j
 			//weightOld = w[j];
-		    (*w)[j] = (*w)[j] - eta*J_weight[j];
+		    (*w)[j] = (*w)[j] - eta*(J_weight[j]/(float)num_of_batches);
 		    //if( abs(w[j] - weightOld) > epsilon ){// some weights need more training
 		    //	stopTraining = false;  
 		    //}
