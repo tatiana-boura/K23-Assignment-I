@@ -273,36 +273,66 @@ int main(int argc, char* argv[]){
 	unsigned int* y_test;
 	unsigned int size_of_test_set;
 
+	float** x_not_yet_trained;
+	unsigned int* y_not_yet_trained;
+	unsigned int num_not_yet_trained;
+
 	printf("\nCreate train sets & valid x,y sets\n");
-	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid, &x_test, &size_of_test_set, &y_test );
+	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid, &x_test, &size_of_test_set, &y_test, &x_not_yet_trained, &y_not_yet_trained, &num_not_yet_trained );
 	
 	//------call gradient_descent() to train model-----------------------------------------------------------------------
 	float bias=0.0;
 	float* w = calloc(voc_size,sizeof(float));
 	float eta = 0.05; //0.0 < eta < 1.0
 	float epsilon = 0.01; //small small number
-	
-	printf("\nTrain model using batch gradient_descent\n");
-	gradient_descent(x_train, y_train, &w, &bias, size_of_train_set, voc_size, eta, epsilon);
-	printf("************ BIAS: %f ****************\n",bias);
-	makeResultFile(w,vocabulary);
 
-	//-----------predict-------------------------------------------------------------------------------------------------
-	printf("\nPredict class of x_valid\n");
-	bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
-	unsigned int t = 0;
-	unsigned int f = 0;
+	float threshold = 0.1;
 
-	for(int c=0; c<size_of_valid_set ; c++){
-		if(ans[c] == true) t++;
-		else f++;
+	while(threshold<0.5){
+
+		printf("\nTrain model using batch gradient_descent\n");
+		gradient_descent(x_train, y_train, &w, &bias, size_of_train_set, voc_size, eta, epsilon);
+		//printf("************ BIAS: %f ****************\n",bias);
+
+		float* probabilities = predict_proba(x_not_yet_trained, w, bias, num_not_yet_trained, voc_size);
+		for( unsigned int i=0; i<num_not_yet_trained; i++){
+			if( (probabilities[i]<threshold) || (probabilities[i]> 1-threshold) ){
+				// add to training set
+				size_of_train_set++;
+                (*x_array) = realloc((*x_array),(size_of_train_set+1)*sizeof(float*));
+                (*y_array) = realloc((*y_array),(size_of_train_set+1)*sizeof(unsigned int));
+
+                x_array[size_of_train_set-1] = x_not_yet_trained[i];
+                if( probabilities[i]<threshold) y_array[size_of_train_set-1] = 0;
+                else if( probabilities[i]> 1-threshold ) y_array[size_of_train_set-1] = 1;
+
+                // ERASE FROM x_not_yet_trained !!!!!
+                
+			}
+		}
+
+		//____________validation-inference__________________________________________________
+		printf("\nPredict class of x_valid\n");
+		bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
+		unsigned int t = 0;
+		unsigned int f = 0;
+
+		for(int c=0; c<size_of_valid_set ; c++){
+			if(ans[c] == true) t++;
+			else f++;
+		}
+
+		free(ans); ans=NULL;
+
+		printf("\nScore: %f\n", ((float)t/(float)size_of_valid_set) );
+		printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
+		//__________________________________________________________________________________
+
+		threshold += 0.1;
 	}
+	
 
-	free(ans); ans=NULL;
-
-	printf("\nScore: %f\n", ((float)t/(float)size_of_valid_set) );
-	printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
-
+	makeResultFile(w,vocabulary);
 	free(w); w=NULL;
 	
 	

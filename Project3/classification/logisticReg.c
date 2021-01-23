@@ -30,7 +30,6 @@ bool* predict( float** x_valid, unsigned int* y_valid, float* w, float bias, uns
 	// predict class of x_valid
 	/* return a boolean array where: 
 	   true -- classified correctly, false -- not classified correctly */
-
 	bool* correctClass = calloc(n,sizeof(bool)); assert( correctClass != NULL );
 
 	for( unsigned int i=0; i<n; i++ ){
@@ -42,8 +41,18 @@ bool* predict( float** x_valid, unsigned int* y_valid, float* w, float bias, uns
 
 		correctClass[i] = (class == y_valid[i]);
 	}
-
 	return correctClass;
+}
+
+float* predict_proba( float** x_valid, float* w, float bias, unsigned int n, unsigned int r ){
+	// predict class of x_valid
+	/* return a probability array */
+	float* probabilities = calloc(n,sizeof(float)); assert( probabilities != NULL );
+
+	for( unsigned int i=0; i<n; i++ ){
+		probabilities[i] = hypothesis(x_valid[i], w, bias, r);
+	}
+	return probabilities;
 }
 
 void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* bias, unsigned int n, unsigned int r, float eta, float epsilon){
@@ -68,8 +77,7 @@ void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* 
 
 		J_bias = 0.0;
 
-		printf("%d' epoch\n",epoch+1 );
-
+		//printf("%d' epoch\n",epoch+1 );
 
 		//create and submit jobs for threads
 		unsigned int num_of_batches = 0;
@@ -92,16 +100,14 @@ void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* 
 		wait_all_tasks_finish(js);
 
 		node* temp = all_thread_results;
-			while(temp){
-				J_thread_results* res = (J_thread_results*)temp->data;
-				for(unsigned int j=0 ; j<r ; j++){
-					J_weight[j] += res->J_weight[j];
-					temp = temp->next;
-				}	
-				J_bias += res->J_bias;
-			}
-
-		J_bias = J_bias/(float)num_of_batches;
+		while(temp){
+			J_thread_results* res = (J_thread_results*)temp->data;
+			for(unsigned int j=0 ; j<r ; j++){
+				J_weight[j] += res->J_weight[j];		
+			}	
+			J_bias += res->J_bias;
+			temp = temp->next;
+		}
 		
 		// simultaneous update -- because it is more efficient
 		// update bias:
