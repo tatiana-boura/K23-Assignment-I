@@ -2,8 +2,9 @@
 
 //#include <time.h>
 
-#define NUM_OF_THREADS 50
+#define NUM_OF_THREADS 100
 #define BATCH_SIZE 1024
+#define EPOCH_NUM 10
 
 float innerProduct(float* x_i, float* w, unsigned int r){
 
@@ -51,66 +52,77 @@ void gradient_descent(float** x_train, unsigned int* y_train, float* w, float* b
 	and non-batch Gradient Descent uncomment the commented lines under the :___ GRADIENT DESCENT __*/ 
 
 	// train the model
-	float _hypothesis_, sum_weights;
-	float sum_bias;
-
 	float* J_weight = calloc(r,sizeof(float)); assert(J_weight!=NULL);
 	float J_bias;
 
-	bool stopTraining=false;
+	//bool stopTraining=false;
 
-	//srand(time(NULL));
-  	
-
-  	// norm(w_new - w_prev) < epsilon
-	while( stopTraining == false ){
+  	// do EPOCH_NUM of epochs
+	//for( unsigned int epoch = 0; epoch < EPOCH_NUM; epoch++ ){
+	for( unsigned int epoch = 0; epoch < 2; epoch++ ){
+		printf("\n");
+	//while( stopTraining == false ){
 		//initialize scheduler --> create threads
+		//JobScheduler* js = initialize_scheduler(5);
 		JobScheduler* js = initialize_scheduler(NUM_OF_THREADS);
 		node* all_thread_results = NULL;
 
 		//create and submit jobs for threads
+		unsigned int num_of_batches = 0;
 		for(unsigned int b=0; b<n ; b+=BATCH_SIZE ){
-			Job job;
-			Batch batch;
-			batch.start = b; batch.end = b+BATCH_SIZE; 
-			create_job(&job, &all_thread_results,x_train, y_train, w, *bias, r, &batch);
-			submit_job(js,(void*)(&job)); //1st submit wakes thread
+		//for(unsigned int b=0; b+BATCH_SIZE<n ; b+=BATCH_SIZE ){
+
+			Job* job = calloc(1,sizeof(Job));
+			Batch* batch=calloc(1,sizeof(batch));
+			//Batch batch;
+			batch->start = b;
+			if( b+BATCH_SIZE < n ) batch->end = b+BATCH_SIZE; 
+			else batch->end = n;
+
+			create_job(job, &all_thread_results,x_train, y_train, w, *bias, r, batch);
+			submit_job(js,(void*)job); //1st submit wakes thread
+
+			num_of_batches++;
 		}	
 		//wait till all the threads return
+		js->last_job = true;
 		wait_all_tasks_finish(js);
 
-		node* temp = all_thread_results;
-		while(temp){
-			J_thread_results* res = (J_thread_results*)temp->data;
-			for(unsigned int k=0 ; k<r ; k++){
-				printf("%f ", res->J_weight[k]);
+		for(unsigned int j=0 ; j<r ; j++){
+			node* temp = all_thread_results;
+			while(temp){
+				J_thread_results* res = (J_thread_results*)temp->data;	
+				J_weight[j] += res->J_weight[j];
+				if(j==0) J_bias += res->J_bias;	
+				temp = temp->next;
 			}
-			printf("\n\n");
-			temp = temp->next;
+			J_weight[j] = J_weight[j]/(float)num_of_batches;				
 		}
+
+		J_bias = J_bias/(float)num_of_batches;
 		
-		/*
 		// simultaneous update -- because it is more efficient
 		// update bias:
 		*bias = *bias - eta*J_bias;
-		// update other weights
+		
+		/*// update other weights
 		float weightOld;
 		// if norm(w_new - w_prev) < epsilon the training will stop
-		stopTraining = true;
+		stopTraining = true;*/
 
 		for( unsigned int j = 0; j < r; j++ ){
 			// keep old weight j
-			weightOld = w[j];
+			/*weightOld = w[j];*/
 			// update new weight j
 		    w[j] = w[j] - eta*J_weight[j];
 
-		    if( abs(w[j] - weightOld) > epsilon ){
+		    /*if( abs(w[j] - weightOld) > epsilon ){
 		    	// some weights need more training
 		    	stopTraining = false;  
-		    }
+		    }*/
 		}
-		*/
 		
+		destroyListOfWordInfo(all_thread_results, (void*)destroy_res);
 		destroy_scheduler(js);
 	}
 

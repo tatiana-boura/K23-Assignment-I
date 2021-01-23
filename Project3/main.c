@@ -179,6 +179,7 @@ int main(int argc, char* argv[]){
 	}*/
 
 	// only using tfidf representation
+	printf("\n");
 	voc_size = make_tfidf_vectorsDROPnRECOMPUTE(ht,BUCKETSIZE,voc_size,&vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
 
 	//___the hash table has now been created -> start making the cliques__________________________________________________
@@ -279,15 +280,15 @@ int main(int argc, char* argv[]){
 	float bias=0.0;
 	float* w = calloc(voc_size,sizeof(float));
 	float eta = 0.05; //0.0 < eta < 1.0
-	float epsilon = 0.01; //small small number (?)
+	float epsilon = 0.01; //small small number
 	
-	printf("\nTrain model using (stochastic) gradient_descent\n");
+	printf("\nTrain model using batch gradient_descent\n");
 	gradient_descent(x_train, y_train, w, &bias, size_of_train_set, voc_size, eta, epsilon);
 	printf("************ BIAS: %f ****************\n",bias);
 	makeResultFile(w,vocabulary);
 
 	//-----------predict-------------------------------------------------------------------------------------------------
-	/*printf("\nPredict class of x_valid\n");
+	printf("\nPredict class of x_valid\n");
 	bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
 	unsigned int t = 0;
 	unsigned int f = 0;
@@ -303,7 +304,7 @@ int main(int argc, char* argv[]){
 	printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
 
 	free(w); w=NULL;
-	*/
+	
 	
 	//---free TDIDF array---------
 	for(unsigned int i=0;i<n;i++){
