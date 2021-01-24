@@ -135,7 +135,6 @@ void destroy_scheduler(JobScheduler* sch){
 	pthread_mutex_destroy(&(sch->res_ins));
 
 	free(sch->tids); sch->tids = NULL;
-	//circqueueDealloc(sch->cb);
 	destroyListOfStrings(sch->q, false );
 	free(sch); sch=NULL;
 
