@@ -159,7 +159,7 @@ int main(int argc, char* argv[]){
 
     // start making tfidf and bow representations
 
-	/*printf("\nType 'b' for BoW implementation or 't' for tf-idf implementation\n");
+	printf("\nType 'b' for BoW implementation or 't' for tf-idf implementation\n");
 	bool flag=true;
 	char c;
 	scanf("%c",&c);
@@ -176,11 +176,7 @@ int main(int argc, char* argv[]){
 			flag=false;
 		}else{ if(c !='\n'){printf("Please type 'b' or 't'\n");}}
 		scanf("%c",&c);
-	}*/
-
-	// only using tfidf representation
-	printf("\n");
-	voc_size = make_tfidf_vectorsDROPnRECOMPUTE(ht,BUCKETSIZE,voc_size,&vocabulary,json_num,htVOC,BUCKETSIZEVOC  ); 
+	}
 
 	//___the hash table has now been created -> start making the cliques__________________________________________________
 
@@ -294,7 +290,7 @@ int main(int argc, char* argv[]){
 
 	printf("\nStart retraining using batch gradient_descent\n");
 
-	float threshold = 0.1;
+	float threshold = 0.05;
 	while(threshold<0.5){
 
 		printf("\ncurrent size of training set: [%d]\n",size_of_train_set );
@@ -329,14 +325,13 @@ int main(int argc, char* argv[]){
 			if(ans[c] == true) t++;
 			else f++;
 		}
-
 		free(ans); ans=NULL;
 
 		printf("\nScore: %f\n", ((float)t/(float)size_of_valid_set) );
 		printf("total: [%d], true: [%d], false: [%d]\n", size_of_valid_set,t,f);
 		//__________________________________________________________________________________
 
-		threshold += 0.1;
+		threshold += 0.2;
 	}
 	
 
@@ -350,11 +345,6 @@ int main(int argc, char* argv[]){
 	}
 	free(x_array); free(y_array);
 
-	for(unsigned int i=0;i<num_not_yet_trained;i++){
-		if(!used_for_training[i]){
-			free(x_not_yet_trained[i]); x_not_yet_trained[i]=NULL;
-		}
-	}
 	free(x_not_yet_trained); x_not_yet_trained=NULL;
 	free(y_not_yet_trained); y_not_yet_trained=NULL;
 

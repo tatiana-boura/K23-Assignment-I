@@ -82,7 +82,10 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                 // mark it as visited
                 addtoHTPair(htPair, outter_clique->path, inner_clique->path, BUCKETSIZEPAIR );
                 //allocate memory in arrays for difference
+
+                //choose++;
                 
+                //f(choose%30==0){
                 //for( unsigned int k = 0; k < 7; k++ ){
                 (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));
                 //printf("1 cliques : [%s] - [%s]\n",outter_clique->path,inner_clique->path );
@@ -97,6 +100,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                 //reallocate memory in arrays for next difference
                 (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
                 (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
+                //}
                 
             }
             inner_clique_list=inner_clique_list->next;

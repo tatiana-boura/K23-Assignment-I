@@ -1,6 +1,6 @@
 #include "logisticReg.h"
 
-#define NUM_OF_THREADS 10
+#define NUM_OF_THREADS 100
 #define BATCH_SIZE 1024
 #define EPOCH_NUM 5
 
