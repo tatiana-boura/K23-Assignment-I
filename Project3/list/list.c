@@ -14,7 +14,7 @@ node* appendListEnd(node* n, void* data){
         n = malloc(sizeof(node)+1);
         n->data=data;
         n->next=NULL;
-    }else n->next = appendList(n->next,data);
+    }else n->next = appendListEnd(n->next,data);
 
     return n;
 }
