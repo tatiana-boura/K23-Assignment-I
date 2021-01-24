@@ -83,7 +83,6 @@ void test_threads(void){
         a thread (found in list of results)*/
         bool found = false;
         node* temp = all_thread_results;
-        printf("In list\n");
         while(temp!=NULL){
             if(((unsigned int)(temp->data)) == input_jobs[i])
                 found = true;
