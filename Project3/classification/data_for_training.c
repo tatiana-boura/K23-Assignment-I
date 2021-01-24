@@ -66,7 +66,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
     node* outter_clique_list=entryTable_j->clique;
     node* inner_clique_list; node* outter_notClique_list;
 
-    //unsigned int choose = 0;
+    unsigned int choose = 0;
 
     // takes an item of the clique
     while( outter_clique_list!=NULL ){
@@ -83,8 +83,8 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                 addtoHTPair(htPair, outter_clique->path, inner_clique->path, BUCKETSIZEPAIR );
                 //allocate memory in arrays for difference
                 
-                //choose++;
-                //if( choose%10 == 0 ){
+                choose++;
+                if( choose%10 == 0 ){
 
                 //for( unsigned int k = 0; k < 7; k++ ){
                     (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));
@@ -100,13 +100,13 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                     //reallocate memory in arrays for next difference
                     (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
                     (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
-                //} 
+                } 
             }
             inner_clique_list=inner_clique_list->next;
         }
         outter_clique_list=outter_clique_list->next;
     }  
-    
+    /*
     // for each item of the clique
     outter_clique_list=entryTable_j->clique;
     while( outter_clique_list!=NULL ){
@@ -148,7 +148,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
             outter_notClique_list = outter_notClique_list->next;
         }        
         outter_clique_list=outter_clique_list->next; 
-    } 
+    } */
 
     return;
 }
