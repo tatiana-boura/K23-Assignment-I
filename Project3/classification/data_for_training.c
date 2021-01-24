@@ -66,7 +66,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
     node* outter_clique_list=entryTable_j->clique;
     node* inner_clique_list; node* outter_notClique_list;
 
-    unsigned int choose = 0;
+    //unsigned int choose = 0;
 
     // takes an item of the clique
     while( outter_clique_list!=NULL ){
@@ -83,30 +83,27 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
                 addtoHTPair(htPair, outter_clique->path, inner_clique->path, BUCKETSIZEPAIR );
                 //allocate memory in arrays for difference
                 
-                choose++;
-                if( choose%10 == 0 ){
-
                 //for( unsigned int k = 0; k < 7; k++ ){
-                    (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));
-                    //printf("1 cliques : [%s] - [%s]\n",outter_clique->path,inner_clique->path );
-                    for( unsigned int k = 0; k<vocabSize; k++ ){
-                        //calculate difference |outter->vector-inner_clique->vector| 
-                        float abs_dif = fabs(outter_clique->vector[k]-inner_clique->vector[k]);
-                        (*x_array)[(*n)][k] = abs_dif; //add to x_array 
-                        (*y_array)[(*n)]=1; //store 1 to y_array -- same clique
-                        //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->vector[k],inner_clique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
-                    }
-                    (*n)++;
-                    //reallocate memory in arrays for next difference
-                    (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
-                    (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
-                } 
+                (*x_array)[(*n)] = calloc(vocabSize,sizeof(float));
+                //printf("1 cliques : [%s] - [%s]\n",outter_clique->path,inner_clique->path );
+                for( unsigned int k = 0; k<vocabSize; k++ ){
+                    //calculate difference |outter->vector-inner_clique->vector| 
+                    float abs_dif = fabs(outter_clique->vector[k]-inner_clique->vector[k]);
+                    (*x_array)[(*n)][k] = abs_dif; //add to x_array 
+                    (*y_array)[(*n)]=1; //store 1 to y_array -- same clique
+                    //printf("|%s[%d]-%s[%d]| = |%f-%f| = %f  %d\n",outter_clique->path,k,inner_clique->path,k,outter_clique->vector[k],inner_clique->vector[k],(*x_array)[(*n)][k],(*y_array)[(*n)]);
+                }
+                (*n)++;
+                //reallocate memory in arrays for next difference
+                (*x_array) = realloc((*x_array),((*n)+1)*sizeof(float*));
+                (*y_array) = realloc((*y_array),((*n)+1)*sizeof(unsigned int));
+                
             }
             inner_clique_list=inner_clique_list->next;
         }
         outter_clique_list=outter_clique_list->next;
     }  
-    /*
+    
     // for each item of the clique
     outter_clique_list=entryTable_j->clique;
     while( outter_clique_list!=NULL ){
@@ -148,9 +145,14 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
             outter_notClique_list = outter_notClique_list->next;
         }        
         outter_clique_list=outter_clique_list->next; 
-    } */
+    }
 
     return;
+}
+
+void resolve_transitivity_issues(float*** x_train,unsigned int** y_train){ 
+    // under construction
+    return; 
 }
 
 void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** valid_set, unsigned int* m, unsigned int** y_train, unsigned int** y_valid, float*** test_set, unsigned int* z, unsigned int** y_test, float*** x_not_yet_trained, unsigned int** y_not_yet_trained, unsigned int* num_not_yet_trained ){
@@ -181,8 +183,8 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
     (*test_set) = calloc(*z, sizeof(float*));
     (*y_test) = calloc(*z, sizeof(float*));
 
+    // this array will be used for retraining
     *num_not_yet_trained = *m + *z;
-
     (*x_not_yet_trained) = calloc(*num_not_yet_trained, sizeof(float*));
     (*y_not_yet_trained) = calloc(*num_not_yet_trained, sizeof(float*));
 
@@ -219,23 +221,25 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
             _z_++;
         }
     }
-    /* not new memory for line -- use pointer from initial array*/
+    /* not new memory for line -- use pointer from initial array */
     _n_=0; _m_=0; _z_=0; _num_not_yet_trained_=0;
     for( unsigned int j = 0; j <total_size; j++ ){
         if( visitedNumbers[j] == 0 ){ 
+            // this instance belongs in training set
             (*train_set)[_n_] = total_set[j];
             (*y_train)[_n_++] = total_y[j];
         }else if( visitedNumbers[j] == 1 ){
+            // this instance belongs in validation set
             (*valid_set)[_m_] = total_set[j];
             (*y_valid)[_m_++] = total_y[j];
-
+            // this instance will alse be used for retraining
             (*x_not_yet_trained)[_num_not_yet_trained_] = total_set[j];
             (*y_not_yet_trained)[_num_not_yet_trained_++] = total_y[j];
-
         }else if( visitedNumbers[j] == 2 ){
+            // this instance belongs in test set
             (*test_set)[_z_] = total_set[j];
             (*y_test)[_z_++] = total_y[j];
-
+            // this instance will alse be used for retraining
             (*x_not_yet_trained)[_num_not_yet_trained_] = total_set[j];
             (*y_not_yet_trained)[_num_not_yet_trained_++] = total_y[j];
         }
