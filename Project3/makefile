@@ -63,11 +63,13 @@ DEF_SRC = ./list/list.c ../Project2/word_info/word_info.c  ../Project2/vocabular
 OUTS    = test_hash_table test_list test_word_info test_vocabulary test_hash_table_pairs test_tfidf_bow 
 
 tests:	
-	cc -g ../Project2/unit_testing/test_hash_table.c $(DEF_SRC) -o test_hash_table -lm
+	cc -g ./unit_testing/test_threads.c $(DEF_SRC) -o test_threads -lm -pthread
 	cc -g ./unit_testing/test_list.c $(DEF_SRC) -o test_list -lm
+	cc -g ../Project2/unit_testing/test_hash_table.c $(DEF_SRC) -o test_hash_table -lm
 	cc -g ../Project2/unit_testing/test_word_info.c $(DEF_SRC) -o test_word_info -lm
 	cc -g ../Project2/unit_testing/test_vocabulary.c $(DEF_SRC) -o test_vocabulary -lm
 	cc -g ../Project2/unit_testing/test_hash_table_pairs.c $(DEF_SRC) -o test_hash_table_pairs -lm
+	cc -g ../Project2/unit_testing/test_tfidf_bow.c $(DEF_SRC) -o test_tfidf_bow -lm
 	cc -g ../Project2/unit_testing/test_tfidf_bow.c $(DEF_SRC) -o test_tfidf_bow -lm
 
 clean:
