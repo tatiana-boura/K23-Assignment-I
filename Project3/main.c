@@ -276,53 +276,54 @@ int main(int argc, char* argv[]){
 	float** x_not_yet_trained;
 	unsigned int* y_not_yet_trained;
 	unsigned int num_not_yet_trained;
+	
+	printf("\nCreate train sets & valid x,y sets\n");
+	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid, &x_test, &size_of_test_set, &y_test, &x_not_yet_trained, &y_not_yet_trained, &num_not_yet_trained );
+	
 	// Table to store the instances originally used for testing/validation
 	// that ended up being used for retraining
 	bool used_for_training[num_not_yet_trained];
 	for(int i=0; i<num_not_yet_trained; i++)
 		used_for_training[i] = false;
 
-	printf("\nCreate train sets & valid x,y sets\n");
-	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid, &x_test, &size_of_test_set, &y_test, &x_not_yet_trained, &y_not_yet_trained, &num_not_yet_trained );
-	
 	//------call gradient_descent() to (re)-train model-----------------------------------------------------------------------
 	float bias=0.0;
 	float* w = calloc(voc_size,sizeof(float));
 	float eta = 0.05; //0.0 < eta < 1.0
 	float epsilon = 0.01; //small small number
 
-	float threshold = 0.1;
+	printf("\nStart retraining using batch gradient_descent\n");
 
+	float threshold = 0.1;
 	while(threshold<0.5){
 
-		printf("\nTrain model using batch gradient_descent\n");
-		gradient_descent(x_train, y_train, &w, &bias, size_of_train_set, voc_size, eta, epsilon);
-		//printf("************ BIAS: %f ****************\n",bias);
+		printf("\ncurrent size of training set: [%d]\n",size_of_train_set );
 
+		gradient_descent(x_train, y_train, &w, &bias, size_of_train_set, voc_size, eta, epsilon);
+		// get predictions for current instanced not in this training set
 		float* probabilities = predict_proba(x_not_yet_trained, w, bias, num_not_yet_trained, voc_size);
 		for( unsigned int i=0; i<num_not_yet_trained; i++){
 			if( ((probabilities[i]<threshold) || (probabilities[i]> 1-threshold)) && !used_for_training[i] ){
 				// add to training set
 				size_of_train_set++;
-                x_array = realloc(x_array,(size_of_train_set+1)*sizeof(float*));
-                y_array = realloc(y_array,(size_of_train_set+1)*sizeof(unsigned int));
+                x_train = realloc(x_train,size_of_train_set*sizeof(float*));
+                y_train = realloc(y_train,size_of_train_set*sizeof(unsigned int));
+                // assign correct values
+                x_train[size_of_train_set-1] = x_not_yet_trained[i];
+                if( probabilities[i]<threshold) y_train[size_of_train_set-1] = 0;
+                else if( probabilities[i]> 1-threshold ) y_train[size_of_train_set-1] = 1;
 
-                x_array[size_of_train_set-1] = x_not_yet_trained[i];
-                if( probabilities[i]<threshold) y_array[size_of_train_set-1] = 0;
-                else if( probabilities[i]> 1-threshold ) y_array[size_of_train_set-1] = 1;
-
-				used_for_training[i] = true;
-                
+				used_for_training[i] = true;   
 			}
+			resolve_transitivity_issues(&x_train,&y_train);
 		}
 
 		free(probabilities);probabilities=NULL;
 
 		//____________validation-inference__________________________________________________
-		printf("\nPredict class of x_valid\n");
+		printf("\nValidation for current loop of retraining\n");
 		bool* ans = predict( x_valid, y_valid, w, bias, size_of_valid_set, voc_size);
-		unsigned int t = 0;
-		unsigned int f = 0;
+		unsigned int t = 0; unsigned int f = 0;
 
 		for(int c=0; c<size_of_valid_set ; c++){
 			if(ans[c] == true) t++;
