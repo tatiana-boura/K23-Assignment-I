@@ -2,9 +2,9 @@
 
 //#include <time.h>
 
-#define NUM_OF_THREADS 100
+#define NUM_OF_THREADS 10
 #define BATCH_SIZE 1024
-#define EPOCH_NUM 10
+#define EPOCH_NUM 5
 
 float innerProduct(float* x_i, float* w, unsigned int r){
 
@@ -77,7 +77,7 @@ void gradient_descent(float** x_train, unsigned int* y_train, float** w, float* 
 
 		J_bias = 0.0;
 
-		//printf("%d' epoch\n",epoch+1 );
+		printf("%d' epoch\n",epoch+1 );
 
 		//create and submit jobs for threads
 		unsigned int num_of_batches = 0;

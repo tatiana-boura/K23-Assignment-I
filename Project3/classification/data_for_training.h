@@ -10,6 +10,6 @@
 
 void create_x_y_array(float*** x_array,unsigned int** y_array,hashTable* ht,unsigned int bucketSize, unsigned int vocabSize,unsigned int* n);
 void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int** y_array,unsigned int vocabSize,unsigned int* n);
-void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** valid_set, unsigned int* m, unsigned int** y_train, unsigned int** y_valid, float*** test_set, unsigned int* z, unsigned int** y_test );
+void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** valid_set, unsigned int* m, unsigned int** y_train, unsigned int** y_valid, float*** test_set, unsigned int* z, unsigned int** y_test, float*** x_not_yet_trained, unsigned int** y_not_yet_trained, unsigned int* num_not_yet_trained );
 void makeResultFile(float* w_array,node* vocabulary);
 #endif

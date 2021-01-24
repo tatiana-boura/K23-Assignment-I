@@ -153,7 +153,7 @@ void storeAbsDifference(bucketEntry* entryTable_j,float*** x_array,unsigned int*
     return;
 }
 
-void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** valid_set, unsigned int* m, unsigned int** y_train, unsigned int** y_valid, float*** test_set, unsigned int* z, unsigned int** y_test ){
+void createSets( float** total_set, unsigned int* total_y, unsigned int total_size ,float*** train_set, unsigned int* n, float*** valid_set, unsigned int* m, unsigned int** y_train, unsigned int** y_valid, float*** test_set, unsigned int* z, unsigned int** y_test, float*** x_not_yet_trained, unsigned int** y_not_yet_trained, unsigned int* num_not_yet_trained ){
     /* total_set  : whole set that will be split
        total_y    : labels for whole set
        total_size : size of whole set
@@ -181,6 +181,11 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
     (*test_set) = calloc(*z, sizeof(float*));
     (*y_test) = calloc(*z, sizeof(float*));
 
+    *num_not_yet_trained = *m + *z;
+
+    (*x_not_yet_trained) = calloc(*num_not_yet_trained, sizeof(float*));
+    (*y_not_yet_trained) = calloc(*num_not_yet_trained, sizeof(float*));
+
     srand(time(NULL));
 
     /* we will use a boolean array of size as total lines 
@@ -191,7 +196,7 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
     for( unsigned int i=0; i <total_size; i++)
         visitedNumbers[i] = 0;
 
-    unsigned int _n_=0, _m_=0, _z_=0;
+    unsigned int _n_=0, _m_=0, _z_=0, _num_not_yet_trained_=0;
     // until the number needed is succeded
     while( _m_!= *m ){
         // choose randomly and number
@@ -215,7 +220,7 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
         }
     }
     /* not new memory for line -- use pointer from initial array*/
-    _n_=0; _m_=0; _z_=0;
+    _n_=0; _m_=0; _z_=0; _num_not_yet_trained_=0;
     for( unsigned int j = 0; j <total_size; j++ ){
         if( visitedNumbers[j] == 0 ){ 
             (*train_set)[_n_] = total_set[j];
@@ -223,9 +228,16 @@ void createSets( float** total_set, unsigned int* total_y, unsigned int total_si
         }else if( visitedNumbers[j] == 1 ){
             (*valid_set)[_m_] = total_set[j];
             (*y_valid)[_m_++] = total_y[j];
+
+            (*x_not_yet_trained)[_num_not_yet_trained_] = total_set[j];
+            (*y_not_yet_trained)[_num_not_yet_trained_++] = total_y[j];
+
         }else if( visitedNumbers[j] == 2 ){
             (*test_set)[_z_] = total_set[j];
             (*y_test)[_z_++] = total_y[j];
+
+            (*x_not_yet_trained)[_num_not_yet_trained_] = total_set[j];
+            (*y_not_yet_trained)[_num_not_yet_trained_++] = total_y[j];
         }
     }
 

@@ -280,7 +280,7 @@ int main(int argc, char* argv[]){
 	printf("\nCreate train sets & valid x,y sets\n");
 	createSets( x_array, y_array, n, &x_train, &size_of_train_set, &x_valid, &size_of_valid_set, &y_train, &y_valid, &x_test, &size_of_test_set, &y_test, &x_not_yet_trained, &y_not_yet_trained, &num_not_yet_trained );
 	
-	//------call gradient_descent() to train model-----------------------------------------------------------------------
+	//------call gradient_descent() to (re)-train model-----------------------------------------------------------------------
 	float bias=0.0;
 	float* w = calloc(voc_size,sizeof(float));
 	float eta = 0.05; //0.0 < eta < 1.0
@@ -310,6 +310,8 @@ int main(int argc, char* argv[]){
                 
 			}
 		}
+
+		free(probabilities);probabilities=NULL;
 
 		//____________validation-inference__________________________________________________
 		printf("\nPredict class of x_valid\n");
