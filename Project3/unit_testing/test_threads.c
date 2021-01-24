@@ -1,3 +1,8 @@
+/*Tester for threads - to test the correctness of the method 
+used in job_scheduler.c and logisticReg.c with a simplified 
+struct for Jobs and actions to be done by threads 
+(they just append a list with the int given by the job assigned)*/
+
 #include "../../Project1/unit_testing/acutest.h"
 #include <stdio.h>
 #include <pthread.h>
@@ -8,15 +13,20 @@
 #include <pthread.h>
 #include "../list/list.h"
 
+/*Change NUM_OF_THREADS or NUM_OF_JOBS to check that threadFunction 
+works for all cases: less, equal or more threads than jobs*/
 #define NUM_OF_THREADS 10
 #define NUM_OF_JOBS 5
 
 bool empty_queue = true; 
 unsigned int active_readers = 0;
 
+/*Counters to check if the correct amount
+of threads is created and exited*/
 unsigned int number_created = 0;
 unsigned int number_exited = 0;
 
+/*Queue for Jobs*/
 typedef node* Queue;
 
 typedef struct JobScheduler{
@@ -31,6 +41,7 @@ typedef struct JobScheduler{
 	bool last_job;
 }JobScheduler;
 
+/*Simplified job struct*/
 typedef struct Job{
 	node** all_thread_results; 
     int number;
@@ -44,9 +55,6 @@ int wait_all_tasks_finish(JobScheduler* sch);
 void destroy_scheduler(JobScheduler* sch);
 
 void test_threads(void){
-    /*Change NUM_OF_THREADS or NUM_OF_JOBS to 
-    check that threadFunction works for all cases:
-    less, equal or more threads than jobs*/
     JobScheduler* js = initialize_scheduler(NUM_OF_THREADS);
     node* all_thread_results = NULL;
 
@@ -64,21 +72,19 @@ void test_threads(void){
 
     wait_all_tasks_finish(js);
 
+    // Check if the list that the threads need to append isn't empty
     TEST_ASSERT(all_thread_results!=NULL);
+    // Check if the correct amount of threads was created and exited
     TEST_ASSERT(number_created==NUM_OF_THREADS);
     TEST_ASSERT(number_created==number_exited);
 
     for(unsigned int i=0; i<NUM_OF_JOBS;i++){
-        // Each job assigned has been processed by a thread
-        // (found in list of results)
-        printf("search for %d\n",input_jobs[i]);
+        /*Check if each job assigned has been processed by 
+        a thread (found in list of results)*/
         bool found = false;
         node* temp = all_thread_results;
         printf("In list\n");
         while(temp!=NULL){
-            /*printf("%d\n",*((unsigned int*)(temp->data)));
-            if(*((unsigned int*)(temp->data)) == input_jobs[i])*/
-            printf("%d\n",(unsigned int)(temp->data));
             if(((unsigned int)(temp->data)) == input_jobs[i])
                 found = true;
             temp = temp->next;
@@ -93,12 +99,12 @@ void test_threads(void){
 }
 
 void* threadFunction(void* args){
-    // get thread argument
+    //Get thread argument
 	JobScheduler* job_sch = (JobScheduler*)args;
 
     number_created++;
 	pthread_mutex_lock(&(job_sch->mtx));
-	// while there in no job sumbitted
+	// while there is no job sumbitted
 	while(empty_queue){
 		pthread_cond_wait(&(job_sch->cond),&(job_sch->mtx));
 	}
@@ -136,12 +142,9 @@ void* threadFunction(void* args){
 
 		// if this thread got a job
 		if(_job_){
-            // append the result to the global list -- in order to process later
+            // Simplified action by thread: get job and append list with the number included (to check that job data is collected correctly)
 			pthread_mutex_lock(&(job_sch->res_ins));
-            printf("[%ld] got %d \n",pthread_self(),((Job*)_job_->data)->number);
-            /*void* num = &(((Job*)_job_->data)->number);
-			*(((Job*)_job_->data)->all_thread_results) = appendList(*(((Job*)_job_->data)->all_thread_results),num);*/
-            *(((Job*)_job_->data)->all_thread_results) = appendList(*(((Job*)_job_->data)->all_thread_results),(void*)(((Job*)_job_->data)->number));
+            *(((Job*)_job_->data)->all_thread_results) = appendList(*(((Job*)_job_->data)->all_thread_results),(void*)(((Job*)(_job_->data))->number));
 			pthread_mutex_unlock(&(job_sch->res_ins));
 
 			// destroy job
@@ -227,6 +230,6 @@ void destroy_scheduler(JobScheduler* sch){
 }
 
 TEST_LIST = {
-	{ "test_threads", test_threads },
+	{ "threads", test_threads },
 	{ NULL, NULL } // end of tests
 };
