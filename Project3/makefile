@@ -60,7 +60,7 @@ $(T_OUT): $(T_OBJS)
 
 # UNIT TESTING #
 DEF_SRC = ./list/list.c ../Project2/word_info/word_info.c  ../Project2/vocabulary/vocabulary.c ../Project2/vocabulary/hash_table_vocabulary.c ../Project2/classification/hash_table_pairs.c ../Project2/hash_table/hash_table.c
-OUTS    = test_hash_table test_list test_word_info test_vocabulary test_hash_table_pairs test_tfidf_bow 
+OUTS    = test_hash_table test_list test_word_info test_vocabulary test_hash_table_pairs test_tfidf_bow test_threads
 
 tests:	
 	cc -g ./unit_testing/test_threads.c $(DEF_SRC) -o test_threads -lm -pthread
@@ -69,7 +69,6 @@ tests:
 	cc -g ../Project2/unit_testing/test_word_info.c $(DEF_SRC) -o test_word_info -lm
 	cc -g ../Project2/unit_testing/test_vocabulary.c $(DEF_SRC) -o test_vocabulary -lm
 	cc -g ../Project2/unit_testing/test_hash_table_pairs.c $(DEF_SRC) -o test_hash_table_pairs -lm
-	cc -g ../Project2/unit_testing/test_tfidf_bow.c $(DEF_SRC) -o test_tfidf_bow -lm
 	cc -g ../Project2/unit_testing/test_tfidf_bow.c $(DEF_SRC) -o test_tfidf_bow -lm
 
 clean:
